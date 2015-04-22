@@ -1,0 +1,114 @@
+\documentclass[a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{a4wide}
+\usepackage{geometry}
+\usepackage[utf8]{inputenc}
+\geometry{a4paper,left=2cm,right=2cm, top=3cm, bottom=3cm}
+\usepackage{listings}
+
+\newcommand{\titel}[1]{\fancyhead[C]{#1}}
+\newcommand{\name}{\fancyhead[L]{Alexander Landmesser}}
+\newcommand{\matrikel}{\fancyhead[R]{Matrikelnummer: 1096552}}
+\newcommand{\pl}{\hspace*{1cm}}
+\begin{document}
+\title{Algorithm Engineering}
+\maketitle
+\section{Datentypen}
+
+\subsubsection*{Getränkeautomat}
+Automat akzeptiert 1E, ein Getränk kostet 3E\\
+Operatoren:
+\begin{enumerate}
+\item Init(Reset)
+\item Akzeptiere1E
+\end{enumerate}
+Init $\rightarrow$ Zustand\\
+\hspace*{0.5cm}Semantik: Automat geht in Zustand 0\\
+Akzeptiere1E: ZustandX\{0,1\} $\rightarrow$ ZustandX\{tue nichts, gib Getänk\}\\
+\hspace*{0.5cm}Semantik: Beschreibung durch einen endlichen Automaten.
+\subsubsection*{Stadtplan}
+Übung 1
+\subsection{Bemerkungen}
+\begin{itemize}
+\item Operatoren können partiell Definiert sein. Man gibt Definitionsbereich oft in einer Vorbedingung an.
+\item Operatoren, bei denen der Datentyp selbst auf der linken Seite nicht vorkommt, heißen \underline{Konstruktoren}. Sie erzeugen ein neues Objekt (bzw. versetzen den Typ in einem bestimmten Zustand).
+	\begin{itemize}
+		\item Create: $\rightarrow$ stack$<$T$>$
+		\item Create: int $\rightarrow$ vector (Vektor bestimmter Dimension)
+	\end{itemize}
+\item Objekt- und Zustandssicht sind beide nützlich. \underline{Stack/Getränkeautomat} haben internen Zustand, Operatoren können ihn verändern.
+	\begin{itemize}
+		\item Integer: Objektsicht besser, Operatoren erzeugen neue Objekte, exisitierende werden nicht geändert.
+	\end{itemize}
+\item stack$<T>$ ist ein parametrisierbarer Datentyp: Stack mit Elementen vom Typ T. Hat eventuell besondere Anforederungen an Typ T, z.B. $x\leq y$ in Dictionaries.
+\item Man kann nun eigentlich schon programmieren, obwohl über die Interpretiernug noch nichts bekannt ist.
+
+\end{itemize}
+\subsubsection*{Anwendung von stack$<T>$}
+Auswertung von Postfix-Ausdrücken\\
+Vereinfachungen: alle Operatoren binär (+-*/), Eingabe nur Zahlen 0-9\\
+\underline{Bsp.:} $(7-5)*(3+1)\rightarrow 75-31+*$
+\subsection{Defintion eines Datentyps}
+(In einer Objekt-Orientierten Programmiersprache)\\
+\begin{lstlisting}[language=c++]
+class Typname {
+	//Definition der Menge der Objekte bzw Zustaende
+	private: //Deklaration von Variablen zur Darstellung der Objekte/Zustaende
+	public: //Operatoren
+	//Kommentare z.B. ueber Effizienz
+};
+\end{lstlisting}
+\subsubsection*{Operatoren}
+Methoden/Memberfunktionen\\
+Syntax: Ergebnistyp Name(Argumente...);\\
+\underline{Spezielle Methoden:} 
+\begin{itemize}
+	\item Kein Ergebnistyp: stack(); stack(size);
+	\item Destruktor: $\sim$ Typname();
+\end{itemize}
+\subsection{Beispiel}
+int\_stack $\rightarrow$ stack$<T>$\\
+\begin{lstlisting}[language=c++]
+class int_stack {
+	/* Eine Instanz vom Typ int_stack ist eine Folge von ganzen Zahlen (int). Eine Folge der laenge 0 heisst der leere Stack.*/
+	private: //Implementierung
+	public: stack(int sz); //Konstruktor
+	//Erzeugt einen Stack mit maximaler Groesse sz
+	~stack() //Destruktor
+	void push (int x);
+	//fuegt x als letzes Element (top) an die Folge an.
+	int top() const;
+	//liefert das letzte (top) Element
+	//Precondition: Stack nicht leer
+	int pop();
+	//entfernt letztes (top) Element der Folge und gibt es zurueck
+	//Precondition: Stack nicht leer
+	bool empty() const;
+	//true, wenn Stack leer, false sonst.
+	
+\end{lstlisting}
+In c++ Spezielle Header Datei, die die Deklarationen ohne Rumpf enthält. Implementierung in .cpp\\
+\subsubsection*{Implementierung der Klasse int\_stack}
+Mehrere Möglichkeiten: Array, Liste
+Array Implementierung:
+$int_stack.h$
+\begin{lstlisting}
+class int_stack {
+	private 
+		int* A; //Feld
+		int sz; //Laenge von A
+		int t;
+};
+\end{lstlisting}
+$int_stack.cpp$
+\begin{lstlisting}
+#include "int_stack.h"
+int_stack::int_stack(int n) {
+	sz=n;
+	A = new int[sz];
+	t-1; //leer
+}
+\end{lstlisting}
+\end{document}

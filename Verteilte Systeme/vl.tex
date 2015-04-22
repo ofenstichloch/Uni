@@ -1,0 +1,68 @@
+\documentclass[a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{a4wide}
+\usepackage{geometry}
+\usepackage[utf8]{inputenc}
+\geometry{a4paper,left=2cm,right=2cm, top=3cm, bottom=3cm}
+\usepackage{listings}
+
+\newcommand{\titel}[1]{\fancyhead[C]{#1}}
+\newcommand{\name}{\fancyhead[L]{Alexander Landmesser}}
+\newcommand{\matrikel}{\fancyhead[R]{}}
+\newcommand{\pl}{\hspace*{1cm}}
+\begin{document}
+\title{Verteilte Systeme}
+\maketitle
+\section{ØMQ}
+\subsection{Verwendung}
+\begin{itemize}
+\item[1. Context:] Es muss für ØMQ ein Kontext erstellt werden (das Umfeld)
+\item[2. Socket:] Es muss ein Socket in diesem Kontext erstellt werden
+\item[3. Sockettyp:] Was für eine Art Socket wird benötigt (SUB/PUB etc.)
+\item[4. Binding:] Socket an eine Adresse und einen Port binden (Remote, oder Lokale für listening)
+\item[5.1 Receive] Receive (blockierend), besonderer Messagetyp
+\item[5.2 Send] Send, gegebener Messagetyp ist zu füllen
+
+\end{itemize}
+ØMQ Buffert alle Nachrichten bis zu einem gewissen Grad. So werden auch langsamere Reader oder später registrierte Subscriber bedient, jedoch ohne versicherung, dass sie alle Nachrichten empfangen.
+\subsection{Patterns}
+\begin{itemize}
+\item[Request-Reply] Synchrone Request-Reply Kommunikation
+\item[Push-Pull] Sender erwartet keine Rückantwort (Push), Empfänger benutzen Pull, um Nachricht zu empfangen.\\
+Kann benutzt werden, um Lasten zu verteilen, weil eine Nachricht nur höchstens eimal empfangen werden kann.
+\item[Pub/Sub] Ein Publisher sendet Nachrichten mit bestimmten Tags, alle Subscriber empfangen alle Nachrichten, die den vorgegebenen Tags des Subscribers entsprechen.
+\end{itemize}
+\subsection{Transportvarianten}
+\begin{itemize}
+\item[ipc:] Interprozess, FIFO etc.
+\item[inproc:] Socketkommunikation innerhalb eines Prozesses.
+\item[mMulticast:] ØMQ unterstützt Multicast, wenn das Netzwerk es unterstützt.
+\end{itemize}
+\subsection{PlayØMQ, Broker}
+Sources generieren Zufallszahlen und geben sie an den Broker.\\
+Worker nehmen Zahlen aus dem Broker und prüfen auf Primzahl.\\
+Sinks hören auf Nummern/Primzahlen.
+Broker: Sendet einkommende Zahlen per Push-Socket an Worker, sendet Zahlen und Primzahlen per PUB-Socket
+Source: Request Reply auf Broker.\\
+Worker: Push/Pull $\rightarrow$ Parallelisierung der Berechnung \\
+Sink: Subscriber, die auf den Broker "Subscriben", mit dem entsprechenden Tag (number/primzahl)
+\subsubsection{Nachrichten}
+Senden und Empfangen von Daten muss besonders behandelt werden, da Nachrichten erstellt werden müssen.\\
+Nachrichten bestehen aus Tag (identifier Char) und Wert (long)
+\subsubsection{Source}
+Benötigt URL von Broker\\
+Erstelle REQ (Request) Socket, der mit dem Broker verbindet.\\
+Source generiert Zahlen, sendet sie an Broker und wartet, bis dieser den Empfang bestätigt hat.
+\subsubsection{Broker}
+Broker hat Sockets für REP (Reply) für Source, PUB (Publisher) für Sinks, PUSH für Worker.\\
+Im Beispiel ist Endpoint eine Methode, die die Befehle zum Erstellen eines einfachen Sockets zusammenfasst.\\
+Broker empfängt Zahl von Source, bestätigt dem Empfang, publiziert die Nummer, sendet sie an die Worker, wartet auf die Antwort und publiziert u.U. die Primzahl.
+\subsubsection{Worker}
+Verbindet per PULL und REQ (Request) Socket auf den Broker. \\
+Empfängt vom Broker per PULL Zahlen, prüft diese und sendet sie u.U. per REQ an Broker. Wenn die Primzahl gesendet wird, muss der Worker wieder auf die Antwort (REPly) des Broker warten.
+\subsubsection{Sink}
+Erstellt SUB (Subscriber) Socket, über den er vom Broker Daten empfängt. \\
+Beim Erstellen wird festgelegt, auf welche Tags der Subscriber hört.\\
+\end{document}

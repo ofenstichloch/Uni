@@ -103,12 +103,77 @@ class int_stack {
 };
 \end{lstlisting}
 $int_stack.cpp$
-\begin{lstlisting}
+\begin{lstlisting}[escapechar=!]
 #include "int_stack.h"
 int_stack::int_stack(int n) {
-	sz=n;
+	sz=2;
 	A = new int[sz];
-	t-1; //leer
+	t = -1; //leer
 }
+int_stack::~int_stack(){
+	delete[] A;
+}
+void int_stack::push(int x){
+	if (t == sz-1){
+		//stack voll
+		int* B=new int[2*sz];
+		sz !$\leftarrow$! 2*sz;
+		for(int i=0; i !$\leq $!;i++){
+			B[i] !$\leftarrow $!
+		}
+		delete[] A;
+	}
+	A[++t] !$\leftarrow $! x; //eigentlich push
+}
+int int_stack::pop(){
+	if(t==-1){
+		EXCEPTION("Leerer Stack")
+	return A[t--];
+}
+
 \end{lstlisting}
+\subsubsection*{Einschub: Variablen, Konstruktoren, Wertzuweisung}
+%TODO Einrückung!
+\begin{itemize}
+\item[Variablen Deklaration] c++: Aufruf des Konstruktors generiert ein Objekt.\\
+	Java: Erst eine Referenz erstellen, dann ein Objekt generieren und auf dieses verweisen.
+\item[Wertzuweisung] c++: $int_stack s1,s2; s1=s2;$ Objekt wird kopiert, es gibt 2 Objekte.\\
+	Java: $int_stack s1,s1; s1=s2;$ Referenzen zeigen auf ein einziges Objekt.
+\item[Referenzsemantik in c++:] Verwendet Pointer auf ein Objekt.\\
+	Test auf Gleichheit (==) Operator\\
+	Parameterübergabe sind Pointer
+\item[Referenzsemantik in Java:] Parameter by Value, gesamtes Objekt kopiert und dann übergeben.
+\end{itemize}
+\subsection*{Korrektheit einer Implementierung}
+(Hier der Array-Implementierung von $int_stack$)\\
+Eigentlich 2 Datentypen:
+\begin{itemize}
+\item[1.] der abstrake Datentyp $int_stack$
+\item[2.] der konkrete Datentyp Array
+\end{itemize}
+\underline{Abstrakter Zustand:} Folge von int's\\
+\underline{Konkreter Zustand:} Werte der Variable A,t,sz\\
+Wir garantieren (Invariante), dass nicht die Kombination von A,t,sz möglich sind, sondern nur die mit:
+\begin{itemize}
+\item[1.]A ist ein Feld der Länge sz
+\item[2.] $-1 \leq t\leq sz-1$
+\end{itemize}
+Sei Z=Menge der konkreten Zustände und S = Menge der abstrakten Zustände\\
+Um die Korrektheit zu zuigen, definieren wir eine Abbildung $F: Z \rightarrow S$\\
+$(A,sz,t) \rightarrow \left\lbrace \begin{array}{l}
+	Folge\ A[0],...,A[t]\ falls t\geq 0\\
+	Leere\ Folge, t=-1
+\end{array}\right.$
+Und zeigen:
+\begin{itemize}
+\item[1.] Konstruktoren erzeugen gültige konkrete Zustände
+\item[2.] Für jede abstrakte Operation und die dazugehörige konkrete Operation $f_{op}$ zeige $F(f_{op}(Z)) = op(F(Z))$
+	Bsp.: push: $S\times int \rightarrow S $\\
+	$f_{push}: Z \times int \rightarrow Z$
+\end{itemize}
+Kommutatives Diagramm:\\
+$z \xrightarrow{F} s$\\
+$\downarrow f_{op} \uparrow op$\\
+$z' \xrightarrow{F} s'$
+
 \end{document}

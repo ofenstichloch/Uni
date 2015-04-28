@@ -65,4 +65,61 @@ Empfängt vom Broker per PULL Zahlen, prüft diese und sendet sie u.U. per REQ a
 \subsubsection{Sink}
 Erstellt SUB (Subscriber) Socket, über den er vom Broker Daten empfängt. \\
 Beim Erstellen wird festgelegt, auf welche Tags der Subscriber hört.\\
+\section{Verteilung von Last}
+
+Kreative Lastverteilung: Verteilte Programmierung.\\
+Mechanische Lastverteilung: Verteilung auf Rechner, gleiche Auslastung der verwendeten Rechner\\
+
+Durch verteilte Rechner ist die "aktuelle Last" verzögert, um die Latenz zwischen A und B. A schickt also Last an B, auch wenn B inzwischen eine hohe Last erreicht hat.\\
+Lösung: A kann anhand der verteilten Last merken, wie viel Last ungefähr an B vergeben wurde (wenn B Last nicht weitergibt).\\
+
+Paketweitergabe:\\
+\begin{itemize}
+\item Wenn der Code lokal vorhanden ist, muss er kopiert werden (achte auf identische Pfadnamen etc.)\\
+	Bei Netzwerklaufwerken geht Zeit verloren, da das Netzwerklaufwerk limitierende Bandbreite hat.
+\item Verteiler schickt Programmcode mit (Große Datenmenge, Achtung Viren)
+
+\end{itemize}
+
+\subsection{Architektur}
+Erstellen einer Lastmetrik: Welche Last hat ein Rechner, welche Last erzeugt ein Paket?\\
+Verteilung der Last der beteiligten Rechner: Entscheidungsgundlage für Verteiler.\\
+Verteilung des Lastpaketes auf gewählte Rechner: Welche Informationen müssen übertragen werden.\\
+\subsection*{Lastmetriken}
+\begin{itemize}
+\item Prozessorauslastung (Anzahl Prozesse, CPU-Zeit)
+\item Speicherauslastung (Bedarf etc.)
+\item Kommunikationslast (IO, Netzwerk)
+\end{itemize}
+\subsubsection*{Pull}
+Zieht Lastwerten an. (Unterforderte Rechner suchen Last)\\
+Lastwert wird bei der Erzeugung eines Paketes ermittelt.\\
+Varianten:
+\begin{itemize}
+\item[Von allen Rechnern:] Verteiler sendet Broadcast und fragt nach Last, alle Rechner antworten mit eignener Last.\\
+	Verbesserung: Antowrt wird verzögert, je nach eigener Last. Damit antwortet der am wenigsten ausgelastete als erstes.
+\item[Feste Teilmenge:] Erreriche bestimmte Worker
+\item[Zufällige Teilmenge:]Frage zufällige Worker an
+\end{itemize}
+\subsubsection*{Push}
+Lastwerte verteilen.  (Überforderte Rechner verteilen Last)\\
+
+\subsection{Verteilungsverfahren}
+Last sollte so verteilt werden, dass Rechen- und Speicherlast gleich verteilt ist und die Kommunikation möglichst lokal stattfindet.
+\begin{itemize}
+\item[Statisches Verfahren] Optimale Verteilung vor dem Start der Anwendung ermitteln.\\ 
+Alle Bestandteile der Lastmetrik sind für alle Prozesse bekannt.\\
+Findet häufig Anwendung, Last ist vorher meistens bekannt (Meterologie etc.)
+\item[Dynamisches Verfahren] Ausführungsort wird für jeden Prozess ermittelt. 
+	\begin{itemize}
+	\item[Mit Migration] Migration heißt, die Adressräume und die Prozessstati zu übertragen. Es muss gewartet werden, bis alle Threads keine OS-Ressourcen mehr benutzen.\\
+	Problem: Adressräume sind u.U. sehr groß. \\
+	Lösung: Copy-on-Reference: Kopiere Adressen, wenn sie benötigt werden. (Reduziert Speicherlast auf Quellknoten nicht).
+	\item[Ohne Migration] Hoher Aufwand die Lastverteilung zu bestimmen.
+	\end{itemize}
+\end{itemize}
+Durchgesetzt hat sich \underline{Initial Placement}\\
+Bei Paketentstehung Zielknoten bestimmen, im Extremfall zufällige Wahl.\\
+Ist durchaus das schnellste Verfahren.\\
+
 \end{document}

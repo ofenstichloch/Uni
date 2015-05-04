@@ -153,13 +153,13 @@ Eigentlich 2 Datentypen:
 \end{itemize}
 \underline{Abstrakter Zustand:} Folge von int's\\
 \underline{Konkreter Zustand:} Werte der Variable A,t,sz\\
-Wir garantieren (Invariante), dass nicht die Kombination von A,t,sz möglich sind, sondern nur die mit:
+Wir garantieren (Invariante), dass nicht die Kombination von A,t,sz möglich sind, sondern nur gültige Zustande mit:
 \begin{itemize}
 \item[1.]A ist ein Feld der Länge sz
 \item[2.] $-1 \leq t\leq sz-1$
 \end{itemize}
 Sei Z=Menge der konkreten Zustände und S = Menge der abstrakten Zustände\\
-Um die Korrektheit zu zuigen, definieren wir eine Abbildung $F: Z \rightarrow S$\\
+Um die Korrektheit zu zeigen, definieren wir eine Abbildung $F: Z \rightarrow S$\\
 $(A,sz,t) \rightarrow \left\lbrace \begin{array}{l}
 	Folge\ A[0],...,A[t]\ falls t\geq 0\\
 	Leere\ Folge, t=-1
@@ -175,5 +175,46 @@ Kommutatives Diagramm:\\
 $z \xrightarrow{F} s$\\
 $\downarrow f_{op} \uparrow op$\\
 $z' \xrightarrow{F} s'$
-
+\subsection*{Vererbung/Generische Datentypen}
+Templates/Wiederverwendung von Code\\
+\underline{Situation}\\
+Man braucht einen Datentyp A, der sehr ähnlich zu einem bereits vorhandenen definierten Typ B ist.\\
+A soll:\\
+\begin{itemize}
+\item einen Teil der Daten/Operationen verwenden
+\item andere Daten/Operationen anfügen
+\item einige verändern (auf andere Weise implementieren)
+\end{itemize}
+\subsubsection*{Beispiel}
+Es existiert die Klasse Polygon (B), implementiert werden soll eine Klasse Rechteck (A).\\
+A ist eine Spezialisierung von B\\
+Rechteck könnte alle Polygon-Operationen (draw(),translte etc)\\
+Einige Operationen können effizienter implementiert werden (Flächeninhalt etc.)\\
+Andere sind nur für Rechtecke definiert.\\
+Jedes Rechteck ist ein spezielles Polygon.
+\subsubsection*{Allgemein}
+Wir leiten die Klasse A von der Klasse B ab.\\
+Syntax in c++: A: public B\\
+\begin{lstlisting}
+class Rechteck: public Polygon{
+	//Konstruktoren -> uebung :(
+	private:
+		//Ueberschreiben
+		double b,h;
+		double area() {return b*h;}
+		double umfang() {return 2*(b+h);}
+		//Hinzufuegen
+		double ratio() {return b/h;}
+};
+\end{lstlisting}
+Ableitungen auch als Baum darstellbar (Shape mit Kindern Polygon/Ellipse/Punkt etc)\\
+\subsubsection*{Typverträglichkeit}
+Einer Variable vom Typ B* oder B\& (alle Variablen in JAVA vom Typ B) kann ein Opbjekt (Pointer/Referenz) vom Typ A zugewiesen werden.\\
+Alle im Ableitungsbaum erreichbaren Typen können zugewiesen werden (Kinder).\\
+Eine Variable hat 2 Typen: Einen Statischen Typ, der zur Compilezeit bekannt ist. Dynamischer Typ, der zur Laufzeit bekannt ist.
+\subsection*{Polymorphe Datenstrukturen}
+Bsp.: Feld von Polygonen\\
+c++: Polygon** (Ein Pointer auf ein Feld von Pointern) A = new Polygon*[100];\\
+A[0] = new Polygon(...);\\
+A[1] = new Rechteck(...);\\
 \end{document}

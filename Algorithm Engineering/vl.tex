@@ -213,8 +213,84 @@ Einer Variable vom Typ B* oder B\& (alle Variablen in JAVA vom Typ B) kann ein O
 Alle im Ableitungsbaum erreichbaren Typen können zugewiesen werden (Kinder).\\
 Eine Variable hat 2 Typen: Einen Statischen Typ, der zur Compilezeit bekannt ist. Dynamischer Typ, der zur Laufzeit bekannt ist.
 \subsection*{Polymorphe Datenstrukturen}
+\begin{lstlisting}
+polygon* p = new rechteck()
+double func(polygon& p){
+	return poly.area();}
+rechteck rect = new rechteck();
+func(rect);
+\end{lstlisting}
+Es wird per dynamischer Bindung die Funktion func der Klasse Rechteck aufgerufen.\\
+C++ benutzt standardmäßig statische Bindung esseidenn Funktion ist "virtual".
 Bsp.: Feld von Polygonen\\
 c++: Polygon** (Ein Pointer auf ein Feld von Pointern) A = new Polygon*[100];\\
 A[0] = new Polygon(...);\\
 A[1] = new Rechteck(...);\\
+\\
+Abstrakte Klassen werden verwendet um Interfaces zu definieren.\\
+Z.B. Shape als abstrakte Klasse. In C++ werden Methoden als abstrakt markiert, wenn sie bei der Deklaration = 0 gesetzt werden\\
+virtual void draw() = 0;\\
+\subsection*{Anwendung auf Algorithmen}
+Lineare Ordnungen durch ein Interface umgesetzt.\\
+In C++:\\
+\begin{lstlisting}
+class comparable{
+	virtual int compare(compareable x)=0;
+}
+\end{lstlisting}
+Anwendung in generischen Sortieralgorithmen:\\
+Quicksort(comparable* A[])\\
+Zum Vergleich benutzt man x.compare(y)\\
+\subsubsection*{Anwendung: Sortiere ein Feld von point}
+\begin{lstlisting}
+class point: public comparable{
+	int compare(comparable x){
+		//x ist tatsaechlich ein point
+		double px=((point&)p).x; //Casting
+		double py=((point&)p).y;
+		//lexikographische Ordnung..
+		return ..;
+	}
+}
+Aufruf von Quicksort:
+point* A[] = new point*[100];
+for(i=0;i<100<i++) A[i] = new point(i,i*i);
+Quicksort(A,100);
+\end{lstlisting}
+Datenstrukturen, bei denen Comparable sinnvoll ist:\\
+\begin{itemize}
+\item Binäre Suchbäume, bei denen die Knoten vergleichbar sind.
+\end{itemize}
+\subsubsection*{Weitere Anwendung von Vererbung}
+Generische Datenstrukturen wie z.B. Listen von beliebigen Objekten.\\
+Einfach verkettete Liste:\\
+Beobachtung: Implementierung der Operationen (push, pop), ist nicht abhängig vom Typ. Der Wert (int,string,point,...) jedoch schon.\\
+Abstraktion: Liste ohne Werte\\
+1. Basisklasse für allgemeines Listenelement:
+\begin{lstlisting}
+class slist_element{
+	slist_element* next;
+	slist_element(slist_element* p) {next = p;}
+};
+\end{lstlisting}
+2. Basisklasse für allgemeine List:
+\begin{lstlisting}
+class slist{
+	slist_element* first;
+	slist() {first = NULL;}
+	
+	void push(slist_element* p){
+		p->next = first;
+		first = p;
+	}
+	slist_element* pop(){
+		if(first == NULL) return first;
+		slist_element* p = first;
+		first = first.next;
+		return p;	
+	}
+}
+\end{lstlisting}
+slist funktionirt auch für alle von slist\_elem abgeleiteten Klassen.\\
+Besondere Elemente werden als neue Klassen definiert, die von slist\_element erben.
 \end{document}

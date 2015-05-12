@@ -121,5 +121,33 @@ Findet häufig Anwendung, Last ist vorher meistens bekannt (Meterologie etc.)
 Durchgesetzt hat sich \underline{Initial Placement}\\
 Bei Paketentstehung Zielknoten bestimmen, im Extremfall zufällige Wahl.\\
 Ist durchaus das schnellste Verfahren.\\
+\subsection{Zeit bei Verteilung}
+2 Möglichkeiten:
+\begin{itemize}
+\item 1. Synchronisieren der Uhren der Systeme
+\item 2. Erstellung eines neuen Zeitmaßes
+\end{itemize}
+\subsubsection{Synchronisation der Uhren}
+Es wird angenommen, dass jede Uhr ungenau ist und eine lineare Abweichung besitzen.\\
+Ziel: Zeit innerhlab eines Rahmen halten und Abweichungen durch Synchronisation verhindern.\\
+Ein System hat eine genaue Zeit, die an andere Systeme verteilt wird:\\
+Die nachgestellten Uhren hinken immer ein wenig hinterher. \\
+DCF77 erste Zeitsender in Offenbach, senden Zeitsignal über Langwelle. Pulst jede Sekunde, Zusatzdaten auf das Sekundensignal moduliert.\\
+\textbf{Vergleich nach F. Christian}:\\
+Client muss herausfinden, was die Laufzeit des Singals ist. Er speichert seine Zeit, wenn das Signal losgeschickt wird und wenn die Antwort empfangen wird. Der Client berechnet die Mitte aus Empfangszeit-Sendezeit, dieser Zeitpunkt wird auf die Zeit des Signals (Servers) gesetzt.\\
+Lokale Uhr kann schneller/langsamer sein. Zurückstellen der Zeit ist unangenehm, deswegen werden Anti-Schaltmillisekunden eingeführt, die die Uhr bei Bedarf leicht abbremsen. Auch beim Vorstellen der Uhr werden meist Schaltmillisekunden verwendet.\\
+\textbf{NTP}:\\
+Server werden in Genauigkeitsstufen unterteilt, Stratum1 ist genau. Stratum 3 oder mehr ist inzwischen selten.\\
+Lokale NTP Server ermöglichen eine sehr genaue lokale Zeit im Netzwerk. Die Uhr ist nicht unbedingt genau die Globalzeit, alle lokalen Systeme laufen aber synchron.\\
+\subsubsection{Lamportzeit}
+Bei jedem lokalen Ereignis "tickt" die logische Uhr. Lokale Ereignisse können Instruktionen oder spezielle Ereignisse sein. Wenn ein Ereignis eintritt, wird diesem ein Zeitstempel zugewiesen. Ein späteres Ereignis tritt auch wirklich später ein und KANN kausal Abhängig von denn vorherigen Ereignissen des selben Systems sein. Kausale Abhängigkeiten zwischen verschiedenen Systemen kann nur durch Datenaustausch ausgelöst werden. Wenn zwei Ereignisse kausal abhängig sind, muss das abhängige Ereignis einen neueren Zeitstempel besitzen als die Ursache.\\
+\underline{Lamportzeit}:\\
+Die logische Uhr tickt bei jedem Ereignis hoch. Der Sender schickt seinen Zeitstempel beim Senden mit. Der Empfänger stellt seine Uhr auf den größeren der beiden Zeitstempel (sein eigener und der vom Sender). \\
+Man kann von der Kausalität auf die Zeitstempel schließen, z.B. zum korrigieren. Die Zeitstempel liefern jedoch keine Informationen über die Kausalität, frühere Ereignisse müssen nicht abhängig sein.\\
+Problem: Zähler erreicht Maximum des Speichers und läuft über. Praktisch selten erreichbar, 64Bit Zeitstempel reicht LANGE.\\
+\subsubsection{Vektorzeit}
+Bei n Rechnern, ein Vektor der Dimension n.\\
+Bei lokalen Ereignissen erhöht das System den eigenen Wert im Vektor, die anderen bleiben gleich. Beim Senden, wird der lokale Eintrag erhöht und der gesamte Vektor mitgeschickt. Beim Empfangen wird komponentenweise das Maximum in den eigenen Vektor übernommen, vorher wird auch der eigenen Wert um eins erhöht, da das Empfangsereignis ein lokales Ereignis ist.\\
+Wenn ein Vektor komplett komponentenweise größer gleich ist als ein anderer, so ist das Ereignis kausal abhängig. Dabei MUSS mindestens eine Komponente echt größer sein. In allen anderen Fällen sind die Ereignisse unabhängig.\\
 
 \end{document}

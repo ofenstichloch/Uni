@@ -15,7 +15,7 @@
 \begin{document}
 \title{Algorithm Engineering}
 \maketitle
-\section{Datentypen}
+\section*{Datentypen}
 
 \subsubsection*{Getränkeautomat}
 Automat akzeptiert 1E, ein Getränk kostet 3E\\
@@ -30,7 +30,7 @@ Akzeptiere1E: ZustandX\{0,1\} $\rightarrow$ ZustandX\{tue nichts, gib Getänk\}\
 \hspace*{0.5cm}Semantik: Beschreibung durch einen endlichen Automaten.
 \subsubsection*{Stadtplan}
 Übung 1
-\subsection{Bemerkungen}
+\subsection*{Bemerkungen}
 \begin{itemize}
 \item Operatoren können partiell Definiert sein. Man gibt Definitionsbereich oft in einer Vorbedingung an.
 \item Operatoren, bei denen der Datentyp selbst auf der linken Seite nicht vorkommt, heißen \underline{Konstruktoren}. Sie erzeugen ein neues Objekt (bzw. versetzen den Typ in einem bestimmten Zustand).
@@ -50,7 +50,7 @@ Akzeptiere1E: ZustandX\{0,1\} $\rightarrow$ ZustandX\{tue nichts, gib Getänk\}\
 Auswertung von Postfix-Ausdrücken\\
 Vereinfachungen: alle Operatoren binär (+-*/), Eingabe nur Zahlen 0-9\\
 \underline{Bsp.:} $(7-5)*(3+1)\rightarrow 75-31+*$
-\subsection{Defintion eines Datentyps}
+\subsection*{Defintion eines Datentyps}
 (In einer Objekt-Orientierten Programmiersprache)\\
 \begin{lstlisting}[language=c++]
 class Typname {
@@ -68,7 +68,7 @@ Syntax: Ergebnistyp Name(Argumente...);\\
 	\item Kein Ergebnistyp: stack(); stack(size);
 	\item Destruktor: $\sim$ Typname();
 \end{itemize}
-\subsection{Beispiel}
+\subsection*{Beispiel}
 int\_stack $\rightarrow$ stack$<T>$\\
 \begin{lstlisting}[language=c++]
 class int_stack {
@@ -292,5 +292,109 @@ class slist{
 }
 \end{lstlisting}
 slist funktionirt auch für alle von slist\_elem abgeleiteten Klassen.\\
-Besondere Elemente werden als neue Klassen definiert, die von slist\_element erben.
+Besondere Elemente werden als neue Klassen definiert, die von slist\_element erben.\\
+Ein "Point" ist ein "slist\_element"\\
+\begin{lstlisting}
+slist L;
+point* p = new point(x,y);
+L.push(p);
+\end{lstlisting}
+slist ist Polymorph, es kann als Liste verschiedener Datentypen dienen.\\
+Situationen in denen diese Polymorphie vorteilhaft ist: Grafik-Editor:\\
+\begin{lstlisting}
+void drawAll() //Iteriere ueber Liste und rufe draw fuer alle auf
+forall x in scene //scene ist die Liste
+	x -> draw();
+\end{lstlisting}
+Falls wir eine Liste von einem bestimmten Objekt-Typ verwenden wollen (z.B.b point\_list) wird diese von slist abgeleitet.\\
+\begin{lstlisting}
+class point_list: public slist {
+	//neues Interface das nur points erlaubt
+	void push(point* p) {slist::push(p);}
+	point* pop(){return (point*) slist::pop();}
+	//Das Casting ist sicher, da durch push sicher nur points in der Liste sind.
+}
+\end{lstlisting}
+Aufwändige Datenstruktur: Balancierte Suchbäume (z.B. AVL)\\
+1. Klasse für die Knoten (benötigt parent, left, right)
+\begin{lstlisting}
+class bin_tree_node{
+	bin_tree_node* left, right, parent;
+};
+\end{lstlisting}
+2. Klasse für den Baum:
+\begin{lstlisting}
+class bin_tree{
+	virtual int cmp(bin_tree_node* p, bin_tree_node* u) = 0
+	//Bsp.: cmp(p,q) = {-1, wenn p<q; 0, wenn p = q; 1, wenn p>q}
+	void insert(bin_tree_node* p){
+		//fuegt p in den Baum ein, verwendet cmp als Vergleich	
+	}
+	bin_tree_node* lookup(bin_tree_node* p){
+		/* in Schleife: 
+		if cmp(q,p) > 0 q=q->left;
+			else q=q->right;
+			*/
+	}
+}
+\end{lstlisting}
+Anwendung auf Point: 
+\begin{lstlisting}
+class point:public bin_tree_node{
+	...
+}
+class point_bin_tree:public bin_tree{
+	//Definiere cmp Funktion
+	int cmp(bin_tree_node* p, bin_tree_node* q){
+		point* a = (point*)p;
+		point* b = (point*)q;
+		if(a->x < b->x) return -1;
+		if(a->x > b->x) return 1;
+		if(a->y < b->y) return -1;
+		if(a->y > b->y) return 1;
+		return 0;	
+	}
+	void insert(point* p){
+		bin_tree::insert(p);
+	}
+	point* min() {return (point*)bin_tree::min();}	
+}
+\end{lstlisting}
+\section*{Templates}
+\subsection*{Funktionstemplates}
+\textit{template $<$class T$>$}\\
+Beispiel: swap(T\& x, T\& y) Vertauscht den Inhalt der beiden Variablen\\
+\begin{lstlisting}
+ swap(T& x, T& y){
+ 	T tmp = x;
+ 	x = y;
+ 	y= tmp;
+ }
+\end{lstlisting}
+Implementierung ist unabhängig von T.
+\subsection*{Klassentemplates}
+\begin{lstlisting}
+template<class T>
+class stack{
+	T* A; //Feld von T's
+	int sz;
+	int t;
+	
+	public
+	void push(T x){...}
+	T pop {...}
+}
+\end{lstlisting}
+Beispiel für mehrere Typen:
+\begin{lstlisting}
+template<class K, class I>
+class dictionary{
+	//Woerterbuch mit Schluessel vom Typ K und werte vom Typ I
+	void insert(K k,I i){...}
+	I translate (K key){...}
+}
+\end{lstlisting}
+Anwendungsbeispiel: Word-Count, zählt wie oft einzelne Wörter in einem Text vorkommen.
+dictionary$<$string,int$?>$ D; Speichert Wort als Schlüssel, Häufigkeit als Wert.
+
 \end{document}

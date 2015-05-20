@@ -5,6 +5,7 @@
 \usepackage{a4wide}
 \usepackage{geometry}
 \usepackage[utf8]{inputenc}
+\usepackage{graphicx}
 \geometry{a4paper,left=2cm,right=2cm, top=3cm, bottom=3cm}
 \usepackage{listings}
 
@@ -149,5 +150,27 @@ Problem: Zähler erreicht Maximum des Speichers und läuft über. Praktisch selt
 Bei n Rechnern, ein Vektor der Dimension n.\\
 Bei lokalen Ereignissen erhöht das System den eigenen Wert im Vektor, die anderen bleiben gleich. Beim Senden, wird der lokale Eintrag erhöht und der gesamte Vektor mitgeschickt. Beim Empfangen wird komponentenweise das Maximum in den eigenen Vektor übernommen, vorher wird auch der eigenen Wert um eins erhöht, da das Empfangsereignis ein lokales Ereignis ist.\\
 Wenn ein Vektor komplett komponentenweise größer gleich ist als ein anderer, so ist das Ereignis kausal abhängig. Dabei MUSS mindestens eine Komponente echt größer sein. In allen anderen Fällen sind die Ereignisse unabhängig.\\
-
+\subsection{Verteilter Wechselseitiger Ausschluss}
+Mehrere Prozesse dürfen eine Aufgabe nur einmal gleichzeitig ausführen.\\
+Semaphoren etc. gehen nicht, da diese einen gemeinsamen Speicher benötigen.\\
+\subsubsection{Zentraler Ansatz}
+Eine Zentrale verwaltet die Ausführungen. Clients senden Requests, Server erlaubt bestimmte Requests.
+Damit sortiert/erlaubt der Server bestimmte Requests nur, wenn kein anderer Client diesen gerade bearbeitet.
+Client benachrichtigt den Server, wenn er einen kritischen Abschnitt verlässt.\\
+Das System hat eine geringe Nachrichtenkomplexität, es werden nur 3 Nachrichten benötigt pro kritischem Abschnitt.\\
+Server ist Single point of failure, wenn dieser ausfällt, fällt das System aus.\\
+Das System ist assymetrisch, der Server führt anderen Code aus, als die Clients.
+\subsubsection{Token-Ring}
+Ringanordnung, Prozesse (Clients) schicken sich Token zu. Nur der Prozess mit Token, darf den kritischen Abschnitt betreten.\\
+Ein Client, der nicht in einen kritischen Zustand will, gibt das Token weiter. Wenn ein Prozess einen kritischen Abschnitt verlässt gibt dieser das Token weiter.
+\subsubsection{Lamport}
+Zentraler Server hat eine Prozess-Warteschlange, Client Requests werden eingereiht, bei einem Release wird dem ersten in der Schlange ein Grant geschickt. Jeder Client verwaltet eine solche Liste und dient somit als "Server". Diese Listen werden identisch gehalten.\\
+Client schickt Request an alle beteiligten Prozesse, alle reihen es in ihre Liste ein. Dem Request wird ein Zeitstempel (erweiterte Lamport Zeit) mitgeschickt. Alle anderen Clients bestätigen diesen Request. Erst wenn alle Clients bestätigt haben, darf der kritische Abschnitt betreten werden.\\
+Ist die Liste leer, muss trotzdem auf alle Bestätigungen gewartet werden.\\
+Das erste Element der Liste kann erst dann ausgeführt werden, wenn es sicher keinen Request mehr gibt oder auch kein Request mehr kommen wird, der vor diesem Element eingereiht würde (Achtung! Lamportzeit != Realzeit).\\
+Anmerkung: Die Kommunikation zwischen zwei Clients ist so gebaut, dass beim Empfang eines Paketes klar definiert ist, dass nun kein weiteres Paket mit einem kleineren Zeitstempel kommen kann (von diesem Client).\\
+Ein Client $P_i$ ermittelt das Minimum aller Zeitstempel der Bestätigungen. Damit kann $P_i$ die Liste in zwei Teile teilen. Alle Einträge mit kleinerem Zeitstempel können sicher ausgeführt werden, alle mit größer oder gleichem sind noch abhängig. Das wird dadurch gewährleistet, dass festgelegt ist, dass die Zeitstempel streng wachsend sind.\\
+\includegraphics[scale=0.5]{lamport1.png}
+\subsubsection{Matrix (Maekawa)}
+Prozesse werden in einer Matrix angeordnet. Ein Knoten, der in einen kritischen Abschnitt eintreten will, sendet seinen Request an alle Knoten in seiner Zeile und seiner Spalte. Der Rest enspricht dem Lamport-Ansatz.
 \end{document}

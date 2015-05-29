@@ -1,10 +1,10 @@
 ﻿<Properties StartupItem="SynthetischeLast/SynthetischeLast.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="SynthetischeLast/Relay.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="SynthetischeLast/Program.cs">
     <Files>
-      <File FileName="SynthetischeLast/Program.cs" Line="62" Column="13" />
-      <File FileName="SynthetischeLast/Worker.cs" Line="29" Column="40" />
-      <File FileName="SynthetischeLast/Relay.cs" Line="26" Column="42" />
+      <File FileName="SynthetischeLast/Program.cs" Line="59" Column="28" />
+      <File FileName="SynthetischeLast/Worker.cs" Line="42" Column="61" />
+      <File FileName="SynthetischeLast/Relay.cs" Line="8" Column="26" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

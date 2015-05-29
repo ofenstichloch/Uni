@@ -38,13 +38,16 @@ namespace SynthetischeLast
 			var RNG = new Random();
 			while (true) {
 				double waitTime = RNG.NextDouble ();
-				System.Threading.Thread.Sleep ((int)(waitTime * 10*(id+1)));
+				//Let the thread sleep a random time, multiply with id to get different sleeptimers
+				System.Threading.Thread.Sleep ((int)(waitTime * 10*(id*2+1)));
 				double mode = RNG.NextDouble ();
 				if (mode < .33) {
-					//local event.. I don't care right now
+					//Generate local event, nothing special to do
 					lamport++;
 				} else if (mode >= .33 && mode < .40) {
-					//send to relay, it doesnt matter what client receives
+					//Generate sending event, create message with current realtimestamp and lamport clock
+					//Send message to relay, relay will distribute it to workers (can be the same one!)
+					//Sending events are far less frequent to prevent queueing lots of unpulled messages
 					lamport++;
 					var mess = new NetMQ.NetMQMessage ();
 					DateTime timestamp = DateTime.UtcNow;
@@ -54,8 +57,10 @@ namespace SynthetischeLast
 					reqSocket.ReceiveMessage ();
 					messagesInQueue++;
 				} else {
-					//pull an event from relay, wait a maximum timeout to prevent deadlock
-					//Causality is broken when event is "sent after it was received"
+					//Generate receiving event
+					//Pull an event from relay, wait a maximum timeout to prevent deadlock
+					//Causality is inconsistent when event is "sent after it was received"
+					//Check realtime timestamp
 					var mess = pullSocket.ReceiveMessage (new TimeSpan (500));
 					if (mess != null) {
 						DateTime timestampMessage = DateTime.FromBinary (long.Parse (mess.Pop ().ConvertToString ()));
@@ -66,13 +71,16 @@ namespace SynthetischeLast
 						}
 						long messagelamport = mess.Pop ().ConvertToInt64 ();
 						lamport = Math.Max (lamport, messagelamport) + 1;
+						//For local execution count the relays theoretical message delay 
 						messagesInQueue--;
 
 
 
 					} else {
-					//	Console.Out.WriteLine (id+":  Nothing to receive");
+						//Might happen that there is nothing to receive, nice, move on
+						//	Console.Out.WriteLine (id+":  Nothing to receive");
 					}
+					//Give the current lamport time to MainClass to have a senseless funny output.
 					MainClass.tellLamport (lamport, id);
 				}
 			}

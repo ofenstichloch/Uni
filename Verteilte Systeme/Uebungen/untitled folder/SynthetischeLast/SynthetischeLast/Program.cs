@@ -6,6 +6,8 @@ namespace SynthetischeLast
 	class MainClass
 	{
 		static long[] clocks;
+		static long oldEvent=-1;
+
 
 		public static void Main (string[] args)
 		{
@@ -44,12 +46,19 @@ namespace SynthetischeLast
 			if (args [0] != "relay") {
 				while (true) {
 					printLamport ();
+					randomEventPicker ();
 					System.Threading.Thread.Sleep (100);
 				}
 			} else {
 				Console.In.ReadLine ();
 			}
 		}
+
+		/*
+		 * 
+		 * Quick and dirty output
+		 * 
+		 */
 
 		public static void tellLamport(long l, int id){
 			clocks[id] = l;
@@ -60,6 +69,28 @@ namespace SynthetischeLast
 				Console.Out.WriteLine (i + ":  " + clocks [i]);
 			}
 			Console.Out.WriteLine (Worker.messagesInQueue);
+		}
+
+		/*
+		 * Pick random events (realtime-based) and check if the clock is consistent
+		 * 
+		 * */
+
+		public static void randomEventPicker(){
+			var rnd = new Random ();
+
+			if (oldEvent == -1) {
+				oldEvent = clocks [rnd.Next (0, clocks.Length)];
+			} else {
+				if (rnd.Next() > 0.7) {
+					var newEvent = clocks [rnd.Next (0, clocks.Length)];
+					//<= because of the extented lamport
+					if (oldEvent > newEvent) {
+						Console.Out.WriteLine ("BIIDUUUUBIIIDUUU");
+						Environment.Exit (0);
+					}
+				}
+			}
 		}
 	}
 }

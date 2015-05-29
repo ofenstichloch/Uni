@@ -89,6 +89,7 @@ namespace SynthetischeLast
 						Console.Out.WriteLine ("BIIDUUUUBIIIDUUU");
 						Environment.Exit (0);
 					}
+					oldEvent = -1;
 				}
 			}
 		}

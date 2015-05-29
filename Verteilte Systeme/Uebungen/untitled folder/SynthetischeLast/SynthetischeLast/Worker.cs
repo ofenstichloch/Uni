@@ -12,8 +12,8 @@ namespace SynthetischeLast
 		NetMQ.NetMQSocket pullSocket;
 		DateTime start;
 		int id;
+		long lamport =0;
 		static int ID = 0;
-		static int count = 0;
 
 		public Worker (string relayRequest, string relayPull)
 		{
@@ -40,30 +40,34 @@ namespace SynthetischeLast
 				double mode = RNG.NextDouble ();
 				if (mode < .33) {
 					//local event.. I don't care right now
-					Console.Out.WriteLine (DateTime.UtcNow + ": Local Event "+id);
+					lamport++;
+					Console.Out.WriteLine (DateTime.UtcNow +"//"+lamport+ ": Local Event "+id);
 				} else if (mode >= .33 && mode < .66) {
 					//send to relay, it doesnt matter what client receives
+					lamport++;
 					var mess = new NetMQ.NetMQMessage ();
 					DateTime timestamp = DateTime.UtcNow;
 					mess.Append (timestamp.ToBinary ().ToString ());
+					mess.Append (lamport);
 					reqSocket.SendMessage (mess);
 					reqSocket.ReceiveMessage ();
-					Console.Out.WriteLine (timestamp + ": Sending Event "+id);
+					Console.Out.WriteLine (timestamp + "//"+lamport+": Sending Event "+id);
 				} else {
 					//pull an event from relay, wait a maximum timeout to prevent deadlock
 					//Causality is broken when event is "sent after it was received"
-					Console.Out.WriteLine (DateTime.UtcNow + ": Waiting for Receive Event "+id);
+					Console.Out.WriteLine (DateTime.UtcNow + "//"+lamport+": Waiting for Receive Event "+id);
 					var mess = pullSocket.ReceiveMessage (new TimeSpan (10));
 					if (mess != null) {
 						DateTime timestampMessage = DateTime.FromBinary (long.Parse (mess.Pop ().ConvertToString ()));
 						if (timestampMessage.CompareTo (DateTime.UtcNow) != -1) {
 							Console.Out.WriteLine ("ERROR");
-							Worker.count++;
 							Console.Out.WriteLine("Runtime: "+DateTime.UtcNow.Subtract(start));
 							Environment.Exit (1);
 						}
+						long messagelamport = mess.Pop ().ConvertToInt64 ();
+						lamport = Math.Max (lamport, messagelamport) + 1;
 					} else {
-						Console.Out.WriteLine (id+ ":  Nothing to receive");
+						Console.Out.WriteLine (id+":  Nothing to receive");
 					}
 
 				}

@@ -1,1 +1,14 @@
-﻿<Properties StartupItem="SynthetischeLast/SynthetischeLast.csproj" />
+﻿<Properties StartupItem="SynthetischeLast/SynthetischeLast.csproj">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="SynthetischeLast/Worker.cs">
+    <Files>
+      <File FileName="SynthetischeLast/Program.cs" Line="14" Column="5" />
+      <File FileName="SynthetischeLast/Worker.cs" Line="51" Column="17" />
+      <File FileName="SynthetischeLast/Relay.cs" Line="35" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

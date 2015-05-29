@@ -10,6 +10,7 @@ namespace SynthetischeLast
 		NetMQ.NetMQContext context;
 		NetMQ.NetMQSocket reqSocket;
 		NetMQ.NetMQSocket pullSocket;
+		public static int messagesInQueue = 0;
 		DateTime start;
 		int id;
 		long lamport =0;
@@ -25,6 +26,7 @@ namespace SynthetischeLast
 			pullSocket.Connect (relayPull);
 			this.id = Worker.ID;
 			Worker.ID++;
+			MainClass.tellLamport (lamport, id);
 		}
 
 		public void loop()
@@ -36,13 +38,12 @@ namespace SynthetischeLast
 			var RNG = new Random();
 			while (true) {
 				double waitTime = RNG.NextDouble ();
-				System.Threading.Thread.Sleep ((int)waitTime * 100);
+				System.Threading.Thread.Sleep ((int)(waitTime * 10*(id+1)));
 				double mode = RNG.NextDouble ();
 				if (mode < .33) {
 					//local event.. I don't care right now
 					lamport++;
-					Console.Out.WriteLine (DateTime.UtcNow +"//"+lamport+ ": Local Event "+id);
-				} else if (mode >= .33 && mode < .66) {
+				} else if (mode >= .33 && mode < .40) {
 					//send to relay, it doesnt matter what client receives
 					lamport++;
 					var mess = new NetMQ.NetMQMessage ();
@@ -51,12 +52,11 @@ namespace SynthetischeLast
 					mess.Append (lamport);
 					reqSocket.SendMessage (mess);
 					reqSocket.ReceiveMessage ();
-					Console.Out.WriteLine (timestamp + "//"+lamport+": Sending Event "+id);
+					messagesInQueue++;
 				} else {
 					//pull an event from relay, wait a maximum timeout to prevent deadlock
 					//Causality is broken when event is "sent after it was received"
-					Console.Out.WriteLine (DateTime.UtcNow + "//"+lamport+": Waiting for Receive Event "+id);
-					var mess = pullSocket.ReceiveMessage (new TimeSpan (10));
+					var mess = pullSocket.ReceiveMessage (new TimeSpan (500));
 					if (mess != null) {
 						DateTime timestampMessage = DateTime.FromBinary (long.Parse (mess.Pop ().ConvertToString ()));
 						if (timestampMessage.CompareTo (DateTime.UtcNow) != -1) {
@@ -66,10 +66,14 @@ namespace SynthetischeLast
 						}
 						long messagelamport = mess.Pop ().ConvertToInt64 ();
 						lamport = Math.Max (lamport, messagelamport) + 1;
-					} else {
-						Console.Out.WriteLine (id+":  Nothing to receive");
-					}
+						messagesInQueue--;
 
+
+
+					} else {
+					//	Console.Out.WriteLine (id+":  Nothing to receive");
+					}
+					MainClass.tellLamport (lamport, id);
 				}
 			}
 		}

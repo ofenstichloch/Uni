@@ -24,7 +24,7 @@ namespace SynthetischeLast
 			while (true) {
 				var message = responseSocket.ReceiveMessage (false);
 				responseSocket.SendMessage (message);
-				Console.Out.WriteLine ("Redirect message");
+			//	Console.Out.WriteLine ("Redirect message");
 				pushSocket.SendMessage (message, false);
 
 			}

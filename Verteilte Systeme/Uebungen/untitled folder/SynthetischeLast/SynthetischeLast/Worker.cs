@@ -71,6 +71,7 @@ namespace SynthetischeLast
 						}
 						long messagelamport = mess.Pop ().ConvertToInt64 ();
 						lamport = Math.Max (lamport, messagelamport) + 1;
+						MainClass.tellReceived (id, lamport);
 						//For local execution count the relays theoretical message delay 
 						messagesInQueue--;
 

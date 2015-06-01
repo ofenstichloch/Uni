@@ -2,8 +2,8 @@
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
   <MonoDevelop.Ide.Workbench ActiveDocument="SynthetischeLast/Program.cs">
     <Files>
-      <File FileName="SynthetischeLast/Program.cs" Line="92" Column="20" />
-      <File FileName="SynthetischeLast/Worker.cs" Line="1" Column="1" />
+      <File FileName="SynthetischeLast/Program.cs" Line="27" Column="14" />
+      <File FileName="SynthetischeLast/Worker.cs" Line="72" Column="3" />
       <File FileName="SynthetischeLast/Relay.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>

@@ -7,7 +7,7 @@ namespace SynthetischeLast
 	{
 		static long[] clocks;
 		static long oldEvent=-1;
-
+		static long[] recvEvents;
 
 		public static void Main (string[] args)
 		{
@@ -19,6 +19,7 @@ namespace SynthetischeLast
 			case "local":
 				int n = int.Parse (args [1]);
 				clocks = new long[n];
+				recvEvents = new long[n];
 				Relay r = new Relay ("tcp://localhost:33333", "tcp://localhost:33334");
 				Thread rT = new Thread (r.loop);
 				rT.Start ();
@@ -44,14 +45,21 @@ namespace SynthetischeLast
 				break;	
 			}
 			if (args [0] != "relay") {
+				Thread.Sleep (100);
 				while (true) {
 					printLamport ();
 					randomEventPicker ();
-					System.Threading.Thread.Sleep (100);
+					System.Threading.Thread.Sleep (300);
 				}
 			} else {
 				Console.In.ReadLine ();
 			}
+		}
+
+
+		public static void tellReceived(int receiver,long timestamp){
+			recvEvents [receiver] = timestamp;
+			
 		}
 
 		/*
@@ -83,10 +91,12 @@ namespace SynthetischeLast
 				oldEvent = clocks [rnd.Next (0, clocks.Length)];
 			} else {
 				if (rnd.Next() > 0.7) {
-					var newEvent = clocks [rnd.Next (0, clocks.Length)];
+					int index = rnd.Next (0, clocks.Length);
+					var newEvent = clocks [index];
 					//<= because of the extented lamport
 					if (oldEvent > newEvent) {
-						Console.Out.WriteLine ("BIIDUUUUBIIIDUUU");
+						
+						Console.Out.WriteLine ("Lamport error (Old/New): "+oldEvent+"/"+newEvent+"  Last received Lamport by new: "+recvEvents[index]);
 						Environment.Exit (0);
 					}
 					oldEvent = -1;

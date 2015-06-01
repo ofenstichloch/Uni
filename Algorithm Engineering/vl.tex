@@ -396,5 +396,39 @@ class dictionary{
 \end{lstlisting}
 Anwendungsbeispiel: Word-Count, zählt wie oft einzelne Wörter in einem Text vorkommen.
 dictionary$<$string,int$?>$ D; Speichert Wort als Schlüssel, Häufigkeit als Wert.
-
+\section*{Fortgeschrittene Datenstrukturen und Algorithmen}
+LEDA: Library of Efficient Datatypes and Algorithms\\
+Plattform: Algorithmus $\rightarrow$ Programm\\
+Datentypen:  Listen, Stacks, Dictionaries, Priority Queue\\
+Efficient: Datenstrukturen\\
+Einfache Benutzung (Pseudocode soll leicht in C++ umsetzbar sein)\\
+Korrektheit: Datentypen (Definition), Program Checker\\
+Weitere Themen: Graph-Datenbanken, -Algorithmen, Geometrie\\
+\subsection*{Spezifikationen von Datentypen in LEDA}
+Item-Konzept: Viele Datentypen sind Definiert als Menge von Items.\\
+Item: Zugriff über Parameter (Abstraktion von den Begriffen Pointer, Referenz, Index)\\
+Bsp.: dictionary$<string, int>$ D speichert Paare aus Schlüsseln (string) und Informationen (int)\\
+Definition: D ist eine Menge von Items (dictionary-Items)\\
+Operationen: \\
+\begin{itemize}
+\item D.insert(string s, int i): Falls D kein Item mit Schlüssel s enthält, füge Item (s,i) ein und gib es zurück. Sonst: Ändere Datenwert i und liefere es zurück.
+\item D.lookup(strin s): liefet das Item mit dem Schlüssel s, falls es nicht existiert, Null.
+\end{itemize}
+2. Beispiel: Priority Queue\\
+$priority_queue<P,I> PQ$\\
+P: Priorität z.B. Zahl, I: Information (z.B. Knoten eines Graphen)\\
+Definition: Menge von Items\\
+Operationen: insert, findMin (minimale Priorität), prio (setze Priorität), inf (setze Information), delmin, decrease\_P\\
+\subsection*{Dijkstra Algorithmus}
+Eingabe: Graph $G=(V,E)$, Kostenfunktion $cost=E\rightarrow int^+$, Startknoten $s\in V$\\
+Ausgabe: Distanzfunktion $dist:V\rightarrow int^+$, dist(v) = Kosten eines billigsten Pfades von s nach v.\\
+\hspace*{1cm}Kosten eines Pfades: Summe der Kanten.\\
+Idee von Dijkstra:\\
+\begin{itemize}
+\item Überschätze Distanzfunktion: 0, falls s=v, $\inf$, falls $s\neq v$.
+\item Kandidatenlist U: Menge aller Knoten, aus deren Kanten ausgehen können, die eine Abkürzung darstellen.
+\item Wähle jeweils $u\in U$ mit dist(u) minimal
+\item Beobachtung: dist(a) ist korrekt.
+\item Durhclaue alle aus u ausgehenden Kanten und überprüfe Dreiecksungleichung
+\end{itemize}
 \end{document}

@@ -26,7 +26,6 @@ namespace SynthetischeLast
 				responseSocket.SendMessage (message);
 			//	Console.Out.WriteLine ("Redirect message");
 				pushSocket.SendMessage (message, false);
-
 			}
 		}
 	}

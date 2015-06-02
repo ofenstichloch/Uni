@@ -178,11 +178,22 @@ Deadlockrisiko, wenn ein Knoten dem einen ein OK gibt, während ein anderer den 
 Die Wurzel des Baumes variiert, die Wurzel ist immer der Knoten, der das Token besitzt. Dadurch kennt jeder Knoten die Richtung zum Token (Wurzel).\\
 Durch die vorgabe der Richtung zur Wurzel (über Eltern), ist es einfach einen Request für das Token an die Wurzel zu senden. Eltern, die nicht die Wurzel sind, geben den Request einfach an ihren Vater weiter.\\
 Wenn ein Knoten, der bereits einen Request gesendet hat, einen weiteren Request weiterleiten soll, wird dieser nicht weitergeleitet, sondern gespeichert und in dem Moment beachtet, wenn der Knoten das Token hat. Wenn ein Knoten (auch das Token) über zwei Requests verfügt, wird jenes weitergeleitet, welches den kleineren Lamport-Zeitstempel besitzt. Das Token wird nun an diesen Knoten weitergeleitet, dazu kommt der Request, der nun noch nicht beantwortet wurde.
-\subsection{Vergleich}
+
+\subsubsection{Vergleich}
 Die gegebenen Lösungen sind alle Optimal. Das geht, da sie alle eine andere Symmetriestufe bedienen. \\
 Symmetrie beschreibt wie viele Knoten an der Bearbeitung eines Requests beteiligt sind. D.h., dass z.B. Maekawa Symmetrischer ist als Raymond, da immer eine gleiche Menge an Knoten per Request gefragt werden. Bei Raymond gibt es Knoten, die viel mehr Requests bearbeiten müssen, wenn sie höher in der Baumhierarchie sind.\\
 Raymond wird für ein k welches gegen n konvergiert asymmetrischer, Maekawa wird symmetrischer.(K=Dimension (bei Baum Anzahl der direkten Kinder eines Knotens), n=Anzahl der Knoten).\\
 Je größer die Symmetrie, desto redundanter ist das System, dafür steigt die Nachrichtenkomplexität. Bei einem sehr asymmetrischen System besteht die Gefahr eines SPOF/Bottleneck.\\
 \includegraphics[scale=0.5]{Asymmetrisch.png}\\
 %Lösungen mittels State-Variablen nicht relevant.
+\section{Fehlertoleranz}
+Fehlerklassen:
+\begin{itemize}
+\item[Crash] Systemausfall/Prozessausfall
+\item[Ommission] 
+\item[Timing] Antwort zu früh oder spät gesendet
+\item[Arbitrary] Es ist nicht mehr sicher, ob die Antwort richtig ist, ungewollt
+\item[Byzantinisch] Auch bewusste Falschantworten
+\end{itemize}
+Bis Timing wird davon ausgegangen, dass wenn eine Antwort kommt, ist sie richtig.
 \end{document}

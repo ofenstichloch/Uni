@@ -6,8 +6,6 @@ namespace SynthetischeLast
 	class MainClass
 	{
 		static long[] clocks;
-		static long oldEvent=-1;
-		static long[] recvEvents;
 
 		public static void Main (string[] args)
 		{
@@ -19,8 +17,7 @@ namespace SynthetischeLast
 			case "local":
 				int n = int.Parse (args [1]);
 				clocks = new long[n];
-				recvEvents = new long[n];
-				Relay r = new Relay ("tcp://localhost:33333", "tcp://localhost:33334");
+				Relay r = new Relay ("tcp://localhost:33333", "tcp://localhost:33334", "");
 				Thread rT = new Thread (r.loop);
 				rT.Start ();
 				Console.Out.WriteLine ("Creating " + n + " worker");
@@ -31,14 +28,15 @@ namespace SynthetischeLast
 				}
 				break;
 			case "relay":
-				r = new Relay (args[1], args[2]);
+				r = new Relay (args[1], args[2], args[3]);
 				rT = new Thread (r.loop);
 				Thread.Sleep (500);
 				rT.Start ();
 				break;
 			case "worker":
-				clocks = new long[1];
-				Worker wo = new Worker (args [1], args [2]);
+				clocks = new long[int.Parse(args[3])+1];
+
+				Worker wo = new Worker (args [1], args [2], int.Parse(args[3]), args[4]);
 				Thread wt = new Thread (wo.loop);
 				Thread.Sleep (500);
 				wt.Start ();
@@ -48,19 +46,13 @@ namespace SynthetischeLast
 				Thread.Sleep (100);
 				while (true) {
 					printLamport ();
-					randomEventPicker ();
 					System.Threading.Thread.Sleep (300);
 				}
 			} else {
 				Console.In.ReadLine ();
 			}
 		}
-
-
-		public static void tellReceived(int receiver,long timestamp){
-			recvEvents [receiver] = timestamp;
 			
-		}
 
 		/*
 		 * 
@@ -78,30 +70,6 @@ namespace SynthetischeLast
 			}
 			Console.Out.WriteLine (Worker.messagesInQueue);
 		}
-
-		/*
-		 * Pick random events (realtime-based) and check if the clock is consistent
-		 * 
-		 * */
-
-		public static void randomEventPicker(){
-			var rnd = new Random ();
-
-			if (oldEvent == -1) {
-				oldEvent = clocks [rnd.Next (0, clocks.Length)];
-			} else {
-				if (rnd.Next() > 0.7) {
-					int index = rnd.Next (0, clocks.Length);
-					var newEvent = clocks [index];
-					//<= because of the extented lamport
-					if (oldEvent > newEvent) {
-						
-						Console.Out.WriteLine ("Lamport error (Old/New): "+oldEvent+"/"+newEvent+"  Last received Lamport by new: "+recvEvents[index]);
-						Environment.Exit (0);
-					}
-					oldEvent = -1;
-				}
-			}
-		}
+			
 	}
 }

@@ -429,6 +429,72 @@ Idee von Dijkstra:\\
 \item Kandidatenlist U: Menge aller Knoten, aus deren Kanten ausgehen können, die eine Abkürzung darstellen.
 \item Wähle jeweils $u\in U$ mit dist(u) minimal
 \item Beobachtung: dist(a) ist korrekt.
-\item Durhclaue alle aus u ausgehenden Kanten und überprüfe Dreiecksungleichung
+\item Durchlaufe alle aus u ausgehenden Kanten und überprüfe Dreiecksungleichung, reduziere Distanz von v
 \end{itemize}
+Kann effizient mit Fibonacci Heap realisiert werden.
+\subsection*{Graphalgorithmen in LEDA}
+\subsubsection*{Der Datentyp Graph}
+Dient zur Erstellung von gerichteten Graphen G=(V,E) mit $E \subseteq (V \times V)$\\
+\subsubsection*{Arten von Objekten}
+Operationen auf einem Graphen G:\\
+Access Operationen:\\
+\hspace*{1cm}node G.source(Edge e): Von welchem Knoten geht die Kante e aus\\
+\hspace*{1cm}node G.target(Edge e): Zu welchem Knoten geht die Kante e\\
+\hspace*{1cm}int G.outdeg(node v): Ausgangsgrad\\
+\hspace*{1cm}int G.indeg(node v): Eingangsgrad\\
+\hspace*{1cm}list\textless edge\textgreater G.out\_edges(node v)\\
+Update Operationen:\\
+\hspace*{1cm}node G.new\_node()\\
+\hspace*{1cm}edje G.new\_edge(node v, node w)\\
+\hspace*{1cm}void G.del\_edge(edge e)\\
+\hspace*{1cm}void G.del\_node(node v) (entfernt v und alle Kanten)\\
+Iterationen (Laufvariable wird extern deklariert, weil weil):\\
+\hspace*{1cm}forall\_nodes(v,G)\\
+\hspace*{1cm}forall\_edges(e,G)\\
+\hspace*{1cm}forall\_out\_edges(e,v)\\
+\hspace*{1cm}forall\_in\_edges(e,v)\\
+Beispiel: Iteration über alle Nachbarknoten von v:\\
+\begin{lstlisting}
+forall_out_edges(e,v){
+	node w = G.target(e)
+}
+\end{lstlisting}
+Beispiel: Teste, ob G azyklisch\\
+Idee: Siehe topologisches Sortieren: \\
+\hspace*{1cm}Solange ein Knoten v existiert mit indeg(v)=0, entferne ihn und alle ausgehenden Kanten.\\
+\hspace*{1cm}Falls G leer, dann ist der Graph azyklisch.
+\begin{lstlisting}[escapechar=!]
+zero <- {v !$\in$! V | indeg(v) = 0}
+while zero !$\neq \emptyset$! do
+	u <- beliebiger Knoten aus zero
+	zero <- zero\{u}
+	forall v !$\in$! V mit (u,v) !$\in$! E
+		entferne (u,v) aus G
+		if indeg(v)=0 then
+			zero <- zero !$\cup$!{u}
+		fi
+	od
+	entferne u aus G
+od
+\end{lstlisting}
+Als C++ Programm (oder auch nicht... Näherliegende Gründe):
+\begin{lstlisting}
+bool isAcyclic (graph G) //Call by Value, Graph wird kopiert
+	stack<node> zero;
+	node v;
+	forall_nodes(v,G){
+		if (G.indeg(v)==0) zero.push(v);
+	}
+	while (!zero.empty()){
+		node u = zero.pop();
+		edge e;
+		forall_out_edges(e,u){
+			node v = G.target(e);
+			G.del_edge(e);
+			if (G.indeg(v)==0) zero.push(v);
+		}
+	}
+	return G.number_of_edges()==0;
+}
+\end{lstlisting}
 \end{document}

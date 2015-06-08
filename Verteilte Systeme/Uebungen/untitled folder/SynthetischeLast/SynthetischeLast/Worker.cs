@@ -15,6 +15,9 @@ namespace SynthetischeLast
 		int id;
 		long lamport =0;
 		static int ID = 0;
+		// Saves the dependent events laport clocks of other workers
+		long[] lastReceived;
+		string options;
 
 		public Worker (string relayRequest, string relayPull)
 		{
@@ -27,6 +30,21 @@ namespace SynthetischeLast
 			this.id = Worker.ID;
 			Worker.ID++;
 			MainClass.tellLamport (lamport, id);
+			lastReceived = new long[100];
+		}
+
+		public Worker (string relayRequest, string relayPull, int id, string options){
+			//connect zmq
+			Console.Out.WriteLine(relayRequest+relayPull+id);
+			context = NetMQ.NetMQContext.Create();
+			reqSocket = context.CreateRequestSocket ();
+			pullSocket = context.CreatePullSocket ();
+			reqSocket.Connect (relayRequest);
+			pullSocket.Connect (relayPull);
+			this.id = id;
+			MainClass.tellLamport (lamport, id);
+			lastReceived = new long[100];
+			this.options = options;
 		}
 
 		public void loop()
@@ -53,6 +71,7 @@ namespace SynthetischeLast
 					DateTime timestamp = DateTime.UtcNow;
 					mess.Append (timestamp.ToBinary ().ToString ());
 					mess.Append (lamport);
+					mess.Append (id);
 					reqSocket.SendMessage (mess);
 					reqSocket.ReceiveMessage ();
 					messagesInQueue++;
@@ -64,14 +83,17 @@ namespace SynthetischeLast
 					var mess = pullSocket.ReceiveMessage (new TimeSpan (500));
 					if (mess != null) {
 						DateTime timestampMessage = DateTime.FromBinary (long.Parse (mess.Pop ().ConvertToString ()));
-						if (timestampMessage.CompareTo (DateTime.UtcNow) != -1) {
-							Console.Out.WriteLine ("ERROR");
+						var now = DateTime.UtcNow;
+						if (timestampMessage.CompareTo (now) != -1 && options != "ignoreRealtime") {
+							Console.Out.WriteLine ("REALTIME ERROR");
 							Console.Out.WriteLine("Runtime: "+DateTime.UtcNow.Subtract(start));
+							Console.Out.WriteLine ("Message: " + timestampMessage.Millisecond + "  Now: " + now.Millisecond);
 							Environment.Exit (1);
 						}
 						long messagelamport = mess.Pop ().ConvertToInt64 ();
 						lamport = Math.Max (lamport, messagelamport) + 1;
-						MainClass.tellReceived (id, lamport);
+						int messid = mess.Pop ().ConvertToInt32 ();
+						lastReceived [messid] = messagelamport;
 						//For local execution count the relays theoretical message delay 
 						messagesInQueue--;
 
@@ -83,6 +105,16 @@ namespace SynthetischeLast
 					}
 					//Give the current lamport time to MainClass to have a senseless funny output.
 					MainClass.tellLamport (lamport, id);
+					//Randomly check if the current lamport clock is correct 
+					//using the lastReceived array as reference
+					foreach (var deplamp in lastReceived) {
+						if (deplamp > lamport) {
+							Console.Out.WriteLine ("LAMPORT ERROR");
+							Console.Out.WriteLine("Runtime: "+DateTime.UtcNow.Subtract(start));
+							Console.Out.WriteLine ("Last received lamport: " + deplamp + ". Current lamport: " + lamport);
+							Environment.Exit (1);
+						}
+					}
 				}
 			}
 		}

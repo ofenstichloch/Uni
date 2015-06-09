@@ -196,4 +196,24 @@ Fehlerklassen:
 \item[Byzantinisch] Auch bewusste Falschantworten
 \end{itemize}
 Bis Timing wird davon ausgegangen, dass wenn eine Antwort kommt, ist sie richtig.
+\subsection{Byzantinisch}
+Zwei Armeen die hinter Hügeln auf zwei Seiten von Byzanz lagern, wollen dieses einnehmen, können es aber nur gemeinsam erreichen. Sie müssen sich also absprechen. Zum absprechen werden Boten geschickt. \\
+A schickt B eine Nachricht mit einen weit genug in der Zukunft liegenden Termin. B schickt einen Boten zurück, der die Nachricht bestätigt. Nun weiß B nicht, ob die Nachricht angekommen ist. Es kann unendlich weiter Boten geschickt und Nachrichten bestätigt werden.\\
+Fehlerfall: Ein Bote fällt aus.\\
+Wenn man mit k Ausfällen rechnet, muss man mind. k+1 schicken, also redundanz.\\
+Weiteres Problem: Nachricht kann kompromittiert werden (abgefangen und verändert).\\
+Wenn man k gefälschte Nachrichten kompensieren möchte, muss A 2k+1 Nachrichten abschicken.\\
+\subsection{Komponenten}
+Das Kompensieren von Fehlern zieht sich durch alle Ebenen, das heißt, dass Software, Betriebssystem und Hardware Fehlerquellen sind.\\
+Crash, Omission, Timing sind mit k+1 redundanten Maschinen kompensiert. Arbitrary benötigt 2k+1 redundante Maschinen, um per Mehrheitsentscheid die richtige Lösung herauszufinden.
+\subsection{Lösungsansätze}
+Passive Redundanz: Server schreibt Daten auf andere Datenspeicher. Backupserver können kontrollieren, ob der Server noch "lebt" und übernimmt, falls dieser ausfällt. Es sind nicht alle Fehlerklassen kompensierbar (nur die ersten 3 Klassen).\\
+Aktive Redundanz: Client schickt Anfrage an eine Menge von Servern, und wählt durch Mehrheitsentscheid die richtige Antwort aus.
+\subsection{Passive Redundanz}
+Einfache Lösung mit mehreren Servern und ein Datenspeicher. STONITH Problem: Wennd er Primary Server nicht total ausfällt, sondern noch ab und zu Dateninkonsistenzen verursacht, muss der Backupserver den Primary selbst komplett abschalten.
+\subsection{Aktive Redundanz}
+\subsubsection{State-Machine-Approach}
+Eine State-Machine Antwort hängt nur vom Startzustand und von der Reihenfolge der bearbeiteten Anfragen ab. Die meisten Server sind keine State-Machines, sie besitzen eigenes Verhalten. Nur bei State-Machines kann man die Antworten bitweise Vergleichen und auf Gleichheit prüfen.\\
+Ein Voter sammelt und vergleicht die Antworten. Dieser Voter muss im Client liegen, da der Voter sonst ein SPOF ist.
 \end{document}
+

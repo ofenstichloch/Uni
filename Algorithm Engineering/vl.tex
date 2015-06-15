@@ -415,7 +415,7 @@ Operationen: \\
 \item D.lookup(strin s): liefet das Item mit dem Schlüssel s, falls es nicht existiert, Null.
 \end{itemize}
 2. Beispiel: Priority Queue\\
-$priority_queue<P,I> PQ$\\
+$priority\_queue<P,I> PQ$\\
 P: Priorität z.B. Zahl, I: Information (z.B. Knoten eines Graphen)\\
 Definition: Menge von Items\\
 Operationen: insert, findMin (minimale Priorität), prio (setze Priorität), inf (setze Information), delmin, decrease\_P\\
@@ -495,6 +495,55 @@ bool isAcyclic (graph G) //Call by Value, Graph wird kopiert
 		}
 	}
 	return G.number_of_edges()==0;
+}
+\end{lstlisting}
+Informationen (Daten) mit den Knoten und Kanten speichern.\\
+\subsubsection*{Parametrisierter Graph}
+Netzwerk: Knoten stehen für Objekte vom Typ vtype, Kanten etype.\\
+Unterklasse vom gegebenen graph\\
+$GRAPH<vtype,etype> G$;
+\subsubsection*{Node/Edge Array}
+$node\_array<T> A(G)$ Mit G einem Graph\\
+$edge\_array<T> B(G)$\\
+Z.B. Kürzester Weg: DIJKSTRA(graph G, $edge\_array<int>$ cost,node startNode, $node\_array<int>$ distance);\\
+Einige Ausgabedaten werden getrennt vom Graphen übergeben.\\
+\subsection*{Erstes konkretes Beispiel: Dijkstra}
+\begin{lstlisting}
+void DIJKSTRA (graph& G, node s, edge_array<int>& cost, node_array<int>& dist)
+{
+	p_queue<node,int> PQ;
+	node_array<pq_item> I(G);
+	dist[s] = 0;
+	I[s] = PQ.insert(s,0);
+	node v;
+	forall_nodes(v,G){
+		if(v!=s) dist[s] = MAXINT;
+	}
+	While (!PQ.empty()){
+		node u = PQ.delmin();
+		edge e;
+		forall_out_edges(e,u){
+			node w = G.target(e);
+			int d = dist[u]+cost[e];
+			if(d<dist[w]){	//Dreiecksungleichung
+				if(dist[w]==MAXINT) //Wurde schon besucht?
+					I[w] = PQ.insert(w,d)
+				else PQ.decrease_p(I[w],d)
+				dist[w] = d;
+		}
+	}		
+\end{lstlisting}
+Analyse: delmin, insert wird n mal ausgeführt. decrease\_p wird m mal (für alle nodes und alle deren Kanten) asugeführt.\\
+Ergebnis: O((m+n)log n)\\
+Korrektheit:\\
+Idee: Füge Programmcode hinzu, der für eine konkrete Testeingabe überprüft, ob das Ergebnis korrekt ist.\\
+Teste am Ende, ob für jede Kante die Dreiecksungleichung erfüllt ist.
+\begin{lstlisting}
+edge e;
+forall_edges(e,G){
+	node v = G.source(e);
+	node w = G.target(e);
+	ASSERT(dist[v] + cost[e] >= dist[w]);
 }
 \end{lstlisting}
 \end{document}

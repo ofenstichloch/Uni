@@ -215,5 +215,28 @@ Einfache Lösung mit mehreren Servern und ein Datenspeicher. STONITH Problem: We
 \subsubsection{State-Machine-Approach}
 Eine State-Machine Antwort hängt nur vom Startzustand und von der Reihenfolge der bearbeiteten Anfragen ab. Die meisten Server sind keine State-Machines, sie besitzen eigenes Verhalten. Nur bei State-Machines kann man die Antworten bitweise Vergleichen und auf Gleichheit prüfen.\\
 Ein Voter sammelt und vergleicht die Antworten. Dieser Voter muss im Client liegen, da der Voter sonst ein SPOF ist.
+\subsection{Fehlertoleranz in Multicast Netzwerken}
+\subsection{Zuverlässigkeitsgrad}
+\begin{itemize}
+\item Keine Garantie, wieviele und welche Empfänger eine Nachricht erhalten.
+\item Garantie, dass mindestens k Empfänger die Nachricht erhalten, wer diese Empfänger sind, ist u.U. bei jeder Nachricht unterschiedlich.
+\item Garantie, dass entweder alle oder gar keine Nachricht ankommt.
+\end{itemize}
+\subsection{Ordnungsgrad}
+Garantien über die Empfangsreihenfolge
+\begin{itemize}
+\item Keine Ordnungsgarantie
+\item FIFO: Sender prüft, ob x+1 empfangen hat, wenn x bis dahin noch nicht empfangen hat, Fehler. Bei mehr als einem Client kann es zu Überschneidungen/Inkonsistenzen führen.
+\item Kausale Ordnung, die Nachrichten kommen kausal korrekt an
+\item Totale Ordnung, z.B. Lamport Zeit, aber schwer zu implementieren, da man globales Agreement braucht, welches bestimmte Zeitstempel einmalig macht.
+\end{itemize}
+Ethernetchips besitzen einen Cache für Multicast Adressen, Cache hat genug Platz für alle Adressgruppen.
+\subsection{Überflutungsalgorithmen}
+Über jede Kante soll maximal eine Nachricht versendet werden. Es wird ein Spannbaum aufgestellt (Baum der (minimal) alle Knoten verbindet).\\
+\subsubsection{Echo-Algorithmus}
+Der Sender schickt an allen von ihm ausgehenden Kanten die Nachricht. Die empfangenden Knoten nehmen die Nachricht an, und leiten sie an alle Kanten, außer der Empfangskante weiter. Knoten erkennen, wenn sie sich gegenseitig die selbe Nachricht geschickt haben (clash), diese Kante wird nicht mehr beachtet, sie ist nicht Teil des Spannbaums. Diese Knoten sind Blätter.\\
+Blattknoten senden eine spezielle Antwort zurück. Innere Knoten können diese Antworten kombinieren und weiterleiten. 
+\subsubsection{Amoeba-Multicast}
+Dem Kern werden einzelne Unicast Nachrichten geschickt. Nur der Kern darf Multicasts senden (SPOF). Einige Empfängerknoten haben Sequencer, die Multicast Nachrichten empfangen. Die empfangenen Nachrichten werden nach Eingangsdatum sortiert. Es entsteht eine totale Ordnung. Ausfallende Sequencer können durch election ersetzt werden. Zuverlässigkeitsgrad von k setzt k+1 sequencer voraus. Das Verfahren hat einen konstanten Overhead von einer Unicast Nachricht.
 \end{document}
 

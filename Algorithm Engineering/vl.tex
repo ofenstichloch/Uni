@@ -546,4 +546,39 @@ forall_edges(e,G){
 	ASSERT(dist[v] + cost[e] >= dist[w]);
 }
 \end{lstlisting}
+\subsection*{Netzwerkflussprobleme: Maxflow }
+Graph: Transportnetzwerk \\
+Jede Kante besitzt eine Kapazität (wie viel pro Zeiteinheit über diese Kante transportiert werden kann).\\
+\underline{Probleme:}
+\begin{itemize}
+\item[1. ]Maximiere den Transport von einem Knoten s (Source) zu einem Knoten t (Senke)
+\item[2. ]Minimiere die Transportkosten (min cost flow)
+\end{itemize} 
+Eingabe: Graph $G=(V,E)$, Knoten $s, t \in V | s\neq t$, Kapazitäten $u\rightarrow \mathbb{R}^+_0$\\
+Schreibweise: $u_{ij}$ für $(u: u(i,j))$\\
+Ergebnis: Flussfunktion $x: E \rightarrow \mathbb{R}^+_0$ mit:
+\begin{itemize}
+\item[1. ]$\forall (i,j) \in E: 0\leq x_{i,j} \leq u_{i,j}$ Kapazitätsbedingung
+\item[2. ]$\forall i\in V \backslash \{s,t\}: \sum_{j\in V mit (i,j)\in E} x_{i,j} = \sum_{k\in V | (k,i)\in E} x_{k,i}$ (Die Menge, die aus i rausgeht, muss auch in i reinkommen).
+\end{itemize}
+Gesucht ist ein Fluss x mit $\sum_{i\in V | (s,i)\in V} x_{s,i} - \sum_{j\in V | (j,s)\in V} x_{js}$ maximal.\\
+$\forall i\in V \backslash \{s,t\}  \delta (i)=0$ maximiere $\delta (s)$\\
+Beobachtung: $\delta (t) =-\delta (s)$\\
+\subsubsection*{Idee für einen Algorithmus: Erhöhende Pfade}
+\begin{itemize}
+\item Starte mit allen x=0 $(\forall (i,j) \in E: x_{i,j} \leftarrow 0)$
+\item Erhöhe x entlang von Pfaden von s nach t.
+\end{itemize}
+\underline{Definition} Restnetzwerk G(x) (hängt vom aktuellen Fluss x ab), beschreibt die Möglichkeiten x zu verändern.\\
+\underline{Erhöhende Pfade} Pfad P von s nach t in G(x). Erhöung von $\delta = min \{ r_{i,j} | (i,j)\in P\}$\\
+\underline{Achtung} Der reale Pfad in G hat eventuell Kanten in Gegenrichtung.
+
+%%BLATT HIER REIN 
+\underline{Korrektheit} x ist immer ein Fluss. Terminiert mit Fluss x, sodass in G(x) kein Pfad von s nach t (bitte was?)
+\underline{Implementierung} 
+\begin{itemize}
+\item[1] Keine explizite Darstellung von G(x), stattdessen Navigiere im Originalgraphen, verwende ausgehende Kanten, wenn $u_{i,j} > x_{i,j}$, eingehende Kanten, wenn $x_{i,j} > 0$.
+\item[2] Berechnung eines erhöhten Pfades: Verwende DFS oder BFS vom Knoten s aus, und berechne die Kanten wie in 1. beschrieben. Stoppe, wenn t erreicht.
+\item[3] Darstellung des Pfades durch pred\_Verweise (Vorfahrverweise).
+\end{itemize} 
 \end{document}

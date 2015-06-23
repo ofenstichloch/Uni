@@ -7,6 +7,7 @@
 \usepackage[utf8]{inputenc}
 \geometry{a4paper,left=2cm,right=2cm, top=3cm, bottom=3cm}
 \usepackage{listings}
+\usepackage{graphicx}
 
 \newcommand{\titel}[1]{\fancyhead[C]{#1}}
 \newcommand{\name}{\fancyhead[L]{Alexander Landmesser}}
@@ -572,7 +573,14 @@ Beobachtung: $\delta (t) =-\delta (s)$\\
 \underline{Definition} Restnetzwerk G(x) (hängt vom aktuellen Fluss x ab), beschreibt die Möglichkeiten x zu verändern.\\
 \underline{Erhöhende Pfade} Pfad P von s nach t in G(x). Erhöung von $\delta = min \{ r_{i,j} | (i,j)\in P\}$\\
 \underline{Achtung} Der reale Pfad in G hat eventuell Kanten in Gegenrichtung.
-
+\underline{Beispiel:}\\
+\includegraphics[scale=0.4]{AE10.png}
+\begin{itemize}
+\item[1.] $x\leftarrow 0, G(x)=G$ (man lässt sonst alle Kanten mit Kapazität 0 weg)
+\item[2.] Pfad $s\rightarrow t$ suchen, z.B. $a\rightarrow^5 3 \rightarrow^1 2 \rightarrow^{10} 4$
+\item[3.] Pfaderhöhung um $\delta$. $\delta = 1$, da minimale Kapazität = 1\\ \includegraphics[scale=0.3]{AE10-2.png}
+\item[4.] Bestimmmung des neuen G(x) (Restkapazitäten)\\ \includegraphics[scale=0.3]{AE10-3.png}
+\end{itemize}
 %%BLATT HIER REIN 
 \underline{Korrektheit} x ist immer ein Fluss. Terminiert mit Fluss x, sodass in G(x) kein Pfad von s nach t (bitte was?)
 \underline{Implementierung} 

@@ -589,4 +589,68 @@ Beobachtung: $\delta (t) =-\delta (s)$\\
 \item[2] Berechnung eines erhöhten Pfades: Verwende DFS oder BFS vom Knoten s aus, und berechne die Kanten wie in 1. beschrieben. Stoppe, wenn t erreicht.
 \item[3] Darstellung des Pfades durch pred\_Verweise (Vorfahrverweise).
 \end{itemize} 
+\subsubsection*{Beispiel Pfaderhöhung (MaxFlow)}
+Idee: Suche alle im Restnetzwerk erreichbaren Knoten bis t gefunden wurde (mit DFS,BFS o.A.)\\
+Algorithmus Labelling:\\
+\hspace*{1cm} graph G;edge\_array$<int>$ cap; edge\_array$<int>$ flow;node\_array$<bool>$ label; node\_array$<edge>$ predecessor;\\
+\begin{lstlisting}[escapechar=@]
+//UEbergabeparameter: Startknoten s
+edge e;
+forall_edges(e,G) flow[e] @$\leftarrow$@ 0;
+node v;
+forall_nodes(v,G){
+	labelled[v] @$\leftarrow$@ fale;
+	pred[v] @$\leftarrow$@ NULL;
+}
+while(true){
+	queue<node> S;
+	S.append(s);
+	labelled[s] @$\leftarrow$@ true;
+	while(S.empty() == false){
+		node v = S.pop();
+		//iteriere alle im Restnetzwerk adjazenten Kanten
+		edge e;
+		forall_out_edges(e,V) {
+			if(flow[e] == cap[e]) continue;
+			node w = G.target(e);
+			if(labelled[w]) continue;
+			labelled[w] @$\leftarrow$@ true;
+			pred[w] @$\leftarrow$@ e;
+			S.append(w);
+		}
+		forall_in_edges(e,V){
+			if(flow[e] == 0) continue;
+			node w = G.source(e);
+			if(labelled[w]) continue;
+			labelled[w] @$\leftarrow$@ true;
+			pred[w] @$\leftarrow$@ e;
+			S.append(w);
+		}
+	}
+	if(labelled[t] == false) break; //t nicht erreichbar
+	int delta = MAXINT;
+	node v = t;
+	while (v != s){
+		edge e = pred[v];
+		int r = (G.source(e) == v) ? flow[e] : cap[e]-flow[e];
+		if(r<delta) delta = r;
+		v = (G.source() == v) ? G.target(e) : G.source(e) ;
+	}
+	v = t;
+	while(v!=s){
+		edge e = pred[v];
+		if(v==G.target(e)){
+			flow[e]+=delta;
+			v = G.source(e);
+		}else{
+			flow[e]-=delta;
+			v = G.target(e);
+		}
+	}
+		
+}
+\end{lstlisting}
+\subsection*{Geometrische Algorithmen}
+Objekte (Klassen/Typen): Point,segment (Strecken), line (Gerade)\\
+Operationen: Vergleiche, Orientierung (Lage eines 3. Punktes zum Strahl zwsichen den ersten beiden)
 \end{document}

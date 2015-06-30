@@ -238,5 +238,50 @@ Der Sender schickt an allen von ihm ausgehenden Kanten die Nachricht. Die empfan
 Blattknoten senden eine spezielle Antwort zurück. Innere Knoten können diese Antworten kombinieren und weiterleiten. 
 \subsubsection{Amoeba-Multicast}
 Dem Kern werden einzelne Unicast Nachrichten geschickt. Nur der Kern darf Multicasts senden (SPOF). Einige Empfängerknoten haben Sequencer, die Multicast Nachrichten empfangen. Die empfangenen Nachrichten werden nach Eingangsdatum sortiert. Es entsteht eine totale Ordnung. Ausfallende Sequencer können durch election ersetzt werden. Zuverlässigkeitsgrad von k setzt k+1 sequencer voraus. Das Verfahren hat einen konstanten Overhead von einer Unicast Nachricht.
+\section{RPC und Client/Server}
+\subsection{Realisierungen von Client/Server}
+Zwei Möglichkeiten: Kommunikation ausgelagert in eigenen Kommunikationsserver oder kommunizierende Kerne.
+\subsection{RPC}
+Idee: Benutzer "bemerkt" Kommunikation nicht. 
+Client sendet eine Nachricht an Empfänger, der daraufhin eine Methode ausführt und das Ergebnis zurück sendet. Client und Server Methodenstubs werden durch ein gegebenes Interface automatisch generiert.
+\subsubsection{ONCPRC}
+Generiert automatisch Code für Server und Client. Für die Funktion müssen nur die gewünschten Server-Methoden und die Client-Verbindungsdaten verändert werden. Zwischenstelle Portmapper, der von jedem Server dessen Port speichert. Der Client fragt diesen an.
+\subsubsection{Probleme}
+Ideal sollte RPC=LPC sein.\\
+LPC wird nur unvollständig erreicht: Client muss Host angeben, Server sollten generell passiv sein, z.B. bei Pipes wird ein Server aber aktiv.\\
+At-Most-Ansatz: Eine Aufgabe wird maximal 1 mal ausgeführt\\
+At-Least-Ansatz: Eine Aufgabe wird minimal 1 mal ausgeführt\\
+\underline{Zustandslose Server}
+Client speichert den Zustand und sendet ihn dem Server mit (Sicherheitsproblem)\\
+\underline{Idempotente Aufträge}
+Eine Aufgabe die bei jeder Ausführung die selbe Antwort liefert.\\
+\underline{Nicht-Idempotente Aufträge}
+Kann in idempotente Aufträge verwandelt werden, indem alle Zustandsinformationen mitgeschickt werden.
+\section{Verteilte Dateisysteme}
+Dateisysteme sind für das persistente Speichern von Daten zuständig.\\
+Merkmale: Blockzugriff, kleine Dateien, sequentieller Zugriff, nur wenige Daten von vielen verändert, meist nur von einem genutzt.\\
+Update in Place (Spurwechsel bei Platte), Log (sequentiele Logfiles)\\
+Grundlagen verteiltes FS: Durchsatz für Nutzer steigern, Skalierbarkeit, Zuverlässigkeit, Datenzugriff unabhängig von Aufenthaltsort.\\
+\subsection{Transparenz}
+\begin{itemize}
+\item Zugangstransparenz: Identische Programmierschnittstelle
+\item Ortstransparenz: Dateiort ist nicht ermittelbar
+\item Namentransparenz: Dateiname ist überall gleich
+\item Migrationstransparenz: Der Name bleibt auch bei Dateimigration gleich
+\item Leistungstransparenz: Geschwindigkeit bei lokalen und entferntem Zugriff ist gleich
+\item Fehlertransparenz: Fehler aufgrund der verteilten Architektur werden maskiert.
+\end{itemize}
+\subsection{Caching}
+Daten werden gecached (Leistungssteigerung)\\
+Bis zu ganze Dateien gecached, Read-ahead oder Seiten\\
+\subsection{NFS}
+Zugangstransparenz gegeben, Ortstransparenz je nach Konfiguration\\
+Zustandslose Server, ausschließlich idempotente Operationen.\\
+Caching auf Client- und Serverseite\\
+Auf System wird ein Virtuelles Dateisystem über das UNIX Dateisystem gelegt, der NFS Client/Server ist teil dieses virtuellen FS. Das wird gemacht, damit man NFS Systeme auch verschachteln kann. Man kann also über NFS eine Datei öffnen, die auf dem Server auch nur per NFS eingebunden ist etc..\\
+NFS verfügt über Dateideskriptor, obwohl zustandslos. Der Deskriptor muss unabhängig vom Serverzustand sein. Dieser Deskriptor ist kein Pfad, sondern eine ID von Server vergeben, um zu sehen, ob eine Datei verändert wurde.
+\subsection{AFS - Andrew File System}
+Skalierbarkeit mit mehr als 5000 Rechnern, Effizienz und Schutz.\\
+Aufgeteilt in VICE (Server, als vertrauenswürdig betrachtet) und VENUS (Clients, UNIX)\\
 \end{document}
 

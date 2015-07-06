@@ -651,6 +651,52 @@ while(true){
 }
 \end{lstlisting}
 \subsection*{Geometrische Algorithmen}
+In $\mathbb{R}^2$\\
 Objekte (Klassen/Typen): Point,segment (Strecken), line (Gerade)\\
 Operationen: Vergleiche, Orientierung (Lage eines 3. Punktes zum Strahl zwsichen den ersten beiden)
+\subsection*{Grundoperationen}
+\textbf{a.orientation(b,c)}\\
+\includegraphics[scale=1]{orientation.png}\\
+\textbf{Vergleich von Punkten}\\
+a.cmp\_xy(b): +1, wenn $a>_{xy}b$, 0 wenn $a=b$, -1 wenn $a<_{xy}b$\\
+\textbf{Min/Max in xy}: trivial\\
+\textbf{Vergleich von Entfernungen}\\
+Ist c oder b näher an a...\\
+$sign((d_x^2+d_y^2) - (d_x^{'2} + d_y^{'2}))$ \\
+Bei allen Grundoperationen muss nur +,- und * verwendet werden, schneller und exakt\\
+\subsection*{Anwendung von orientation}
+Strecke: segment(a,b)\\
+point s.start(), point s.end()\\
+\textbf{Schnitt von zwei Segmenten:} \\
+Zwei Segmente (a,b) (c,d): a,orientation(b,c) != a.orientation(b,d) $\wedge$ c.orientation(d,a) != c.orientation(d,b)\\
+\subsection*{Konvexe Hülle}
+\textbf{Eingabe:} Liste von Punkten L\\
+\textbf{Ausgabe:} Kleinstes konvexes Polygon P, das alle Punkte enthält (Polygonecken sind Punkte aus L)\\
+\textbf{Konvex:} Alle Winkel des Polygons $>$ 180 Grad, jede Strecke zwischen zwei Punkten in diesem Polygon liegt komplett im Polygon.\\
+\textbf{Ausgabe:} Ecken gegen den Urzeigersinn sortiert (und nummeriert)\\
+\textbf{Algorithmus:} Gift wrapping (Ursprünglich im Raum)\\
+\hspace*{1cm} Starte bei $Min_{xy}(L)$\\
+\begin{lstlisting}
+list<point> convexHull(list<point> &L){
+	list<point> P;
+	point q0 = L.first();
+	point p;
+	forall(p in L){
+		if(p.cmp_xy(q)  == -1) q0=p;
+	}
+	P.append(q0); L.del(q0);
+	while 1{
+		point q = L.first()
+		forall(p in L){
+			if P.last().orientation(q,p) == -1 ||
+			(P.last().orientation(q,p) == 0 && P.last().cmp_dist(q,p) == -1)
+				q = p;
+		}
+		L.del(q);
+		if q==q0 break
+		else P.append(q);
+	}
+	return P;
+			
+\end{lstlisting}
 \end{document}

@@ -283,5 +283,39 @@ NFS verfügt über Dateideskriptor, obwohl zustandslos. Der Deskriptor muss unab
 \subsection{AFS - Andrew File System}
 Skalierbarkeit mit mehr als 5000 Rechnern, Effizienz und Schutz.\\
 Aufgeteilt in VICE (Server, als vertrauenswürdig betrachtet) und VENUS (Clients, UNIX)\\
+Verfügt über Protection Domains (Benutzer- und Gruppenrechte), authentifizierung mit Kerberos\\
+\subsection{Coda}
+Ziel: Integration portabler Computer, gewollte Netzwerkpartitionierung, Kompensation von Server-/Netzwerkausfällen\\
+Besitzt Konfliktlösungen.\\
+Optimistische Replikation: Client arbeiten auf Dateien im eigenen Cache, Server behebt evtl. Konflikte\\
+Replikation bestimmter Teile des gemeinsamen Systems in einer Volume Storage Group\\
+Periodische Tests prüfen Accessible VSG (AVSG), Preferred Server wird ausgewählt, bei Ausfall wird ein neuer aufgenommen\\
+\subsubsection{Disconnected Operation}
+AVSG = $\emptyset$\\
+Optimistisch: Venus arbeitet auf Cache\\
+Hoarding: Soviel wir möglich lokal cachen, Venus beobachtet Zugriffe\\
+Emulation: Venus übernimmt Serverrolle, Reply-Log aufzeichnen, Kritische Daten in Recoverabel Virtual Memory speichern\\
+Reintegration: Reply-Log an AVSG übergeben, der dann verarbeitet; Viele Konflikte automatisch lösbar, rest manuell\\
+Hoarding $\rightarrow$ Emulation $\rightarrow$ Reintegration $\rightarrow$ Hoarding\\
+\subsubsection{Surrogate}
+Mobile Geräte sind unzuverlässig (Netzwerk), gerine Rechenleistung\\
+Operation Shipping: Statt Datenblöcke werden Replay-Operationen and Surrogate gesendet, Surrogate aktualisiert Server\\
+\subsection{ZEBRA}
+Network RAID, riesige Logfile, Schreiben IMMER an Anfang, Stripe Cleaner schreibt sehr alte Blöcke vorne an. Damit wird hinten das "Band" frei.\\
+Klappt IMMER! (Technische Details)\\
+\subsection{P2P-Dateisysteme}
+Verteiltes Speichern von Dateien, damti überall verfügbar, Leistung und Fehlertoleranz\\
+Probleme: Peers können jederzeit offline gehen, keine unverschlüsselte Speicherung\\
+\subsubsection{Self-*}
+Self-organizing: Keine Zentrale administration\\
+Self-repairing: Reparatur von Lücken automatisch (z.B. Weggang von Ressourcen)\\
+Self-tuning: Optimierung über Zeit z.B. verbesserung der Latenz\\
+\subsection{Tapestry}
+Routing über Namen unabh. vom Aufenthaltsort\\
+DHT: Distributed Hash Table (Name wird gehashed, möglichst keine duplikate)\\
+Stationen bekommen eine ID (z.B. auch durch Hashes), werden nach ID aufsteigend als Ring aufgebaut\\
+Stationen sollen Daten speichern, Daten haben Namen und auch Hash. Eine Datei wird auf der Station gespeichert, deren ID näher an der der Datei  ist. Stationen können das unter sich aushandeln, da sie die ID und die Richtung kennen. Eine neue Station handelt mit Nachbarn die zu übernehmenden Daten aus.\\
+Von jedem Knoten aus gibt es ein paar Kanten, die große Teile des Rings überspringen. Falls sich die DatenID stark von der eigenen unterscheidet, wird es an eine völlig andere Stelle des Rings weitergegeben.\\
+Damit Stationen ausfallen können gibt es Replikate, deren Name sich aus dem Namen der Originaldatei ableiten lässt, diese liegt dann auf einem anderen Server.
 \end{document}
 

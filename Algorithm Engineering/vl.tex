@@ -676,6 +676,8 @@ Zwei Segmente (a,b) (c,d): a,orientation(b,c) != a.orientation(b,d) $\wedge$ c.o
 \textbf{Ausgabe:} Ecken gegen den Urzeigersinn sortiert (und nummeriert)\\
 \textbf{Algorithmus:} Gift wrapping (Ursprünglich im Raum)\\
 \hspace*{1cm} Starte bei $Min_{xy}(L)$\\
+\textbf{Laufzeit:}O(h*n): h=\#Ecken\\
+\hspace*{1cm}KH ist mindestens so komplex wie Sortieren von n Zahlen\\
 \begin{lstlisting}
 list<point> convexHull(list<point> &L){
 	list<point> P;
@@ -699,4 +701,48 @@ list<point> convexHull(list<point> &L){
 	return P;
 			
 \end{lstlisting}
+Verschiedene Algorithmen mit Laufzeit O(n logn)\\
+Strategien:
+\begin{itemize}
+\item Inkrementell, Punkt zu Punkt
+\item Divide and Conquer
+\item Scan/Sweep
+\end{itemize}
+\textbf{Inkrementell:}\\
+Sortiere Punkteliste nach xy. Durchlaufe die Punkte, aktueller Punkt sei $p_i$\\
+$CH_i = CH(p_1,...,p_i)$ ist berechnet \\
+Schritt: Entferne alle von $p_{i+1}$ sichtbaren Ecken aus $CH_i$, füge $p_{i+1}$ stattdessen an.\\
+Dafür: Finde die Tangenten Berührpunkte o (oben) und u (unten), entferne alle Punkte zwischen o und u.\\
+\hspace*{1cm}Füge $p_{i+1}$ nach u ein\\
+\begin{lstlisting}
+//Datenstruktur
+list<point> L;
+L.cyclic_succ(p)
+L.cyclic_pred(p)
+//Punkte in L gegen den Urzeigersinn sortiert
+//Initialisierung
+//Dreieck aus p123, Annahme: nicht colinear, es muss p1.orientation(2,3) >0
+//Schleife
+for(int i = 4; i <= n; i++){
+	point o =  p_{i-1}
+	while( pi.orientation(o,CH.cyclic_succ(o) <= 0){
+		o = CH.cyclic_succ(o)
+	}
+	point u = p_{i-1}
+	while (pi.orientation(u,CH.cyclic_pred(u)) >=0){
+		u = CH.cyclic_pred(u);
+	}
+	CH.delete_internal(u,o)
+	CH.insert_after(pi,u)
+\end{lstlisting}
+Analyse: Sortieren in O(n logn), for Schleife (jeder Punkt wirst höchstens einmal entfernt) $\rightarrow$ O(n)\\
+$\rightarrow$ O(n), falls schon sortiert, ansonsten O(n logn)\\
+\textbf{Divide and Conquer:} p1,...,pn sortiert\\
+\begin{lstlisting}
+CH(p1,...,pn)
+	if(n <= 3) KH
+	else
+		m = n/2
+		A <- CH(p1,...,pm)
+		B <- CH(pm+1,...,pn)
 \end{document}

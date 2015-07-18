@@ -107,7 +107,7 @@ $int_stack.cpp$
 \begin{lstlisting}[escapechar=!]
 #include "int_stack.h"
 int_stack::int_stack(int n) {
-	sz=2;
+	sz=n;
 	A = new int[sz];
 	t = -1; //leer
 }
@@ -118,13 +118,13 @@ void int_stack::push(int x){
 	if (t == sz-1){
 		//stack voll
 		int* B=new int[2*sz];
-		sz !$\leftarrow$! 2*sz;
-		for(int i=0; i !$\leq $!;i++){
-			B[i] !$\leftarrow $!
+		sz = 2*sz;
+		for(int i=0; i<sz;i++){
+			B[i] = A[i]
 		}
 		delete[] A;
 	}
-	A[++t] !$\leftarrow $! x; //eigentlich push
+	A[++t] = x; //eigentlich push
 }
 int int_stack::pop(){
 	if(t==-1){

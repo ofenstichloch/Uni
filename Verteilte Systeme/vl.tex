@@ -316,6 +316,8 @@ DHT: Distributed Hash Table (Name wird gehashed, möglichst keine duplikate)\\
 Stationen bekommen eine ID (z.B. auch durch Hashes), werden nach ID aufsteigend als Ring aufgebaut\\
 Stationen sollen Daten speichern, Daten haben Namen und auch Hash. Eine Datei wird auf der Station gespeichert, deren ID näher an der der Datei  ist. Stationen können das unter sich aushandeln, da sie die ID und die Richtung kennen. Eine neue Station handelt mit Nachbarn die zu übernehmenden Daten aus.\\
 Von jedem Knoten aus gibt es ein paar Kanten, die große Teile des Rings überspringen. Falls sich die DatenID stark von der eigenen unterscheidet, wird es an eine völlig andere Stelle des Rings weitergegeben.\\
-Damit Stationen ausfallen können gibt es Replikate, deren Name sich aus dem Namen der Originaldatei ableiten lässt, diese liegt dann auf einem anderen Server.
+Damit Stationen ausfallen können gibt es Replikate, deren Name sich aus dem Namen der Originaldatei ableiten lässt, diese liegt dann auf einem anderen Server.\\
+Alternativ: Dateien in Blöcke einteilen, die dann auch auf bestimmten Servern mit Replikaten liegen.\\
+
 \end{document}
 

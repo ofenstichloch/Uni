@@ -1,0 +1,78 @@
+\documentclass[a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{a4wide}
+\usepackage{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\geometry{a4paper,left=2cm,right=2cm, top=3cm, bottom=3cm}
+\usepackage{listings}
+
+\newcommand{\oh}[1]{$\mathcal{O}(#1)$}
+\newcommand{\titel}[1]{\fancyhead[C]{#1}}
+\newcommand{\name}{\fancyhead[L]{Alexander Landmesser}}
+\newcommand{\matrikel}{\fancyhead[R]{}}
+\newcommand{\pl}{\hspace*{1cm}}
+\begin{document}
+\title{Ausgewählte Kapitel ADS}
+\maketitle
+\section{Datenstrukturen für Mengen}
+\subsection{Union-Find-Problem}
+Verwaltung von diskunkten Mengen\\
+\subsubsection*{Problem}
+Verwalte eine Partition (Zerlegung in disjunkte Teilmengen) der Menge \{1,...,n\} unter folgenden Operationen.\\
+Jede Teilmenge (Block) besitzt einen eindeutigen Namen aus \{1,..,n\}.
+\begin{itemize}
+\item FIND(x): $x\in \{1,..,n\}$ Liefert den Namen der Teilmenge, die x enthält
+\item UNION(A,B,C): Vereinigt die Teilmengen mit Namen A und B zu einer Teilmenge mit dem Namen C.
+\end{itemize}
+\subsubsection*{Initialisierung}
+Wir starten mit der Partitionierung: $\{\{1\},..,\{n\}\}$ mit dem Namen $i$ für $\{i\}$,$1\leq i \leq n$\\
+Analyse: Kosten für 1 Union (worst case)\\
+Amortisiert: Kosten für $n-1$ mögliche UNIONs\\
+$\rightarrow$ Kosten von $n-1$ UNIONs und m FINDs\\
+\underline{\textbf{1. Lösung} (einfach)}\\
+Verwende ein Feld name[1..n] mit name[x] = Name des Blocks der x enthält. $1\leq x \leq n$\\
+\begin{lstlisting}
+for i=1 to n do
+	name[i] <- i
+done
+\end{lstlisting}
+FIND(x): return name[x] : \oh{n}\\
+UNION(A,B,C): \oh{n}
+\begin{lstlisting}
+for i=1 to n do
+	if name[i] = A OR name[i] = B
+	then name[i] <- C
+	fi
+done
+\end{lstlisting}
+Gesamtlaufzeit (Lemma 1):\\
+$n-1$ UNIONs und m FINDs kosten \oh{n^2+m}\\
+\underline{\textbf{2. Lösung} (Verbesserung)}\\
+1. Find unverändert\\
+2. Ändere den Namen der kleineren Menge in den Namen der größeren\\
+Zusätzliche Felder:
+\begin{itemize}
+\item size[1..n]: size[A] = Anzahl Elemente im Block A, initialisiert mit 1
+\item L[1..n]: L[A] = Liste aller Elemente in Block A, initialisiert L[i] = \{i\}
+\end{itemize}
+FIND(x) bleibt gleich\\
+UNION(A,B):
+\begin{lstlisting}[escapechar=!]
+if size[A] !$\leq$! size[B]
+then
+	forall i in L[A] do
+		name[i]!$\leftarrow$! B
+	done
+	size[B] += size[A]
+	L[B] !$\leftarrow$! L[B] concatenate L[C]
+else
+	symmetrisch
+\end{lstlisting}
+Die Menge heißt jetzt A oder B\\
+Effekt: UNION(A,B,..) hat Laufzeit \oh{min(|A|,|B|)}\\
+Worst Case eines UNION dieser Folge von UNIONs: \oh{\frac{n}{2}} = \oh{n} (kann nur einmal vorkommen)\\
+Gesamtkosten für alle n-1 UNIONs: \oh{n*log(n)}
+\end{document}

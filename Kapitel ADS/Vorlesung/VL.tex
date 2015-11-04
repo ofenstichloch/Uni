@@ -164,7 +164,7 @@ else
 Zeige Laufzeit \oh{log(n)}:\\
 Sei für jeden Knoten x die höhe(x) die Hohe von x in seinem Baum (maximale Pfad zu Blatt), Blatt=0\\
 size(x): Anzahl der Knoten im Unterbaum mit Wurzel x (Gewicht)\\
-Lemma: Bei weighted Union rule gilt stets, dass $size(x)\geq 2^{\text{höhe}(x)}$ für alle Knoten x.\\
+\underline{Lemma}: Bei weighted Union rule gilt stets, dass $size(x)\geq 2^{\text{höhe}(x)}$ für alle Knoten x.\\
 Beweis: Induktion über höhe(x):\\
 \begin{lstlisting}[escapechar=!]
 Vorasussetzung:
@@ -184,5 +184,63 @@ Schritt:
 		!$\geq 2*2^{\text{höhe}(y)}$! nach IA
 		!$=2^{\text{höhe}(y)+1} = 2^{\text{höhe}(x)}$!
 \end{lstlisting}
-
+Da Anzahl der Knoten $n \Rightarrow size(x) \leq n$ gilt:\\
+\hspace*{1cm}$\Rightarrow n\geq size(x)\geq 2^{hoehe(x)}$ für alle x\\
+\hspace*{1cm}$hoehe(x) \leq log(n)$\\
+\underline{Satz:} Bei UNION-FIND mit weighted UNION ist die Laufzeit einer beliebigen Folge n-1 Unions und m Finds \oh{n+log(n)}\\
+Beweis: 1. UNION \oh{1} worst-case, 2. Find \oh{log(n)} worst case (Lemma)\\
+\underline{\textbf{5. Lösung (Verbesserung von FIND):}}\\
+Pfad-Komprimierung (path compression)\\
+Ein FIND(x) durchläuft den Pfad von x zur Wurzel.\\
+$x=x_0,...,x_l=Wurzel$\\
+\underline{Idee:} Hänge $x_0,...,x_{l-1}$ direkt an die Wurzel an.\\
+Erhöht die Kosten dieses Finds um einen konstanten Faktor.\\
+Algorithmus:
+\begin{lstlisting}
+FIND(x)
+	r <- x;
+	while vater[r] != 0 do 
+		r <- Vater[r]
+	od
+	while x != r do
+		y <- vater[x]
+		vater[x] <- r
+		x <= y
+	od	
+\end{lstlisting}
+Ganz klar: \oh{log(n)} worst case\\
+\underline{Satz (Tarjan):} Bei UNION-FIND mit weighted UNION und path compression hat eine beliebige Folge von n-1 Unions und m Finds mit $m\geq n$, die Gesamtkosten \oh{m*\alpha(m,n)}, \\wobei $\alpha(m,n) = min\lbrace z\in \mathbb{N} | A(z,\frac{4m}{n}) > log n\rbrace$\\
+mit A einer Variante der Ackermannfunktion.\\
+$\alpha$ ist eine Art Inverse der Ackermannfunktion $\Rightarrow$ Ist extrem langsam wachsend.\\
+Definition von A:\\
+$A: \mathbb{N}_0\times\mathbb{N}_0 \rightarrow \mathbb{N}_0$\\
+$A(i,0) = 0$ für alle $i\in\mathbb{N}_0$\\
+$A(0,x) = 2x$ für alle $x\geq 1$\\
+$A(i,1) = 2$\\
+$A(i,x) = A(i-1,A(i,x-1))$ für $i\geq 1,x\geq 2$\\
+A(i,x) als Matrix $i\times x$: 
+$\begin{matrix}
+0&2&4&6&8&10\\
+0&2&4&8&16&32\\
+0&2&4&16&65536&2^{65536}&\\
+0&2&4&65536&2\uparrow\uparrow65536&.\\
+0&2&.&.&.&.
+\end{matrix}
+$\\
+1. Zeile: $A(0,x)=2x$; 2. Zeile: $A(1,x)=2^x$; 3. Zeile: $A(2,x)=2^{2^{.^{.^2}}}$\\
+Anmerkung: Pfeilschreibweise=(Knuth Up-Arrow)\\
+Beweis des Satzes:\\
+Situation: n Elemente \{1,..,n\}, beliebige Folge von n-1 Unions und m Finds: $U_1,F_1,F_2,U_2,...$\\
+Am Ende: 1 Baum T' (n-1 weighted Unions)\\
+Konzeptuell kann T' anders erhalten werden: Führe zunächst alle Unions aus $\rightarrow$ Baum T. Dann führe m partielle Finds auf T aus ($PF_1,...,PF_m$), die genau den selben Pfad wir $F_i$ durchlaufen, bis zu ihrere ursprünglichen Wurzel vor den Unions.\\
+Wir schätzen nun die Gesamtkosten dieser Folge (insbesondere der m PF's) ab.\\
+Frage: Wieviele Vater-Verweise (Kanten) werden insgesamt durchlaufen?\\
+Sei F=Multi-Menge aller durch die PF's durchlaufenen Kanten (mit Mehrfachen)\\
+Zu zeigen: $|F| = $\oh{m*\alpha(m,n)}\\
+Idee:\\
+a) Teile F in Gruppen nach Rang der Endpunkte der Kanten, wobei Rang(x)=Höhe(x) im Baum T (nicht T')\\
+b) Schätze die Gruppen einzeln ab.\\
+Zunächst einteilung der Knoten in die Gruppen nach Rang (nicht disjunkt).\\
+Sei $z\in\mathbb{N}_0$, Für $0\leq i \leq z, j\geq 0$ sei:\\
+$G_{ij}=\lbrace Knoten\ x|A(i,j)\leq Rang(x)<A(i,j+1)\rbrace$\\
 \end{document}

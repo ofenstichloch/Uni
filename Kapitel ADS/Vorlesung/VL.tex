@@ -243,4 +243,41 @@ b) Schätze die Gruppen einzeln ab.\\
 Zunächst einteilung der Knoten in die Gruppen nach Rang (nicht disjunkt).\\
 Sei $z\in\mathbb{N}_0$, Für $0\leq i \leq z, j\geq 0$ sei:\\
 $G_{ij}=\lbrace Knoten\ x|A(i,j)\leq Rang(x)<A(i,j+1)\rbrace$\\
+Veranschaulichung: $\lbrace [A(i,j) ... A(i,j+1)[\rbrace$ Menge von Ineraktionen\\
+\includegraphics[scale=0.15]{Bild3.png}\\
+Beispiel: Rang(x)=7, Rang(y)=13\\
+$\Rightarrow$ $x\in G_{0,3},G_{1,2},G_{2,2},...$\\
+$\Rightarrow$ $y\in G_{0,6},G_{1,3},G_{2,2},...$\\
+Eine Einteilung der Multi-Menge F \\
+Für $0\leq k \leq z: N_k=\lbrace (x,y)\in F | k=min\lbrace i\geq 0|\exists j\ mit\ x,y\in G_{i,j}\rbrace\rbrace$\\
+und $N_{z+1} := F\setminus\cup_{0\leq i\leq z} N_i$\\
+Schließlich definieren wir für $0\leq k\leq z+1: L_k=\lbrace(x,y)\in N_k | (x,y) $ist letzte (oberste) Kante auf PF-Pfad\\
+\underline{Lemma:}\\
+a) $|L_k| \leq m$ für $0\leq k \leq z+1$\\
+b) $|N_0\setminus L_0|\leq n$\\
+c) $|N_k\setminus L_k | \leq \frac{5}{8}n$ für $1\leq k \leq z$\\
+d) $|N_{z+1}\setminus L_{z+1} | \leq n*a(z,n)$ mit $a(z,n) = min\lbrace i\geq 0 | A(z,i) > log(n)\rbrace$\\
+Beweis:\\
+a) Für jedes PF gibt es höchstens 1 Kante in $L_k$. Die Behauptung folgt daraus, dass es insgesamt nur m PFs gibt.\\
+b) Sei $(x,y)\in N_0\setminus L_0$, dann gilt $\exists j\geq 0$ mit $x,y \in G_{0,j}$, das heißt $A(0,j) \leq Rang(x) < Rang(y) < A(0,j+1)$\\
+\hspace*{1cm}$\Rightarrow Rang(x)=2j, Rang(y)=2j+1$\\
+\hspace*{1cm}$(x,y) \not\in L_0 \Rightarrow $ nicht die letzte Kante in diesem PF: Betrachte PF von (x,y), dann existiert eine Kante $(s,t)\in L_0$ auf diesem PF-Pfad\\
+Situation:\\
+$Rang(x)=2j, Rang(y)=2j+1$\\
+$Rang(s)\geq Rang(y)$ da letzter Pfad vor dem nicht letzten sein muss\\
+$Rang(t) > Rang(s)$ da Pfad von s nach t\\
+$\Rightarrow Rang(t) \geq 2j+2$\\
+Nach dem PF: x hat neuen Vater (möglicherweise t) u mit $Rang(u)\geq Rang(t)\geq 2k+2$\\
+$\Rightarrow$ Rangdifferenz zwischen x und dem neuen Vater u $\geq 2$\\
+$\Rightarrow$ Spätere PFs können keine Kante (x,..) mehr zu $N_0$ hinzufügen\\
+$\Rightarrow$ Für jeden Knoten wird maximal eine ausgehende Kante (Vaterverweis) in $N_0\setminus L_0$ gezählt werden.\\
+$\Rightarrow |N_0\setminus L_0| \leq n$\\
+Beweis c), d):\\
+Idee: Schätze Beitrag eines Knotens $x\in G_{k,j}$ zu $N_k\setminus L_k$ d.h. alle Kanten, die von x ausgehen und in $N_k\setminus L_k$ gezählt werden.\\
+Sei $k\geq 1$ und $x\in G_{k,j}$ beliebig, d.h. $\exists j$ mit $ A(k,j) \leq Rang(x) < A(k,j+1)$\\
+und $y_1,...,y_q$ alle Endknoten mit $(x,y_i)\in N_k\setminus L_k$. Ziel: q nach oben abschätzen.\\
+$\Rightarrow Rang(y_1)\leq ...\leq Rang(y_q)<A(k,j+1)$\\
+Beobachtungen:\\
+1) $j\geq 2$ weil sonst k=0 die minimale Zeile definiert, sodass $(x,y_i)$ im selben Intervall ( de ersten 3 Spalten sind immer gleich gefüllt mit 0,2,4). Hier: $k\geq 1$\\
+2) $(x,y_i)\not\in L_k$ für $1\leq i\leq q \Rightarrow \exists (s_i,t_i)\in N_k$ auf PF-Pfad von $(x,y_i)$ oberhalb von $(x,y_i)$
 \end{document}

@@ -24,4 +24,25 @@
 \item Isolierte Addressräume für Anwendungen
 \item Verhindere Monopolisierung
 \end{itemize}
+\section{Monolithe und Mikrokerne}
+Systemcalls sind im gefährlicher Bereich, eine Anwendung soll keinen direkten Zugriff auf die Hardware haben.\\
+Anwendungen benutzen Libraries mit fremden Funktionen.\\
+System Call Wrapper bietet eine Funktion, die die Systemaufrufe implementiert.\\
+System calls liegen im Kernel, garantiert Schutz der Hardwarefunktionen, da nur über die System Calls Zugriff erlaubt ist.\\
+Hardwareinterrupt: Gerät meldet per Leitung/Bit Interrupt. CPU rechnet fertig und bearbeitet diesen Interrupt.\\
+System Calls sind Softwareinterrupts.\\
+Bei der Ausführung von System calls wechselt das System in den privileged mode und auf den kernel stack. Im privileged mode ist Zugriff auf gefährliche Hardware erlaubt. (Supervisor/Usermode)\\
+Nur das Betriebssystem darf im privileged mode laufen und tut dies auch immer, Anwendungen laufen im user mode.
+\subsection{Monolithen}
+Alle Funktionen des Betriebssystems liegen in einem großen Kernel. D.h. jeder System call wird in diesem einen Kernel ausgeführt.\\
+Alle aktuellen Betriebssysteme sind Monolithen.\\
+Verbesserung der Entwicklug durch Kernelmodule, die geladen/entladen werden können.
+\subsection{Mikrokerne}
+Für jede Funktionalität wird ein Mikroserver mit Mikrokern bereitsestellt (File,Grafik, Sound, Speicher etc.)\\
+Anfragen werden u.U. durch alle Server geleitet, dabei entstehen für jeden Server Kontextwechse (Zeit!)\\
+Kontextwechsel kosten viel Zeit, da bei jedem Kontextwechsel die Caches kalt werden, also keine Treffer besitzen.\\
+Verbesserter Ansatz: Entwicklung als Mikrokerne, dadurch leichterer Entwicklung und Wartung. Nach erfolgreichem Testen werden diese Mikrokerne in einen Monolithen integriert und die Adressgrenzen aufgehoben.\\
+
+
+
 \end{document}

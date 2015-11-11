@@ -280,4 +280,47 @@ $\Rightarrow Rang(y_1)\leq ...\leq Rang(y_q)<A(k,j+1)$\\
 Beobachtungen:\\
 1) $j\geq 2$ weil sonst k=0 die minimale Zeile definiert, sodass $(x,y_i)$ im selben Intervall ( de ersten 3 Spalten sind immer gleich gefüllt mit 0,2,4). Hier: $k\geq 1$\\
 2) $(x,y_i)\not\in L_k$ für $1\leq i\leq q \Rightarrow \exists (s_i,t_i)\in N_k$ auf PF-Pfad von $(x,y_i)$ oberhalb von $(x,y_i)$
+Nach der Pfadkopmrimierung ist Vater von $x=y_i+1$. Außerdem ist $y_{i+1}$ Vorfahr von $t_i$ dabei ist $t_i = y_{i+1}$ möglich.\\
+%TODO Bild 3: Baum Vorfahren dings
+Es gilt stets $Rang(x) < Rang(y_i)\leq Rang(s_i) < Rang(t_i) \leq Rang(y_{i+1}$\\
+Definition von $N_k$ k minimal $\Rightarrow (x,y_i),(s_i,t_i)\not\in N_{k-1}$\\
+$\Rightarrow \exists j$ mit $Rang(s_i) < A(k-1,j) \leq Rang(t_i)$\\
+Daher gilt $Rang(y_i) < A(k-1,j)\leq Rang(y_{i+1})$ für $1\leq i \leq q-1$\\
+Anwendung auf di gesamte Folge $y_1,...,y_q$ (d.h. q-1 mal):\\
+$Rang(y_1)<A(k-1,j_1)\leq Rang(y_2)<A(k-1,j_2)\leq Rang(y_3)<...\leq Rang(y_{q-1}) < A(k-1,j_{q-1})<Rang(y_q)$\\
+Beobachtung: $j_{i+1} \geq j_i \Rightarrow \exists j_1$ mit $Rang(y_1)<A(k-1,j_1)\leq A(k-1,j_1+q-1)\leq Rang(y_q)$\\
+$ $\\
+\textbf{I.} $\exists j\geq 2: Rang(y_q)\geq A(k-1,j+q-1)$\\
+Beweis Teil c:\\
+$k\geq 1, x\in G_{k,j},(x,y_i)\in N_k \Rightarrow y_1,...,y_q \in G_{k,j}, j\geq 2$\\
+$\Rightarrow A(k,j) \leq Rang(y_1)\leq ...\leq Rang(y_q)<A(k,j+1)$\\
+\textbf{II.}$Rang(y_q)<A(k,j+1)$\\
+Nach I und II:\\
+$\exists j: A(k-1,j+q-1)\leq A(k,j+1) = A(k-1,A(k,j))$\\
+$\Rightarrow (Monotonie\ von\ A\ in\ Zeilen) j+q-1 < A(k,j)$\\
+$\Rightarrow (j\geq 2) q < A(k,j)$\\
+Wir haben gezeigt: Für jeden Knoten $x\in G_{k,j},k\geq 1,j\geq 2$ gibt es höchstens A(k,j) Kanten $(x,y)\in N_k\setminus L_k$\\
+$\Rightarrow |N_k\setminus L_k | \leq \sum_{j\geq 2} |G_{k,j} * A(k,j)$ mit $1\leq k \leq z$\\
+Behauptung: $|G_{k,j} | \leq \frac{2n}{2^{A(k,j)}}$ extrem fallend, n Knoten im Baum.\\
+Daraus folgt: $|N_k\setminus L_k \leq \sum_{j\leq 2} \frac{2n*A(k,j)}{2^{A(k,j)}}$ wobei $A(k,j) \leq 2^j$, da $k\geq 1$ zweite Zeile.\\
+$\leq 2n\sum_{j\geq 2} \frac{2^j}{2^{2^j}} = 2n\sum_{j\geq 2} \frac{1}{2^{2^j-j}} = 2n(\frac{1}{4} + \frac{1}{32}+\frac{1}{2^{12}}+...)$ wobei $(\frac{1}{32}+...)$ mit $\frac{1}{16}$ abgeschätzt wird.\\
+$\Rightarrow = \frac{5}{8}n$\\
+Beweis der Behauptung $|G_{k,j} | \leq \frac{2n}{2^{A(k,j)}}$\\
+Sei l beliebig mit $A(k,j) \leq l < A(k,j+1)$\\
+Zähle zuerst alle Knoten mit $Rang(x)=l$. Dafür sei $G_{k,j,l} = \lbrace x\in G_{k,j} | Rang(x) = l$\\
+Es gilt:\\
+1. Jeder Knoten x mit $Rang(x)=l$ hat mindestens $2^l$ Nachkommen (alle Knoten im Unterbaum mit Wurzel x), nach Lemma weighted Union\\
+2. Für $x\neq y$ mit $Rang(x)=Rang(y)$ sind die Nachkommensmengen disjunkt.
+1+2: $|G_{k,j,l}| \leq \frac{n}{2^l}$ mit n Gesamtanzahl der Knoten\\
+$\Rightarrow |G_{kj}| = \sum_{l=A(k,j)}^{A(k,j+1)-1} | G_{k,j,l}|$\\
+$\leq \sum_{l=A(k,j)}^{\inf} \frac{n}{2^l} = n\sum_{l=A(k,j)}^{\inf} \frac{1}{2^l}$\\
+$= n (1\frac{1}{2^{A(k,j)}} + \frac{1}{2}\frac{1}{{A(k,j)}}+\frac{1}{4}\frac{1}{{A(k,j)}}+...)$\\
+$= n*\frac{2}{2^{A(k,j)}}$\\
+Beweis Teil d:\\
+$k=z+1$, weighted Union $\Rightarrow Rang(y_q) \leq log(n)$\\
+Nach I. für $k=z+1$:\\
+$A(z,j+q-1) \leq Rang(y_q)\leq log(n)$\\
+$\Rightarrow j+q-1 < \alpha (z,n)$, da $\alpha (z,n)$ minimal mit $A(z,\alpha (z,n))>log(n)$\\
+$\Rightarrow q < \alpha (z,n)$ mit $j\leq 2$\\
+
 \end{document}

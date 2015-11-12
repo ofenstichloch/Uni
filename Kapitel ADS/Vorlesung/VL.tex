@@ -149,7 +149,7 @@ while vater[x] != 0 do
 od
 return name[x]
 \end{lstlisting}&
-\begin{lstlisting}
+\begin{lstlisting}[escapechar=|]
 r1 = wurzel[A]
 r2 = wurzel[B]
 if size[r1] |$\leq $| size[r2] then
@@ -322,5 +322,46 @@ Nach I. für $k=z+1$:\\
 $A(z,j+q-1) \leq Rang(y_q)\leq log(n)$\\
 $\Rightarrow j+q-1 < \alpha (z,n)$, da $\alpha (z,n)$ minimal mit $A(z,\alpha (z,n))>log(n)$\\
 $\Rightarrow q < \alpha (z,n)$ mit $j\leq 2$\\
+Also gibt es für jeden Knoten x höchstens $\alpha (z,n)$ Kanten $(x,..)\in N_{z+1}\setminus L_{z+1}$ mit n = Anzahl aller Knoten\\
+$\Rightarrow |N_{z+1}\setminus L_{z+1} | \leq n*\alpha (z,n)$\\
+\underline{Beweis des Satzes (Tarjan):}\\
+Jede beliebige Folge von n-1 Unions und $m\geq n$ Finds hat die Gesamtlaufzeit von \oh{m*\alpha (m,n)}\\
+Lemma (Kosten aller Finds): Für jedes $z\geq 0$ gilt:\\
+ $|F| = \sum_{k=0}^{z+1} |L_k | + \sum_{k=1}^{z+1} |N_k\setminus L_k | = \sum_{k=0}^{z+1} | L_k | + |N_0\setminus L_0 |+\sum_{k=1}^{z} |N_k\setminus L_k | + |N_{z+1}\setminus L_{z+1}|$\\
+ $\leq (z+2)*m +n + \frac{5}{8}n*z* + n*\alpha (z,n)$\\
+ Betrachte $z=\alpha (m,n),\ n\leq m$ (jedes z liefert eine obere Schranke)\\
+ Dann gilt: \\
+ $|F|\leq \mathcal{O}(m*\alpha (m,n))+ n+\mathcal{O}(n*\alpha (m,n))+n*\alpha (z,n)$\\
+ $|F|\leq \mathcal{O}(m*\alpha(m,n)+n*\alpha(z,n))$\\
+ $\Rightarrow \alpha(\alpha(m,n),n) \leq 4\frac{m}{n}$\\
+ $\Rightarrow \leq n*\frac{4m}{n} = \mathcal{O}(m)$\\
+ Insgesamt: Kosten aller Find-Operationen sind $|F| = \mathcal{O}(m\alpha(m,n)+m)=\mathcal{O}(m\alpha(m,n))$\\
+ Kosten aller Unions: \oh{n}=\oh{m}\\
+ Bemerkung:\\
+ 1) In der Praxis sehr gute Laufzeiten (sehr einfache Algorithmen und Datenstrukturen, $\alpha (m,n) < 4 $ für alle in der Praxis vorkommenden Werte von m,n.\\
+ 2) Die Schranke $m\alpha(m,n)$ ist scharf, d.h. das Union-Find-Problem hat tatsächlich diese Komplexität.Es gibt Beweise für untere Schranke $\Omega(m*\alpha(m,n))$\\
+ 3) Optimal...yey.\\
+ 4) Varianten: Split-Find (für Intervalle), \\
+ Union-Split-Find: Split(x) markiere x, Union(x) entfernt Markierung, Find(x) nächste Markierung rechts von x\\
 
+\subsection{Wörterbücher}
+Wir kennen balancierte Suchbäume.\\
+Problem: Teilmenge $S\subseteq U$ mit U Universum, eventuell linear geordnet.\\ 
+Speichere S (Schlüssel) in einer Datenstruktur D mit:\\
+D.insert(x) $x\in U,\ S\leftarrow S\cup\{ x \}$\\
+D.delete(x) $x\in U,\ S\leftarrow S\setminus \{x\}$\\
+D.lookup(x) $x\in U$, testet ob $x\in S$\\
+Es soll zusätzlich zum Schlüssel Zusatzinformation gespeichert werden.\\
+Wir behandeln 2 Datenstrukturen: Randomisierte Suchbäume, Perfektes Hashing\\
+\subsubsection{Randomisierter Suchbaum}
+Entwickelt von Seidel/Aragon\\
+Idee: Verwende einen Zufallsprozess zur Balancierung von binären Suchbäumen.\\
+Vorteile: Sehr einfache Implementierung, geringer Aufwand zur Verwaltung der Balance, effiezient\\
+\textbf{Definition} RST(Randomized Search Tree):\\
+Sei $S=\{x_1,...,x_n\}$ eine Menge von n Schlüsseln aus einem linear geordneten Universum U.\\
+Jedem $x_i \in S$ wird zusätzlich eine Zufallszahl $prio(x_i)$, seine Priorität zugeordnet. Diese Zufallszahlen sind gleichverteilte reele Zahlen aus [0,1] oder praktisch ganze Zahlen aus [0,..,$2^{32}-1$].\\
+Ein RST für S ist:\\
+1) Ein Knotenorientierter binärer Suchbaum für die Paare $(x_i,prio(x_i))$\\
+2) Gleichzeitig ein Maximum-Heap bezüglich der Prioritäten $prio(x_i)$\\
+\includegraphics[scale=0.07]{6.jpg}
 \end{document}

@@ -42,6 +42,13 @@ Für jede Funktionalität wird ein Mikroserver mit Mikrokern bereitsestellt (Fil
 Anfragen werden u.U. durch alle Server geleitet, dabei entstehen für jeden Server Kontextwechse (Zeit!)\\
 Kontextwechsel kosten viel Zeit, da bei jedem Kontextwechsel die Caches kalt werden, also keine Treffer besitzen.\\
 Verbesserter Ansatz: Entwicklung als Mikrokerne, dadurch leichterer Entwicklung und Wartung. Nach erfolgreichem Testen werden diese Mikrokerne in einen Monolithen integriert und die Adressgrenzen aufgehoben.\\
+\section{Virtuelle Maschinen}
+Ermöglicht Migration von Virtuellen Maschinen wärend des Betriebs auf andere Hardware.\\
+IBM entwickelte VM, da Maschinen zu teuer waren, um die neuen Versionen neben den Produktivsystem zu testen.\\
+VMM (Hypervisor) läuft im priviligierten Modus und nimmt die Befehle des Gastsystems an und schickt das erwartete Ergebnis zurück. Das Gastsystem läuft im User-Mode und könnte diese Befehle nicht ausführen. Das Erkennen kritischer Instruktionen ist Aufwändig.\\
+Hypervisor (Typ1 VMM): Direkt auf der Hardware, VMM ist quasi Betriebssystem\\
+Typ2 VMM: Usermode Anwendungen (VirtualBox, etc.)\\
+Paravirutalisierung: Angepasste Gastsysteme, die kritische Stellen einem speziellen Hostsystem übergeben.\\
 
 
 

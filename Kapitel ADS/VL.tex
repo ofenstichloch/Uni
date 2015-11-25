@@ -363,5 +363,36 @@ Jedem $x_i \in S$ wird zusätzlich eine Zufallszahl $prio(x_i)$, seine Prioritä
 Ein RST für S ist:\\
 1) Ein Knotenorientierter binärer Suchbaum für die Paare $(x_i,prio(x_i))$\\
 2) Gleichzeitig ein Maximum-Heap bezüglich der Prioritäten $prio(x_i)$\\
-\includegraphics[scale=0.07]{6.jpg}
+\includegraphics[scale=0.07]{6.jpg}\\
+Die Prioritäten auf einem Pfad von der Wurzel zu einem Blatt sind monoton fallend. Die maximale Priorität ist in der Wurzel.\\
+1) Sie $x_i$ der Schlüssel mit maximaler Priorität, Erzeuge den Wurzelknoten v mit dem Inhalt $(x_i,p_i)$ mit $p_i$ maximal.\\
+2) $v.left \leftarrow (\{x_j | x_j < x_i \})$\\
+3) $v.right \leftarrow (\{x_k|x_k > x_i\})$\\
+Beobachtung: Degenerierter Baum ist unwahrscheinlich, da er nur auftritt, wenn in der Liste der maximale Schlüssel immer die maximale Priorität hat.\\
+Erwartete Höhe (Kosten der Operationen) ist \oh{log(n)}.\\
+Alternative Konstruktion:\\
+Füge alle Schlüssel in absteigender Reihenfolge bzgl. der Priorität in einen normalen Knoten-orientierten Baum ein. Dabei fügt das Insert den entsprechenden Knoten an die richtige Position bzgl. des Schlüssels ein. Der Baum wird durch eine zufällige (weil Prioritäten zufällig) Folge von Inserts aufgebaut.\\
+\underline{Operationen auf einem RST:}\\
+1) Lookup(x): Normale Suche im binären Suchbaum. Falls $x\in S$ gilt: \oh{Tiefe(x)}, also maximal \oh{Hoehe(T)}\\
+2) Insert(x): Bestimme eine zufällige Priorität $prio(x) \in [0,1]$. Füge einen neuen Knoten (Blatt) v mit Inhalt $(x,prio(x))$ gemäß dem Schlüssel x durch ein normales Insert in den RST ein. Im Allgemeinen wird hier die Heapeigenschaft bzgl. der Prioritäten verletzt. Rotiere deswegen v nach oben, bis $prio(vater(v)) \geq prio(v)$ oder bis $v=Wurzel$\\
+Beim Rotieren gibt es zwei Fälle:\\
+1. v ist rechtes Kind $\rightarrow$ rotate\_left(vater(v))\\
+2. v ist linkes Kind $\rightarrow$ rotate\_right(vater(v))\\
+Dabei sind es meistens nur wenige auszuführende Rotationen. Der Fall, dass bis zur Wurzel rotiert werden muss (prio(v) ist neues Maximum) ist selten.\\
+3) Delete(x): Lookup(x) liefert Knoten v mit Schlüssel x. Rotiere v nach unten, bis er ein Blatt ist. Lösche diesen dann.\\
+Runterschieben des zu löschenden Knotens:\\
+\begin{lstlisting}
+//Sei pl die Prioritaet des linken Kindes, pr die des rechten.
+while v ist kein Blatt do
+	if pl > pr und v.right == null
+		rotate_right(v)
+	else
+		rotate_left(v)
+	fi
+od
+\end{lstlisting}
+4) Split(y) teilt den Unterbaum von y. $s_1 = \{x\in S | x\leq y\}, s_2=\{x\in S|x>y\}$\\
+5) Join($T_1,T_2$): Bildet aus den beiden übergebenen RST einen neuen.($T_1,T_1 sind RST von s_1,s_2$)\\
+\hspace*{1cm} Bedingung: $max(s_1)<min(s_2)$\\
+\hspace*{1cm} Kontruiere RST mit $max(s_1)<x<min(s_2)$ mit x als Wurzelelement mit unendlicher Priorität. Entferne x mit delete(x).\\
 \end{document}

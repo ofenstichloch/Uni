@@ -395,4 +395,34 @@ od
 5) Join($T_1,T_2$): Bildet aus den beiden übergebenen RST einen neuen.($T_1,T_1 sind RST von s_1,s_2$)\\
 \hspace*{1cm} Bedingung: $max(s_1)<min(s_2)$\\
 \hspace*{1cm} Kontruiere RST mit $max(s_1)<x<min(s_2)$ mit x als Wurzelelement mit unendlicher Priorität. Entferne x mit delete(x).\\
+\underline{Laufzeitanalyse:}\\
+Wir analysieren die erwarteten Kosten einer Delete-Operation in einem RST mit n Knoten. D.h. für Schlüssel $x_1,..,x_n$, die durch Insert eingefügt wurden. Beobachtung: Insert ist das inverse Delete\\
+Sei T ein RST für die Menge $S=\{x_1,..,x_n\}$ mit $x_1<..<x_n$ entstanden durch Folge von Inserts.\\
+Betrachte Operation Delete($x_k$) mit $1\leq k \leq n$\\
+Allgemeine Situation: $P_k$: Suchpfad nach $x_k$, $L_k$: Rechtes Rückgrat vom linken Unterbaum von $x_k$, $R_k$: linkes Rückgrat vom rechten Unterbaum von $x_k$.\\
+Kosten: \oh{|P_k|+|L_k| + |R_k|} mit $P_k$ Lookup, $L_k$ und $R_k$ das Rotieren.\\
+\underline{Lemma 1:}
+Sei $S=\{x_1,...,x_n\}$ mit $x_i<x_{i+1}$ für $i=1,...,n-1$ und $\{prio(x_i) | i=1,...,n\}$ eine Menge von gleichverteilten reelen Zufallszahlen aus [0,1] abgespeichert in einem RST (Betrachte den Knoten v, der einen beliebigen Schlüssel $x_k$ enthält). Dann gilt:\\
+a) $E(|P_k|) = H_k + H_{n-k+1}-1$ H: Harmonische Zahl.\\
+b) $E(|L_k|) = 1-\frac{1}{k}$\\
+c) $E(|R_k|) = a-\frac{1}{n-k+1}$\\
+Wobei $H_k = \sum_{i=1}^k \frac{1}{i}$\\
+1) $H_k \leq 1+ln(k)$\\
+2) $\sum_{i=0}^{k-1} H_i = k*(H_k -1)$\\
+\underline{Beweis Lemma 1:}\\
+Betrachte eine Permutation $\Pi : \{1,..,n\} \rightarrow \{1,..,n\}$, die S nach Prioritäten absteigend sortiert, d.h. $prio(x_{\Pi(1)})>prio(x_{\Pi(2)})...$. Dann gilt (Beobachtung):\\
+1) Jede der Permutationen $\Pi$ ist gleich wahrscheinlich (da Prioritäten gleichverteilt).\\
+2) Man erhält den RST (denselben binären Baum) durch normales Einfügen von $x_{\Pi(1)},..,x_{\Pi(n)}$ in einen normalen binären Suchbaum.\\
+3) Dann wächst der Baum nur an den Blättern.\\
+Duch die zufälligen Prioritäten ist der RST immer ein zufälliger Baum.\\
+Teil a): Suchpfad $P_k$\\
+Seien $P_k'$ und $P_k''$ eine Zerlegung von $P_k$: $P_k' = \{v\in P_k | key(v)<x_k\}$, $P_k'' = \{v\in P_k | key(v) > x_k\}$\\
+$w\in P_k''$ war zum Zeitpunkt seiner Einfügung der kleinste aller Knoten mit Schlüssel $> x_k$, $v\in P_k$ der größte $<x_k$\\
+Wir zeigen $E(|P_k'|) = H_k$, sowie $E(|P_k''|) = H_{n-k+1}$, daraus folgt a).\\
+Zur Abschätzung von $E(|P_k'|)$ definieren wir ein Spiel:\\
+Spiel A: Ziehe zufällige Schlüssel aus S und zähle wie oft ein Schlüssel kleiner als $x_k$ gezogen wird, der maximal ist. Das Spiel endet, sobald $x_k$ gezogen wird.\\
+$A^k = $erwartetes Ergebnis von Spiel A für den Schlüssel $x_k = E(|P+k'|)$\\
+Induktion: $A^i = H_i$ für $i<k$ (Erwartungswert: $E=\sum_{X}(prob(x)*value(x))$\\
+$A^k = \frac{1}{k}*1 + \sum_{i=1}^{k-1}\frac{1}{k}*(1-A^{k-i}) = \frac{1}{k}\sum_{i=1}^k(1+A^{k-i})=\frac{1}{k}(k+\sum_{i=0}^{k-1} H_i)= 1+\frac{1}{k}(k(H_k -1)) = H_k$\\
+$\frac{1}{k}*1$: Im ersten Zug $x_k$, $ \sum_{i=1}^{k-1}\frac{1}{k}*(1-A^{k-i})$im 1. Zug nicht $x_k$ sondern $x_i$ aus $\{x_1,...,x_{k-1}\}$
 \end{document}

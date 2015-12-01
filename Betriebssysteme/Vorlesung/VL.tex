@@ -45,10 +45,19 @@ Verbesserter Ansatz: Entwicklung als Mikrokerne, dadurch leichterer Entwicklung 
 \section{Virtuelle Maschinen}
 Ermöglicht Migration von Virtuellen Maschinen wärend des Betriebs auf andere Hardware.\\
 IBM entwickelte VM, da Maschinen zu teuer waren, um die neuen Versionen neben den Produktivsystem zu testen.\\
-VMM (Hypervisor) läuft im priviligierten Modus und nimmt die Befehle des Gastsystems an und schickt das erwartete Ergebnis zurück. Das Gastsystem läuft im User-Mode und könnte diese Befehle nicht ausführen. Das Erkennen kritischer Instruktionen ist Aufwändig.\\
+VMM (Hypervisor, Virtual Machine Monitor) läuft im priviligierten Modus und nimmt die Befehle des Gastsystems an und schickt das erwartete Ergebnis zurück. Das Gastsystem läuft im User-Mode und könnte diese Befehle nicht ausführen. Das Erkennen kritischer Instruktionen ist Aufwändig.\\
 Hypervisor (Typ1 VMM): Direkt auf der Hardware, VMM ist quasi Betriebssystem\\
-Typ2 VMM: Usermode Anwendungen (VirtualBox, etc.)\\
+Typ2 VMM: Usermode Anwendungen (VirtualBox, etc.) Application Layer\\
 Paravirutalisierung: Angepasste Gastsysteme, die kritische Stellen einem speziellen Hostsystem übergeben.\\
+Ausblick: Anwendungen laufen jeweils in eigenen kleinen VM's\\
+Immer mehr Anwendungen laufen in Managed Umgebungen (Runtime Environment etc.), also leicht virtualisiert.\\
+\section{Architekturansätze}
+\subsection{Microsoft Singularity}
+Ansatz ein neues System zu entwickeln mit Microkernel, Zuverlässigkeit und modern.\\
+Problem der aktuellen OS: Unmanaged Code und deren Zugriff auf den Adressraum. Wenn es nur Managed Software gibt, kann auch das OS managed sein. Speicherzugriff wird von Runtimes gemanaged. Dadurch müssen die Adressräume nicht isoliert werden, es gibt keine teuren Kontextwechsel.\\
+Software isoliert Prozesse (SIP): Alles in einem Adressraum, aber Isoliert durch Software.\\
+Interprozesskommunikation: Eigene Kommunikationssprache Sing\# entwickelt. Zustandbasierter Ansatz.
+Kombiniert Vorteile von Mikrokernel aber umgeht die Schwächen.\\
 
 
 

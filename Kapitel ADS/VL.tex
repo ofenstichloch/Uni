@@ -416,13 +416,77 @@ Betrachte eine Permutation $\Pi : \{1,..,n\} \rightarrow \{1,..,n\}$, die S nach
 3) Dann wächst der Baum nur an den Blättern.\\
 Duch die zufälligen Prioritäten ist der RST immer ein zufälliger Baum.\\
 Teil a): Suchpfad $P_k$\\
-Seien $P_k'$ und $P_k''$ eine Zerlegung von $P_k$: $P_k' = \{v\in P_k | key(v)<x_k\}$, $P_k'' = \{v\in P_k | key(v) > x_k\}$\\
-$w\in P_k''$ war zum Zeitpunkt seiner Einfügung der kleinste aller Knoten mit Schlüssel $> x_k$, $v\in P_k$ der größte $<x_k$\\
+Seien $P_k'$ und $P_k''$ eine Zerlegung von $P_k$: $P_k' = \{v\in P_k | key(v)\leq x_k\}$, $P_k'' = \{v\in P_k | key(v) \geq x_k\}$\\
+$w\in P_k''$ war zum Zeitpunkt seiner Einfügung der kleinste aller Knoten mit Schlüssel $\geq x_k$, $v\in P_k$ der größte $\leq x_k$\\
 Wir zeigen $E(|P_k'|) = H_k$, sowie $E(|P_k''|) = H_{n-k+1}$, daraus folgt a).\\
 Zur Abschätzung von $E(|P_k'|)$ definieren wir ein Spiel:\\
-Spiel A: Ziehe zufällige Schlüssel aus S und zähle wie oft ein Schlüssel kleiner als $x_k$ gezogen wird, der maximal ist. Das Spiel endet, sobald $x_k$ gezogen wird.\\
+Spiel A: Ziehe zufällige Schlüssel aus $\{x_1,...,x_k\}$ und zähle wie oft der Schlüssel maximal ist. Das Spiel endet, sobald $x_k$ gezogen wird.\\
 $A^k = $erwartetes Ergebnis von Spiel A für den Schlüssel $x_k = E(|P+k'|)$\\
 Induktion: $A^i = H_i$ für $i<k$ (Erwartungswert: $E=\sum_{X}(prob(x)*value(x))$\\
 $A^k = \frac{1}{k}*1 + \sum_{i=1}^{k-1}\frac{1}{k}*(1-A^{k-i}) = \frac{1}{k}\sum_{i=1}^k(1+A^{k-i})=\frac{1}{k}(k+\sum_{i=0}^{k-1} H_i)= 1+\frac{1}{k}(k(H_k -1)) = H_k$\\
-$\frac{1}{k}*1$: Im ersten Zug $x_k$, $ \sum_{i=1}^{k-1}\frac{1}{k}*(1-A^{k-i})$im 1. Zug nicht $x_k$ sondern $x_i$ aus $\{x_1,...,x_{k-1}\}$
+$\frac{1}{k}*1$: Im ersten Zug $x_k$, $ \sum_{i=1}^{k-1}\frac{1}{k}*(1-A^{k-i})$im 1. Zug nicht $x_k$ sondern $x_i$ aus $\{x_1,...,x_{k-1}\}$\\
+Spiel B: Kandidaten $\{x_k,...,x_n\}$. Ziehe zufällige Elemente und zähle wie oft ein neues Minimum gezogen wird.\\
+$B^k = $ Erwartungswert dieser Zahl\\
+Behauptung: $B^k = H_{n-k+1}$, Beweis symmetrich zu A (Übung)\\
+$\Rightarrow$ Teil a) des Lemmas: $E(|P_k|)=H_k+ H_{n-k+1} -1$. -1, weil $x_k$ doppelt gezählt.\\
+Wie in Teil a) können wir annehmen, dass der RST ein normaler binärer Baum mit zufälliger Insert-Reihenfolge $x_\Pi(1),...,x_\Pi(n)$ ist.\\
+$L_k:$ Ziehe zufällige Elemente sobald $x_k$ gezogen ist (Trigger). Zähle wie oft ein Element $> x_k$ gezogen wird, das maximal ist.\\
+$R_k:$ symmetrisch mit Element $<x_k$ minimal.\\
+Spiel C: k Kandidaten $\{x_1,...,x_k\}$\\
+$C^k := E(|L_k|) = \frac{1}{k} * A^{k-1}+\sum_{i=1}^{k-1}(\frac{1}{k}C^{k-i})$\\
+$C^k = \frac{1}{k}(H_{k-1} + \sum_{i=0}^{k-1}C^i$\\
+Trick: schätze $\Delta_j := C^{j+1} -C^j$ ab $\Rightarrow \sum_{i=0}^{k-1}C^k = \sum_{i=1}^{k-1}(\Delta_j)$\\
+Betrachte: $(j+1)*C^{j+1}-j*C^j = C^j +H_j-H_{j-1}$\\
+$\Rightarrow (j+1)*(C^{j+1}-C^j) = H_j - H_{j-1}$\\
+$\Rightarrow \frac{1}{j*(j+1)}=C^{j+1}-C^j$\\
+$\Rightarrow \Delta_j = \frac{1}{f}-\frac{1}{j+1}$\\
+$C^k = \sum_{j=1}^{k-1}\Delta_j = \sum_{j=1}^{k-1}(\frac{1}{j}-\frac{1}{j+1}) = 1-\frac{1}{k}$\\
+Spiel D: Kandidaten $\{x_k,...,x_n\}$, zähle wie oft ein Element nach $x_k$ gezogen wird, das minimal ist.\\
+$D^k = \frac{1}{n-k+1}B^{k-1} +\sum_{i=k+1}^n(\frac{1}{n-k+1}D^{i-k}$\\
+Satz: Sei T ein RST für eine Menge von n Schlüsseln.\\
+1. Die erwartete Laufzeit für Insert, Delete und Lookup ist jeweils \oh{log(n)}\\
+2. Die erwartete Zahl der Rotationen bei Insert oder Delete ist $< 2$\\
+Beweis:\\
+1. Kosten für Lookup: $E(|P_k|)$ nach einem $x_k$\\
+Lemma Teil a) $E(|P_k|) = H_k + H_{n-k+1} -1$\\
+$\Rightarrow \leq 2H_n = $\oh{ln(n)} = \oh{log(n)}\\
+Insert, Delete von $x_k$\\
+Kosten \oh{|P_k|=|L_k|+|R_k|)} = \oh{H_k + H_{n-k+1} - 1 +1 - \frac{1}{k}+1 - \frac{1}{n-k+1}} = \oh{H_n} = \oh{log(n)}\\
+2. Erwartete Anzahl an Rotationen:\\
+$E(|L_k|) + E(|R_k|) = 1-\frac{1}{k} + 1 - \frac{1}{n-k+1} < 2$\\
+\subsection{Hashing}
+Spezielle Wörterbücher, da Schlüssel ganze Zahlen. Es werden keine Vergleiche ($\leq$, $\geq$ etc.) auf der Schlüsselmenge durchgeführt. Es gibt keine lineare Ordnung.\\
+Genauer: Verwalte Schlüsselmenge $S\subseteq \{0,..,N-1\}$ mit eventuell dazugehörigen Daten (Satellitendaten).\\
+Operationen: Lookup(x), Insert(x), Delete(x)\\
+Wie immer gilt $n=|S|$, $N=$Anzahl aller Schlüssel.\\
+Triviale Lösung: \\
+Verwende ein Feld $T[0...N-1]$ (Tafel). Speichere $x\in S$ (mit seinen Daten) an Tafelposition x, d.h. $T[x] \leftarrow x$\\
+Für alle $y  \not\in S: T[y] \leftarrow null (-1)$\\
+Lookup(x): return T[x]\\
+Problem: Speicherplatz \oh{N}, Ziel \oh{n}\\
+Ziel Hashing: Laufzeig \oh{1}, Speicher \oh{n}\\
+Hashtable: $T[0...m-1]$ mit m Größe der Tafel $m<<N$\\
+Hashfunktion: $h: U \rightarrow \{0,...,m-1\}$ mit Universum $U=\{0,...,N-1\}$. Speichert $x\in S$ an Position h(x)\\
+Insert: $T[h(x)] \leftarrow x $(Daten)\\
+Lookup(x): Teste on $T[h(x)] == x$\\
+Die Hashfunktion entscheided, wie die Tabelle kleiner als die Schlüsselmenge werden kann.\\
+Häufig verwendete naive Hashfunktion: $h:x\rightarrow x\ mod\ m$\\
+Es treten Kollisionen auf, wenn $h(x)=h(y)$ mit $x\neq y$\\
+Kollisionsbehandlung:\\
+1. Hashing mit Verkettung (Kollisionsmengen werden in Liste gespeichert und mit abgefragtem Wert abgeglichen)\\
+Oft $m < n$. Speichere alle Schlüssel $x\in S$ mit $h(x)=i$ in einer Liste $T[i]$. Meißt wird als Funktion der einfache Modulo verwendet.\\
+Lookup(x): Durchsuche Liste von $T[h(x)]$ linear. \oh{1+|T[h(x)]}, worstcase \oh{n}\\
+\hspace*{1cm} Erwartete Kosten: \oh{1+\frac{n}{m}} (Übung), Belegungsfaktor $\beta = \frac{n}{m}$ (Erwartete Länge einer Liste T[x]\\
+Insert(x): Falls Lookup(x)=null füge x an erste Stelle von $T[h(x)]$ ein. \\
+Delete(x): Entfernt x aus der Liste $T[h(x)]$\\
+Verbesserung: Immer wenn $\beta >4 $ wird, verdopple die Tafelgröße. 1 sehr teures Insert $\rightarrow$, im Schnitt weiter \oh{1}\\
+Bei Delete und kleinem $\beta$ kann Tabelle halbiert werden. 1 sehr teures Delete.\\
+2. Hashing mit offener Adressierung (Ausprobieren einer Folge von Positionen)\\
+Voraussetzung: $n\leq m$ und damit $\beta \leq 1$\\
+Idee: Folge von Hashfunktionen $h_0, h_1,...$: $h_i(x) = (f(x) + i * g(x))\ mod\ m$\\
+Mit f,g Hashfunktionen $U\rightarrow \{0,..,m-1\}$\\
+f(x) gibt die Startposition an, g(x) verschiebt diese.\\
+h(x)=1 heißt Linear Probing.\\
+Falls belegt probiere $h_1(x), h_2(x),...,$, bis freie Stelle gefunden.\\
+3. Perfektes Hashing (keine Kollision durch injektive Funktion) Voraussetzung $n\leq m$
 \end{document}

@@ -455,6 +455,7 @@ Kosten \oh{|P_k|=|L_k|+|R_k|)} = \oh{H_k + H_{n-k+1} - 1 +1 - \frac{1}{k}+1 - \f
 2. Erwartete Anzahl an Rotationen:\\
 $E(|L_k|) + E(|R_k|) = 1-\frac{1}{k} + 1 - \frac{1}{n-k+1} < 2$\\
 \subsection{Hashing}
+Speicherung dünn besetzter Tabellen / sparse tables\\
 Spezielle Wörterbücher, da Schlüssel ganze Zahlen. Es werden keine Vergleiche ($\leq$, $\geq$ etc.) auf der Schlüsselmenge durchgeführt. Es gibt keine lineare Ordnung.\\
 Genauer: Verwalte Schlüsselmenge $S\subseteq \{0,..,N-1\}$ mit eventuell dazugehörigen Daten (Satellitendaten).\\
 Operationen: Lookup(x), Insert(x), Delete(x)\\
@@ -488,5 +489,21 @@ Mit f,g Hashfunktionen $U\rightarrow \{0,..,m-1\}$\\
 f(x) gibt die Startposition an, g(x) verschiebt diese.\\
 h(x)=1 heißt Linear Probing.\\
 Falls belegt probiere $h_1(x), h_2(x),...,$, bis freie Stelle gefunden.\\
-3. Perfektes Hashing (keine Kollision durch injektive Funktion) Voraussetzung $n\leq m$
+Der Status der Positionen kann in einem zweiten Feld status[0..m-1] gespeichert werden (frei, besetzt, gelöscht).\\
+Lookup(x): Durchsuche Folge $T[h_0(x)],T[h_1(x)]...$ bis x gefunden, oder freie Position (dann ist x nicht enthalten)\\
+Delete(x): Lookup(x) , markiere Position als frei. Problem: Elemente dahinter unerreichbar.\\
+\hspace*{1cm}  Lösung: gelöscht flag im Statusarray. Lookup übergeht diesen und hält nicht, Insert erkennt es als freies Feld.\\
+3. Perfektes Hashing (keine Kollision durch injektive Funktion) Voraussetzung $n\leq m$\\
+$S\subseteq \{0,...,N-1\} n=|S|$ verwende Tafel der Größe $m\geq n$ und m=\oh{n}\\
+Statisch: S ist fest, nur 2 Operationen. Init(S) Konstruktor, Lookup(x)\\
+Ziel: Tafelgröße s=\oh{n}, Hashfunktion injektiv auf S\\
+Gegeben $S\subseteq \{0,..,N-1\}$ und Tafel $T[-,...,s-1]$\\
+Injektive Funktion $h:\{0,...,N-1\} \rightarrow \{0,...,s-1\}$ injektiv auf S\\
+Idee: Verwende ein randomisiertes Verfahren, d.h. wähle eine zufällige Funktion aus den Kandidaten.\\
+Originalarbeit: Storing a Sparse Table with \oh{1} worst-case Access Time\\
+Verwende zweistufiges Hashing Schema (injektiv), Auswahl der Funktion durch Randomisierung\\
+1. Schritt: Funktion (muss noch nicht injektiv sein) bildet auf eine Liste von Buckets ($W_0,...,W_{s-1}$) $W_i=\{x\in S | h(x)=i\}$ ab, mit s der Größe der ersten Stufe.\\
+2. Schritt: Für jedes $W_i$ gibt es eine eigene Hashfunktion $h_i$, die jeweils auf eine weitere Tafel der Größe s abbilden. $h_i$ ist injektiv auf $W_i$. Für jedes $W_i$ gibt es eine eigene 2. Tafel $\{m_0,...,m_{s-1}\}$. Dadurch gibt es auf der zweiten Stufe quadratische Tafelgröße.\\
+Man findet "leicht" eine Funktion h der ersten Stufe mit $\sum_{i=0}^{s-1} |W_i|^2 = $\oh{n}\\
+Für Tafeln quadratischer Größe findet man relativ leicht injektive Hashfunktion.
 \end{document}

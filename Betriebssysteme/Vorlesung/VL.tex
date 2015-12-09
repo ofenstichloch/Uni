@@ -58,6 +58,15 @@ Problem der aktuellen OS: Unmanaged Code und deren Zugriff auf den Adressraum. W
 Software isoliert Prozesse (SIP): Alles in einem Adressraum, aber Isoliert durch Software.\\
 Interprozesskommunikation: Eigene Kommunikationssprache Sing\# entwickelt. Zustandbasierter Ansatz.
 Kombiniert Vorteile von Mikrokernel aber umgeht die Schwächen.\\
+\section{Concurrency}
+Virtuelle Prozessoren: Erstelle für jeden virt. Prozessor einen eigenen Stack, sowie den CPU-Zustand (Register etc.)\\
+Kontrollfluss siehe Syssoft: Running$\rightarrow$Block: speicher Zustand in Speicher, erlaube einem ready-Prozess CPU-Zeit\\
+Scheduler sendet regelmäßig interrupts, um monopolisierung zu verhindern.\\
+Competition: Threads wollen CPU behalten.... Für immer..\\
+Cooperation: Threads wissen, wann sie warten und geben CPU ab (per Semaphore/Mutex etc.)\\
+Blockieren/Freigeben von Threads via Semaphore ist relativ teuer.\\
+Prozessoren und Programmiersprachen bieten Interlocked-Methoden, die im Prozessor atomar ausgeführt werden.\\
+Producer-Consumer/Reader-Writer Problem!\\
 
 
 

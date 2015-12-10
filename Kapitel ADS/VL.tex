@@ -506,4 +506,37 @@ Verwende zweistufiges Hashing Schema (injektiv), Auswahl der Funktion durch Rand
 2. Schritt: Für jedes $W_i$ gibt es eine eigene Hashfunktion $h_i$, die jeweils auf eine weitere Tafel der Größe s abbilden. $h_i$ ist injektiv auf $W_i$. Für jedes $W_i$ gibt es eine eigene 2. Tafel $\{m_0,...,m_{s-1}\}$. Dadurch gibt es auf der zweiten Stufe quadratische Tafelgröße.\\
 Man findet "leicht" eine Funktion h der ersten Stufe mit $\sum_{i=0}^{s-1} |W_i|^2 = $\oh{n}\\
 Für Tafeln quadratischer Größe findet man relativ leicht injektive Hashfunktion.
+Sei p eine Primzahl mit $p>N$. $U=\{0,...,N-1\}, S\subseteq U,n=|S|$, $s\in\mathbb{N}$ Tafelgröße\\
+Betrachte folgende Hashfunktionen $h_1,...,h_{p-1}$\\
+$h_k:\{0,...,N-1\} \rightarrow \{0,...,s-1\}$\\
+$h_k(x) = (k*x\ mod\ p)\ mod\ s$\\
+Jede Funktion $h_k, 1\leq k\leq p-1$ veteilt die Menge S auf s Buckets:\\
+$W_0^k,...,W_{s-1}^k$, d.h. genauer: $W_i^k = \{x\in S|h_k(x)=i\}$\\
+Lemma1: Für jede Menge $S\subseteq \{0,...,N-1\}$ mit $|S|=n$ gilt:\\
+$\exists k, 1\leq kleq p-1$ mit $\sum_{i=0}^{s-1}({|W_i^k| \choose 2})<\frac{n^2}{s}$\\
+$({n \choose k}) = \frac{n!}{k!(n-k)!}$: Anzahl der k-elementigen Teilmengen einer Menge der Größe n\\
+$({n \choose 2}) = \frac{n*n-1}{2}$\\
+hier: $({|W_i^k| \choose 2})$: Anzahl aller $\{x,y\} x\neq y, x,z\in S$, die im selben Bucket $W_i^k$ landen. (\#Kollisionen)
+Beweis:\\
+Behauptung: $\sum_{k-1}^{p-1}\sum_{i=0}^{s-1}({|W_i^k| \choose 2}) < (p-1)\frac{n^2}{s}$ (Beweis später)\\
+Daraus folgt Lemma1. Indirekt gilt Lemma 1 nicht $\Rightarrow \forall 1\leq k\leq p-1: \sum_{i=0}^{s-1}({|W_i^k| \choose 2}) \geq \frac{n^2}{s}\Rightarrow \sum_{i=1}^{p-1}\sum_{i=0}^{s-1}({|W_i^k| \choose 2}) \geq (p-1)\frac{n^2}{s} $Widerspruch zu Behauptung\\
+Folgerung 1: Für $s=n$ (d.h. Tafelgröße n) folgt aus Lemma1: $\exists k, 1\leq k\leq p-1: \sum_{i=0}^{n-1}(|W_i^k|^2)<3n$\\
+Beweis: Betrachte Lemma1 für s=n\\
+$\exists 1\leq k\leq p-1 :\sum_{i=0}^{n-1}({|W_i^k| \choose 2}) < n$\\
+$\sum_{i=0}^{n-1}\frac{|W_i^k|*(|W_i^k|p1)}{2} < n$\\
+$\sum_{i=0}^{n-1}|W_i^k|(|W_i^k|-1) <2n$\\
+$\sum_{i=0}^{n-1}(|W_i^k|^2-|W_i^k|) <2n$\\
+$\sum_{i=0}^{n-1}|W_i^k|^2 < 2n+\sum_{i=0}^{n-1} |W_i^k|$ wobei $\sum_{i=0}^{n-1} |W_i^k| = n$ also $|S|$\\
+Folgerung 2: Für $s=n^2$ foglt aus Lemma 1: $\exists 1\leq k' \leq p-1$ sodass die Hashfunktion $h_{k'}:x\rightarrow (k'*x\ mod\ p)\ mod\ n^2$ die injektiv auf S ist, d.h. $|W_i^{k'}|\leq 1$ für $i=0,...,n^2-1$\\
+Für quadratische Tafelgrößen existiert eine perfekte Hashfunktion $h_{k'}$\\
+Beweis: Betrachte Lemma 1 für $s=n^2$\\
+$\exists 1\leq k'\leq p-1$ mit $\sum_{i=0}^{n-1}({|W_i^{k'}| \choose 2}) < \frac{n^2}{2}=1\Rightarrow \sum_{i=0}^{n^2-1}({|W_i^{k'}| \choose 2}) = 0 \Rightarrow \forall 0\leq i \leq n^2-1: |W_i^{k'}|\leq 1 \Rightarrow \#Kollisionen=0$\\
+Vermeidung des quadratischen Speicherplatzes durch ein 2-Stufiges hashing-Schema.\\
+1. Stufe: Verwende Tafelgröße s=n und wähle ein k gemäß der Folgerung d.h. $\sum_{i=0}^{n-1}|W_i^k|^2<3n$\\
+Die Hashfunktion $h_k(x):x\rightarrow (kx\ mod\ p)\ mod\ n$ verteilt s auf eine Tafel der Größe n, sodass die Summe der Quadrate der Bucketgrößen kleiner ist als 3n.\\
+2. Stufe: Für jedes nicht-leere Bucket $W_i^k$ der 1. Stufe verwende eine Tafel der Größe $s_i=|W_i^k|^2$ und wähle $k_i$ gemäß Folgerung 2. Genauer: Für i=0,...,n-1 wähle ein $k_i$ sodass $h_{k_i}(x): x\rightarrow (k_ix\ mod\ p)\ mod\ s_i$ injektiv auf $W_i^k$ ist.\\
+Gesamtbedarf: 1. Stufe: Platz n, 2. Stufe: $\sum_{i=0}^{n-1}|W_i^k|^2 < 3n$ ungefähr $4n$, genauer später.\\
+Problem: Wie findet man diese injektiven Funktionen, d.h. wie wählt man k und $k'$\\
+Idee: Erhöhe die Tafelgrößen auf Stufe 1 und Stufe 2 um einen konstanten Faktor. Dann erfüllen mindestens 50\% aller k die Bedingungen von Folge 1\&2\\
+
 \end{document}

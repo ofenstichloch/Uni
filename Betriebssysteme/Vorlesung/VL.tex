@@ -67,7 +67,18 @@ Cooperation: Threads wissen, wann sie warten und geben CPU ab (per Semaphore/Mut
 Blockieren/Freigeben von Threads via Semaphore ist relativ teuer.\\
 Prozessoren und Programmiersprachen bieten Interlocked-Methoden, die im Prozessor atomar ausgeführt werden.\\
 Producer-Consumer/Reader-Writer Problem!\\
-
+Spin-Locks: Erfordern atomaren Lese-/Schreibzyklus (Nicht Read/Write getrennt)\\
+TAS(Test and Set) gibt den ursprünglichen Wert der Adresse zurück, bevor diese von TAS beschrieben wird.\\
+Schnellste Art der Synchronisation, wenn auf many-core, durch paralleles busy-waiting.\\
+Vorteil: Schnelle Behandlung der Scheduler-Queues\\
+Nachteil: Kooperierende Threads, die parallel laufen sollten.\\
+Aktuelle Betriebssysteme kennen keine Gang-Threads, Gruppen von Threads, die gleichzeitig laufen wollen.\\
+Gedankenspiel: Es gibt keinen atomaren Lese-/Schreibzyklus\\
+Grundlage: Es gibt einen kritischen Abschnitt\\
+Implementierung enter() leave() des kritischen Abschnitts.\\
+volatile: Variable kann sich durch anderen nicht jetzt compilierten code verändern, der Compiler soll es nicht wegoptimieren.\\
+Deadlock: Es geht nicht weiter, aber alle Beteiligten tuen nichts\\
+Lifelock: Es geht nicht weiter, aber alle Beteiligten brennen den Prozessor weg.
 
 
 \end{document}

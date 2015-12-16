@@ -538,5 +538,28 @@ Die Hashfunktion $h_k(x):x\rightarrow (kx\ mod\ p)\ mod\ n$ verteilt s auf eine 
 Gesamtbedarf: 1. Stufe: Platz n, 2. Stufe: $\sum_{i=0}^{n-1}|W_i^k|^2 < 3n$ ungefähr $4n$, genauer später.\\
 Problem: Wie findet man diese injektiven Funktionen, d.h. wie wählt man k und $k'$\\
 Idee: Erhöhe die Tafelgrößen auf Stufe 1 und Stufe 2 um einen konstanten Faktor. Dann erfüllen mindestens 50\% aller k die Bedingungen von Folge 1\&2\\
-
+Beweis der Behauptung:\\
+(*)$\sum_{k=1}^{p-1}\sum_{i=0}^{s-1} {|W_i^k| \choose 2})<(p-1)\frac{n^2}{s}\Rightarrow \exists k:\sum_{i=0}^{s-1}({|W_i^k| \choose 2})<\frac{n^2}{s}$\\
+Mit p Primzahl $p\geq N$
+Die Summe ist: Anzahl aller Paare $(l,\{x,y\})$ mit $1\leq k \leq p-1,\ x,y\in S,\ x\neq y$ und $h_k(x) = h_k(y)$ (Kollision).\\
+Beitrag eines festen Paares $x\neq y$ zu der Summe = Anzahl aller k mit $h_k(x)=h_k(y)$\\
+$(kx\ mod\ p-ky\ mod\ p)\ mod\ s = 0$\\
+$kx\ mod\ p-ky\ mod\ p = i*s\ i\in \mathbb{Z}$\\
+$k*(x-y)\ mod\ p\in \{-(p-1),...,p-1\}$ Vielfaches von s aus der Menge $\Rightarrow \frac{2*(p-1)}{s}$ verschiedene Gleichungen\\
+Lösen der Gleichung nach k $k=\frac{i*s}{x-y}\ mod\ p)$ Da p eine Primzahl ($\mathbb{Z_p}$ ein Körper) existiert eine wohl-definierte Division (inverse zur Multiplikation) und daher besitzt jede Gleichung höchstens eine Lösung für k.\\
+$\Rightarrow$ Der Beitrag von \{x,y\} $x\neq y$ zur Summe $\leq \frac{2(p-1)}{s}$\\
+Wir summieren über  alle 2-elementigen Teilmengen $\{x,y\}, x\neq y, x,y\in S$:\\
+Anzahl der Teilmengen (*) $\leq ({n \choose 2}) * \frac{2(p-1)}{s}=\frac{n(n-1)}{2}*\frac{2(p-1)}{s}\leq n^2\frac{p-1}{s}$\\
+Implementierung Beispiel:\\
+3 Felder (1. Stufe) $W[0...n-1]$ mit $W[i]$ Pointer auf Bucket 2. Stufe.\\
+\hspace*{1cm}size]-...n-1] Anzahl aller Elemente in $W_i^k$\\
+\hspace*{1cm} $K[0...n-1]$ mit $K[i]=k_i$ k-Werte der 2. Stufe.\\
+\hspace*{1cm} Variable $k_0 = $k der ersten Stufe\\
+Für 2. Stufe: n Tafeln $B_i$ mit $i=0...n-1$ und $B_i[0...size[i]^2-1]$\\
+Platzbedarf: $size+K+W+k_0+B_i = 3n+1\ +\ \sum_{i=0}^{n-1} size[i]^2 \leq 6n+1 =$\oh{n}\\
+Speichere $x\in S$ wie folgt: $i\leftarrow h_{k_0}(x),\ j\leftarrow h_{K[i]}(x),\ W[i][j] \leftarrow x$\\
+Mit $h_{k_0} = ((k_0*x\ mod\ p)\ mod\ n$ und $h_{K[i]}(x) = ((K[i] * x)\ mod\ p)\ mod\ size[i]^2$\\
+Lookup: Teste ob W[i][j]==x\\
+Bemerkung: Für size[i]=0 kein $B_i$ auf 2. Stufe, W[i]=null; Für size[i]=1 keine neue Hashfunktion K[i], speichere direkt.\\
+\hspace*{1cm} Für kleine size[i] konstant kann man Verkettung anstelle von Hashfunktion+Tabelle nehmen.
 \end{document}

@@ -562,4 +562,125 @@ Mit $h_{k_0} = ((k_0*x\ mod\ p)\ mod\ n$ und $h_{K[i]}(x) = ((K[i] * x)\ mod\ p)
 Lookup: Teste ob W[i][j]==x\\
 Bemerkung: Für size[i]=0 kein $B_i$ auf 2. Stufe, W[i]=null; Für size[i]=1 keine neue Hashfunktion K[i], speichere direkt.\\
 \hspace*{1cm} Für kleine size[i] konstant kann man Verkettung anstelle von Hashfunktion+Tabelle nehmen.
+Aufbauzeit: \oh{n*N} für Garantie eines k (alle k ausprobieren)\\
+Randomisierung: Wir brauchen viele geeignete k's, dann ist mit hoher Wahrscheinlichkeit ein zufällig gewähltes gut.\\
+Folgerung 3: Für $s=n$ in Lemma 1 gilt für mindesetens die Hälfte aller k $1\leq k\leq p-1$ $\sum_{i=0}^n |W_i^k|^2 < 5n$\\
+Beweis: $\sum_{k=1}^{p-1}\sum_{i=0}^{s-1}({|W_i^k| \choose 2}) < (p-1)\frac{n^2}{s}$\\
+$\sum_{k=1}^{p-1}\sum_{i=0}^{n-1}({|W_i^k| \choose 2}) <(p-1)n$\\
+Anhand der Behauptung hälfte aller ks: $\sum_{i=0}^{n-1}({|W_i^k|\choose 2}) < 2n$ denn sonst ist für mehr als die hälfte der Wert $\geq 2$\\
+(2n ist ungefähr der Mittelwert der $W_i^k$'s.\\
+$\Rightarrow \sum_{i=0}^{n-1} \frac{|W_i^k|(|W_i^k|-1)}{2}<2n$\\
+\hspace*{1cm}$\sum_{i=0}^{n-1} |W_i^k|^2 - \sum_{i=0}^{n-1} |W_i^k| < 4n$
+Da $\sum_{i=0}^{n-1} |W_i^k| = n$: $\sum_{i=0}^{n-1} |W_i^k|^2<5n$\\
+Folgerung 4: Für $s=2n^2$(Lemma 1) gilt für mindestens die Hälfte aller k' $1\leq k'\leq p-1$: $h_{k'}(x)\rightarrow (k'x\ mod\ p)\ mod\ 2n^2$ ist injektiv auf S.\\
+Beweis: $s=2n^2$: $\sum_{k=0}^{p-1}\sum_{i=0}^{2n^2-1} ({|W_i^k| \choose 2}) < (p-1) \frac{n^2}{2n^2} \Rightarrow <\frac{1}{2}(p-1)$\\
+Daraus folgt, dass für mindestens die Hälfte aller k $1\leq k\leq p-1$ gilt: $\sum_{i=0}^{2n^2-1}({ |W_i^k| \choose 2}) = 0$ (das entsprechende $h_k$ ist injektiv.\\
+Platzbedarf: 1. Stufe:$3n+1$, 2. Stufe: $\sum_{i=0}^{n-1}2|W_i^k|^2 = 2\sum_{i=0}^{n-1}|W_i^k|^2 < 10n$. Insgesamt 13n+1=\oh{n}\\
+Randomisierte Berechnung der k-Werte. Mindestens die Hälfte sind geeignet. Dann ist zufälliges k mit Wahrscheinlichkeit $\frac{1}{2}$ ok. $\Rightarrow$ Erwartete Anzahl von zufälligen Ziehungen bis ein k gefunden ist ist 2. Erwaretete Aufbauzeit \oh{n}\\
+Zusammenfassung (Perfect Hashing): Jede Menge $S\subseteq \{0,...,N-1\}$ mit $|S|=n$ kann so abgespeichert werden, dass gilt:\\
+\hspace*{1cm}1: Platzbedarf ist \oh{n} (13n)\\
+\hspace*{1cm}2: Erwartete Aufbauzeit ist \oh{n}\\
+\hspace*{1cm}3: Zugriff (Lookup) in Ziet \oh{1} im worst-case\\
+Dynamisierung (Insert/Delete) ist möglich (Dynamic perfect hashing)\\
+Bei Kollisionen (unwahrscheinlich) muss Tafels 2. Stufe neu gebaut werden (Rehashing)\\
+\subsection{Priority Queues}
+Definition des Datentyps: Priority Queue PQ speichert Paare (p,i) von Prioritäten und Informationen $p\in P, i\in I$\\
+z.B. P ganze Zahlen, I Knoten eines Graphen\\
+Operationen: PQ.insert(p,i) fügt das Paar (p,i) ein. PQ.findmin() liefert ein Paar mit minimaler Priorität. PQ.delmin() entfernt das Paar PQ.findmin(). PQ.decrease\_p(x,q) vermindert die Priorität des Paares x=(p,i) auf q d.h. (q,i) mit $q<p$\\
+\subsubsection{Mögliche Implementierung}
+1. Unsortierte Liste: Liste speichert Wert und Priorität, Insert/Decrease=O(1), Find=O(n)\\
+2. Sortierte Liste (Suchbaun)\\
+3. Fibonacci Heap\\
+\subsubsection{Amortisierte Analyse Fibonacci Heap}
+Abschätzung einer beliebigen Folge von Operationen auf einer Datenstruktur D: $D_0\rightarrow^{op_0}D_1\rightarrow^{op_1}D_2...$\\
+Die amortisierten Kosten sind die durchschnittlichen Kosten einer beliebigen Operation. (Hier Gesamtkosten / n)\\
+Beispiel: Binärzähler mit den Operationen Init (Setze auf 0) und Increase (erhöhe um 1)\\
+Datenstruktur: Bitstring $...a_3a_2a_1a_0$ mit $ a_i\in \{0,1\}$\\
+Zählerwert = $\sum_{i\geq 0}a_i2^i$\\
+Operationen: Init: Erzeuge Liste der Länge 1 mit $a_0=0$. Kosten \oh{1}\\
+Increment:\\
+$a_0\leftarrow a_0+1$\\
+$i=0$\\
+while $a_i=2$ do\\
+$a_i=0;a_{i+1}\leftarrow a_{i+1}+1;i\leftarrow i+1;$\\
+done\\
+Increment Laufzeit: \oh{1+\text{Anzahl Überträge}}
+Laufzeit einer Folge Init und n Increment: \oh{n*log(n)} (worst case), da die Zahl log(n) Bits hat.\\
+Da so hohe Überträge sehr selten sind eher \oh{n}
+\subsubsection{Amortisierte Analyse: Potentialmethode}
+Allgemein: Datenstruktur D, Potential (Funktion $pot:D\rightarrow R_0^+$\\
+Operation: $op: D'\rightarrow^{op}D''$\\
+Definition: $T_{\text{Tats}}(op): $ Ausführungszeit einer Operation (Tatsächliche Kosten)\\
+\hspace*{1cm} $T_{\text{Amort}}(op) = T_{\text{Tats}}(op)+pot(D'')-pot(D')$\\
+\hspace*{1cm} D.h.:$T_{\text{Amort}}(op) = T_{\text{Tats}}(op)+\Delta pot$\\
+Betrachte nun eine Folge von n Operationen: $D_0\rightarrow^{op_0}D_1\rightarrow^{op_1}D_2\rightarrow^{op_n}D_n$\\
+Dann gilt: $\sum_{i=1}^n T_{\text{Tats}}(op_i) = \sum_{i=1}^n T_{\text{Amort}}(op_i) + pot(D_0) - pot(D_n)$\\
+Spezialfall: $pot(D_0) = 0; pot(D_i)\geq 0 \Rightarrow \sum_{i=1}^n T_{\text{Tats}}(op_i) \leq \sum_{i=1}^n T_{\text{Amort}}(op_i)$
+Anwendung auf Zähler (INIT$\rightarrow D_0 \rightarrow^{increment} D_1...$):\\
+Problem: Wähle gut Potentialfunktion, die eine gute Schranke liefert.\\
+Hier: pot = Anzahl aller 1 im Bitstring. Bedingung des Spezialfalls erfüllt.\\
+Betrachte nun $T_{\text{Tats}}$ und $T_{\text{Amort}}$\\
+Wenn der Zähler nun folgende Form hat: $xxx0111$ mit der ersten Null von rechts aus gesehen und k Einsen davor, dann ist:\\
+1. $T_{\text{Tats}}(incr)=$\oh{1+k}\\
+2. $\Delta pot=1-k$\\
+Also: $T_{\text{Tats}}(incr)=1+k + (1-k )= 2 =$\oh{1}\\
+$\Rightarrow$ Potentialmethode Gesamtkosten 2n = \oh{n}
+\subsubsection{Fibonacci Heaps}
+Warteschlangen werden realisiert durch eine Menge sogenannter "Heap ordered Trees".\\
+Ein Baum T heißt "Heap ordered", wenn seine Knoten mit Prioritäten beschriftet sind, sodass  für alle Knoten $v\neq $Wurzel gilt: prio(v)$\geq$ prio(vater(v)).\\
+Wir benötigen einige Pointer in den Knoten: Vater, Verweise auf 1. Kind, alle Kinder eines Knoten in zyklischer doppeltverketteten Liste (2 Verweise im Knoten), und Daten\\
+Mögliche Klasse:\\
+\begin{lstlisting}
+class node{
+	P prio;
+	I indo;
+	node parent,left_sib,right_sib;
+	bool mark;
+	int rank
+}
+\end{lstlisting}
+\includegraphics[scale=0.1]{7.png}\\
+Auch Wurzel ist in einer zyklischen Liste (Wurzelliste).\\
+Realisierung der Operationen:\\
+Konstruktor(Init)\oh{1}: min=0\\
+PQ.findmin()\oh{1}: Zugriff über min\_pointer\\
+PQ.insert(p,i)\oh{1}:  Erzeuge neuen Baum, der nur aus 1 Knoten besteht. Füge v in die Wurzelliste dieses Baums ein, v.prio = p, v.info = i. Falls $p<minprio$ dann min=v\\
+PQ.delmin(): Bringt Fib.-Heap in eine besondere Form: 
+Alle Wurzeln sollen paarweise unterschiedliche Rängehaben (\# Kinder).\\
+delmin im Detail:\begin{enumerate}
+\item[1.] $v\leftarrow min$
+\item[2.] Lösche v aus der Wurzelliste (doppelt verkettet) und füge alle Kinder v in die Wurzelliste ein. (Hier entstehen gleiche Ränge. \oh{rang(v)}
+\item[3.] Eliminiere Mehrfach-Vorkommen des gleichen Rangs:\\
+while $\exists$ 2 Wurzeln $v_1,v_2$ gibt, sodass $v_1\neq v_2$ und rang($v_1$)=rang($v_2$)\\
+do: If $v_1.prio\leq v_2.prio$, sonst vertausche ; Verschmelze($v_1,v_2$) (Mache $v_2$ zum Kind von $v_1$)\\
+(Hänge Baum größerer Priorität an den der kleineren Priorität)\\
+Daraus folgt: Alle Wurzeln haben verschiedenen Rang $\Rightarrow$ \# Wurzeln $\leq$ max Rang.\\
+Kosten: \oh{maxRang}\\
+\item[4.]Lineare Suche nach Minimum
+\end{enumerate}
+Lemma: Schritt 3 hat Laufzeit $T_{\text{Tats}}$ \oh{maxRang + \# Verschmelzungen}\\
+Beweis: durch Algorithmus\\
+Idee: Verwende Feld (Tafel) Rank[0,...,maxRang]. Speichere in Rank[i] die Wurzel mit Rang=i (unter allen bereits bearbeiteten Wurzeln)
+\begin{lstlisting}
+for i=0 to maxRang do Rank[i] = null od
+forall wurzel v in Wurzelliste do
+	while Rank[rang(v)] != null do
+		vtmp = Rank[rang(v)]
+		Rank[rang(v)] = null
+		v = Verschmelze (v,vtmp)
+	done
+	Rank[rang(v)]=v
+done
+\end{lstlisting}
+Laufzeit: Sei \# $W_0$ = \# Wurzeln vor z.2; \# $W_1$ = \# Wurzeln nach z.2; \# V=\# Verschmelzungen \\
+Dann gilt: \\
+1. Laufzeit von z.2 \oh{maxRang + \# W_0 + \# V}\\
+2. \# $W_0$ = $\# W_1 + \# V$ Weil jede Verschmelzung eine Wurzel eliminiert\\
+3. Am Ende ist \# $W_1\leq maxRang$ da alle Ränge verschieden)\\
+$\Rightarrow$ \oh{maxRang +\# W_0 + \# W_1} = \oh{maxRang + \# W_1 + \# V + \# W_1} = \oh{maxRang + \# W_1 + \# V} = \oh{maxRang+\# V}\\
+Da $\# W_1 \leq maxRang$. Es bleibt abzuschätzen was maxRang und \# V ist.\\
+Wir schätzen den maximalen Rang ab. Beobachtung Insert,Delmin erzeugen spezielle Bäume (binomische Bäume).\\
+Folge von Bäumen: $T_0,...,T_i$ mit $T_0$ ein Knoten, $T_{i+1}$ ist $T_i$ mit einem weiteren $T_i$ als zusätzliches Kind.\\
+Der Maximale Rang ist an der Wurzel. Anzahl der Knoten verdoppelt sich mit steigendem i, Rang erhöht sich um 1.\\
+maxRang = log(n)
 \end{document}

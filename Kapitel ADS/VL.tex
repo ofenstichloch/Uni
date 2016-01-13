@@ -682,5 +682,47 @@ Da $\# W_1 \leq maxRang$. Es bleibt abzuschätzen was maxRang und \# V ist.\\
 Wir schätzen den maximalen Rang ab. Beobachtung Insert,Delmin erzeugen spezielle Bäume (binomische Bäume).\\
 Folge von Bäumen: $T_0,...,T_i$ mit $T_0$ ein Knoten, $T_{i+1}$ ist $T_i$ mit einem weiteren $T_i$ als zusätzliches Kind.\\
 Der Maximale Rang ist an der Wurzel. Anzahl der Knoten verdoppelt sich mit steigendem i, Rang erhöht sich um 1.\\
-maxRang = log(n)
+Lemma: maxRang = log(n) in binomischen Bäumen, wobei n die Anzahl der Knoten ist.\\
+Beweis: 1. Die Wurzel von $T_i$ hat Rang i, $T_i$ hat $2^i$ Knoten (verdoppelt sich in jedem Schritt $i\rightarrow i+1$\\
+\hspace*{0.5cm}$\Rightarrow$ Wurzel hat Rang log(n).\\
+\hspace*{0.5cm}2. Wurzel hat maximalen Rang in $T_i$, da alle Nachkommen Wurzen von $T_j$ sind, mit $j<i$. 2. Folgt aus 1.\\
+Fibonacci-Heap ist eine Menge von binomischen Bäumen. Nach Lemma gilt maxRang$\leq log(n)$ wobei n Anzahl der Knoten ist.\\
+Amortisierte Analyse:\\
+\hspace*{0.5cm} Potential = Anzahl der Wurzeln.\\
+$T_{\text{amort}}(op)=T_{\text{tats}}(op) + \Delta pot$\\
+Betrachte beliebige Folge von Operationen. Dann sind:\\
+create=\oh{1}, finMin=\oh{1}, da $T_{\text{tats}}=$\oh{1} und $\Delta pot=0$.\\
+insert: $T_{\text{tats}}=$\oh{1} und $\Delta pot=1 \Rightarrow T_{\text{amort}}=$\oh{1}\\
+delmin: $T_{\text{tats}}=$\oh{maxRang+\#V}. $\Delta pot \leq $maxRang $-\#V$, wobei die Kinder von v zu Wurzeln werden und jede Verschmelzung eine Wurzel entfernt\\
+\hspace*{0.5cm} $T_{\text{amort}} = T_{\text{tats}}+\Delta pot \leq maxRang +\#V + maxRang -\#V=2maxRang = $\oh{log(n)}\\
+Bemerkung: Amortisierte Analyse kann auch modelliert werden durch sogenannte "coin operated machines". Das Potential wird dabei als eine Art Konto angesehen. \\
+Eine beliebige Folge von $n_1$ Inserts, $n_2$ FindMins, $n_3$ DelMins und 1 Create hat Gesamtkosten \oh{n_1+n_2+n_3*log(n)}\\
+Worstcase Kosten von delMin sind \oh{n}\\
+Wir behandeln nun PQ.decrease(v,q): v Knoten, q neue kleinere Priorität.\\
+Schritte:\begin{enumerate}
+\item[1] v.prio = q (verminderung), verletzt u.U. die Heap-Eigenschaft \oh{1}
+\item[cut] Lösche den Pointer zum Vaterknoten und füge v in die Wurzelliste ein (und aus Geschwisterliste löschen), Kinderknoten hängen weiterhin an v, setze v.mark=false \oh{1}
+\item[3] Update des min-Pointers für minimale Wurzel \oh{1}
+
+\end{enumerate}
+Achtung: Baum ist nicht mehr binomisch $\rightarrow$ log(n) Schranke für maxRang ist nicht mehr gültig\\
+Wie kann man den Rang dennoch auf log(n) beschränken:\\
+Idee: Setze das Löschen von Vaterverweisen in Richtung Wurzel fort, sobald ein zweites Kind entfernt wird:
+\begin{enumerate}
+\item[4] Falls v keine Wurzel, Markiere(Vater(v))
+\end{enumerate}
+\begin{lstlisting}
+Markiere(v):
+while w.parent!=null UND w.mark=true do
+	u=w.parent
+	Fuege w in Wurzelliste ein
+	w.mark = false
+	w=u
+done
+if w.parent!=null then
+	w.mark=true
+fi
+\end{lstlisting}
+Wurzeln sind stets unmarkiert.
+Beobachtung: Eine decrease-Operation kann sehr viele cut-Operationen zur Folge haben.
 \end{document}

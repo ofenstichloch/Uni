@@ -79,6 +79,20 @@ Implementierung enter() leave() des kritischen Abschnitts.\\
 volatile: Variable kann sich durch anderen nicht jetzt compilierten code verändern, der Compiler soll es nicht wegoptimieren.\\
 Deadlock: Es geht nicht weiter, aber alle Beteiligten tuen nichts\\
 Lifelock: Es geht nicht weiter, aber alle Beteiligten brennen den Prozessor weg.
-
+\section{Echtzeitsysteme}
+Benötigt bestimmte Betriebssysteme (RTOS) und darin bestimmte Scheduler.\\
+Voraussetzungen: Nach oben maximal abschätzbare Interupt-Zeit, minimale Kontextwechselzeit\\
+Der Scheduler bekommt von einer Anwendung Zeitrahmen, indenen etwas erfüllt werden muss. Der Scheduler muss diese Zeitrahmen einhalten.\\
+Echtzeitanwendungen haben: Ready time (ab wann darf bearbeitet werden), Deadline (bis wann MUSS es fertig sein), $\Delta e$ (Ausführungszeit, worst case).\\
+Echtzeitanwendungen dürfen nicht blockieren, dadurch kann man die Ausführzeit nicht abschätzen.\\
+Preemption: Eine Ausführung kann unterbrochen werden, falls andere Prioritäten wichtiger sind. Achtung: Caches/Kontextwechsel\\
+Static/Dynamic Scheduling: Statisch (Alle Faktoren genau bekannt)\\
+Explicit/Implicit: Implicit (Prioritäten für Anwendungen), Explicit (Statischer Scheduling Plan, der fest steht)\\
+EDF (Earliest Deadline First): Bearbeite Aufgabe mit nächstgelegener Deadline, Voraussetzung Cooperatives Anwendungsdesign\\
+Nicht Preemptiv: Nicht optimal, preemptives EDF ist optimal.\\
+\subsection*{Rate Monotonic Scheduling}
+Passt gut zu aktuellen Betriebssystemen, da diese statische Prioritäten verwenden.\\
+Höhere Frequenz = Höhere Priorität. Je höher die Frequenz, desto kleiner ist die Ausführzeit (muss ja).\\
+Klausur: Beispiel warum nicht Preemptive nicht geht!
 
 \end{document}

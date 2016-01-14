@@ -723,6 +723,64 @@ if w.parent!=null then
 	w.mark=true
 fi
 \end{lstlisting}
-Wurzeln sind stets unmarkiert.
-Beobachtung: Eine decrease-Operation kann sehr viele cut-Operationen zur Folge haben.
+Wurzeln sind stets unmarkiert.\\
+Beobachtung: Eine decrease-Operation kann sehr viele cut-Operationen zur Folge haben.\\
+Wie zeigen, dass durch diese Markierungsstrategie den maximale Rang durch \oh{log(n)} beschränkt.\\
+Lemma: MaxRang $\leq 1,4404* log(n)$\\
+Beweis: Idee: Zeige, dass \# Knoten expotentiell mit maxRang wächst (untere Schranke) $\Rightarrow $maxRang=\oh{log(n)}\\
+Sei v beliebiger Knoten mit Rang i. Ordne die Kinder von v nach der Zeit, zu der sie am Knoten v angehängt wurden (Verschmelzung)\\
+Sei $w_j$ das j. Kind.\\
+Behauptung: $Rang(w_j)\geq j-2$\\
+Beweis: Als $w_j$ Kind von v wurde galt: $Rang(w_j)=j-1$. $w_j$ hat seitdem höchstens 1 Kind verloren (da er nicht Wurzel ist, Markierungsstrategie) $\Rightarrow Rang(w_j)\leq j-2$\\
+Sein nun v ein Knoten mit Rang i und $s_i := $minimale Zahl von Knoten um Unterbaum mit Wurzel vom Rang i.\\
+$s_0=1; s_1=2$ trivial. Für $i>2: s_i=2+s_0+...+s_{i-1} = 2+\sum_{j=0}^{i-1}s_j$\\
+Betrachte die Folge der Fibonacci-Zahlen $F_0=0, F_1=1, F_i=F_{i-1}+F_{i-1} (i\geq 2)$\\
+Es gilt  1: $F_{i+2} = 2+\sum_{j=2}^{i}F_j$ für $i\geq 1$\\
+2: $s_i \geq F_{i+2}$ für $i\geq -$\\
+Beweis (Induktion über i): $i=0:s_0=1=F_2$\\
+\hspace*{0.5cm}$i>0 s_i = 2+\sum_{j=0}^{i-2}s_j \geq 2+\sum_{j=0}^{i-2}F_{j+2} = 2+ \sum_{j=1}^i F_j = F_{i+2}$\\
+Außerdem gilt: $F_{i+1} \geq (\frac{1+\sqrt{t}}{2})^i \geq (1,618)^i $ für $i\geq 0$\\
+\hspace*{0.5cm} $s_i \geq 1,618^i$\\
+Dann gilt: $s_r \leq n$ mit r maximaler Rang und n \# Knoten, d.h. $1,618^r \leq n \Rightarrow r\leq log_{1,618}(n) = \frac{log(n)}{log(1,618)} = 1,4404..*log(n)$\\
+Das heißt, dass maxRang$\leq 1,4404*log(n) =$\oh{log(n)}\\
+Amortisierte Analyse der Gesamtkosten einer beliebigen Folge von Insert, Findmin, Delmin, Decrease:\\
+Wir modifizieren das Potential $pot=\# Wurzeln + 2*\# markierteKnoten$. Analyse von Insert,Findmin und Delmin bleibt gleich, da sich nichts an den Markierungen ändert.\\
+Decrease\_p: $T_{\text{tats}} = $\oh{k+1}. $\Delta pot:$ \# Wurzeln erhöht sich um k+1, \# markierte Knoten nimmt ab um k-1\\
+$\Delta pot=(k+1)+2*(1-k) = 3-k \Rightarrow T_{\text{armort}} =  T_{\text{tats}} + \Delta pot = k+1 + (3-k) = 4$=\oh{1}\\
+(Anmerkung: Das k ist die Anzahl der Knoten, die wegen der vorhandenen Markierung um schlimmsten Fall durchlaufen werden müssen)\\
+Satz: Fibonacci-Heaps unterstützen die PQ-Operationen Insert,Findmin,Decreas\_p in amortisierter Zeit \oh{1} und Delmin in \oh{log(n)}\\
+Alternativ: Jede Folge von $k_1$ Inserts, $k_2$ Findmins, $k_3$ Delmins und $k_4$ Decrease\_p kostet insgesamt \oh{k_1+k_2+k_3*log(n)+k_4}\\
+
+
+
+
+
+
+
+
+
+
+\subsubsection{Übung}
+Erwartungswert: Summe aller möglichen Werte x multipliziert mit deren Wahrscheinlichkeit.\\
+Hier: $\sum_{k=1}^{\inf}(k*\frac{1}{2}k)$ Integrierende Reihe mit k=Anzahl der Versuche bis zum Erfolg\\
+6.2: Priority Queues:\\
+a) Doppelt verkettete Listen: (Alternativ mit Pointer auf Minimum)\begin{enumerate}
+\item Insert(x,p)=\oh{1} bzw \oh{1}
+\item findmin=\oh{n} bzw \oh{1}
+\item delmin=\oh{n} bzw \oh{n}
+\end{enumerate}
+b) Suchbaum: Alle Operationen \oh{log(n)}. Mit Minpointer hat findmin \oh{1}\\
+c) Binärer Heap (Heapsort): \begin{enumerate}
+\item Findmin (Wurzel)
+\item Delmin: Entferne Wurzel (Überschreibe den Wert mit unterem Rechten Blatt, lasse Wurzel Sinken, Entferne Blatt) \oh{log(n)}
+\item Insert:Füge als Blatt ein, lasse es an die Richtige Position steigen \oh{log(n)}
+\end{enumerate}	
+6.3: $F_0=0,F_1=1,F_i=F_{i-1}+F_{i-2}$ für $i\geq 2$\\
+a) $F_{i+2} = 2 + \sum_{j=2}^i F_j$ für $i\geq 2$\\
+$F_{i+2} =  F_{i+1} +F_i = 2+\sum_{j=2}^{i-1} F_j + F_i = 2 \sum_{j=2}^i F_j$\\
+b) $F_{i+1} \geq (\frac{1+\sqrt{5}}{2})^i=\Phi^i$\\
+Beh.: $\Phi^2 = \Phi+1$\\
+$F_{i+1} = F_i + F_{i+1} \geq \Phi^{i-1}+\Phi^{i-1}=\Phi^{i-1}(1+\Phi)=\Phi^{i-1}*\Phi^2 = \Phi^i$\\
+
+
 \end{document}

@@ -751,11 +751,95 @@ $\Delta pot=(k+1)+2*(1-k) = 3-k \Rightarrow T_{\text{armort}} =  T_{\text{tats}}
 Satz: Fibonacci-Heaps unterstützen die PQ-Operationen Insert,Findmin,Decreas\_p in amortisierter Zeit \oh{1} und Delmin in \oh{log(n)}\\
 Alternativ: Jede Folge von $k_1$ Inserts, $k_2$ Findmins, $k_3$ Delmins und $k_4$ Decrease\_p kostet insgesamt \oh{k_1+k_2+k_3*log(n)+k_4}\\
 
-
-
-
-
-
+\section{Graphalgorithmen}
+\begin{itemize}
+\item[1.] Kürzeste Wege
+\item[2.] Planare Graphen
+\end{itemize}
+\subsection{Kürzeste oder billigste Wege im Graphen}
+Sei $G=(V,E)$ ein gerichteter Graph und $cost:E\rightarrow \mathbb{R}$ Kosten der Kante e.\\
+Kosten von Pfad P: Sei ein Pfad von v nach w, dann definiert $cost(p):=\sum_{e\in P}cost(e)$\\
+$dist(v,w)=min\{cost(P)|\text{P ist Pfad von v nach w}\}$ heißt Distanz von v nach w\\
+Achtung: Kreise mit negativer Distanz oder Distanz 0: $inf\{cost(P)|\text{P ist Pfad von v nach w}\}$ (unterer Grenzwert)\\
+Für negative Kreise gilt dann: $dist(x,y)=-\infty$, für unerreichbare Knoten $dist(x,y)=\infty$\\
+Varianten des Problems der Berechnung der Distanz:\\
+\begin{itemize}
+\item[1] Single Source Single Target: Gegeben 2 feste Knoten v und w, dist(v,w)
+\item[2] Single Source: Gegeben fester Knoten s, berechne dist(s,v) für alle Knoten v
+\item[3] All Pairs: Berechne alle dist(v,w) für alle Paare $v,w\in V\times V$
+\end{itemize}
+Single Source Problem:\\
+Gegeben: $G=(V,E), c:E\rightarrow\mathbb{R}$ und ein Knoten $s\in V$\\
+Problem: Berechne dist(s,v) für alle $v\in V$ bzgl. der Kostenfunktion c\\
+Falls negative Kosten existieren, dann ist ein Teilproblem das Erkennen von negativen Kreisen. Zunächst nehmen wir an, es gibt keine negativen Kreise. (zB. es gibt keine negativen Kosten oder es gibt keine Kreise)\\
+Die gesuchte Distanzfunktion erfüllt die Dreiecksungleichung: Für jede Kante $(v,w)\in E$ gilt:
+$dist(s,w)\leq dist(s,v)+c(v,w)$\\
+Idee für einen allgemeinen Algorithmus:\begin{itemize}
+\item Überschätze die dist-Funktion: $DIST[v]=-\infty$, falls $v\neq s$; 0, falls $v=s$
+\item Slange es eine Kante $(v,w)\in E$ gibt, die die Dreiecksungleichung verletzt, setze $DIST[w] \leftarrow DIST[v]+c(v,w)$\\
+\end{itemize}
+Beobachtungen im Ablauf des Algorithmus:
+\begin{itemize}
+\item Falls $DIST[v]<\infty$, dann existiert ein Pfad von s nach v mit diesen Kosten.
+\item Für alle Knoten v gilt $DIST[v] \geq dist(s,v)$
+\item Sobald alle Dreiecksungleichungen erfüllt sind, gilt $DIST[v]=dist(s,v)$ für alle $v\in V$
+\item Die Reihenfolge, in der Kanten ausgewählt werden, spielt eine entscheidende Rolle für die Laufzeit
+\end{itemize}
+Pseudocode des Grundalgorithmus:\\
+\begin{lstlisting}
+forall v in V do
+	Dist[v] = infinity 
+od
+Dist[s] = 0
+while Kante (v,w) mit DIST[w] > Dist[v]+c(v,w) existiert do
+	Waehle eine solceh Kante (v,w)
+	DIST[w] = DIST[v]+c(v,w)
+od
+\end{lstlisting}
+Weitere Bedingungen: \begin{itemize}
+\item Die gesuchten dist-Werte erfüllen die Dreiecksungleichung $dist(v)+c(v,w)\geq dist(w)$
+\item Auf kürzesten Pfaden gilt Gleichheit: Sei $s=v_0,..,v_l=v$ ein kürzester Pfad von s nach v, dann gilt: $dist(v_i)+c(v_i,v_{i+1})=dist(v_{i+1})$ Aus Definition dist-Funktion folgt: $\sum_{i=0}^{l-1}c(v_i,v_{i+1})$
+\item Es ist einfach, die kürzesten Pfade selbst zusätzlich zu den DIST-Werten zu berechnen: Speichere für jeden Knoten v mit $DIST[v]<\infty$ den Vorgänger von v auf dem aktuell besten Pfad von s nach v. Dau wird immer, wenn eine Dreiecksungleichung verletzt ist und der DIST-Wert korrigiert wird: $DIST[w] \leftarrow DIST[v]+c(v,w)$ und $PRED[w]\leftarrow v$.
+Am Ende repräsentieren die PRED-Verweise alle kürzesten Pfade rückwärts (als kürzeste-Wege-Baum)
+\end{itemize}
+Idee für effizienten Algorithmus: \\
+Kandidatenmenge U: Wir merken uns alle Knoten, aus deren Kanten ausgehen könnten, die die Dreiecksungleichung verletzen.\\
+Am Anfang: $U=\{s\}$\\
+Immer, wenn ein DIST-Wert vermindert wird, nehmen wir den Knoten in U auf.\\
+Algorithmus:
+\begin{lstlisting}[escapechar=!]
+forall !$v\in$! do
+	DIST[v] = unendlich
+	PRED[v] = null
+done
+DIST[s] = 0
+U = {s}
+while !$U\neq \emptyset$! do
+	!\text{Wähle und entferne einen Knoten} $u\in U$!
+	forall v in V mit (u,v) in E do
+		d = DIST[u] + c(u,v)
+		if d < DIST[v] then
+			DIST[v] = d
+			PRED[v] = u
+			U = U !$\cup$! {v}
+		fi
+	done
+done
+\end{lstlisting}
+Folgen: Datenstruktur für U scheint eine Queue sinnvoll (BFS). Bei negativen Zyklen terminiert die Hauptschleife eventuell nicht.\\
+Lemma: Eigenschaften des Algorithmus (während der Laufziet):\begin{itemize}
+\item[a)] Falls $v\not\in U$, dann gilt für alle ausgehenden Kanten $(v,w): DIST[w] \leq DIST[v]+c(v,w)$
+\item[b)] Sei $v_0,...,v_l$ ein kürzester Pfad von s nach v. Falls $DIST[v]>dist(s,v)$ (DIST-Wert ist noch nicht korrekt), dann existiert auf dem Pfad ein Knoten $v_i,0\leq i \leq k-1$ mit: $v_i\in U$, $DIST[v_i]=dist(s,v_i)$
+\item[c)] Es existiert stets ein Knoten $u\in U$ mit $DIST[u] = dist(s,u)$ (Perfekte Wahl in Zeile 8)
+\item[d)] Falls in Zeile 8 immer ein Knoten perfekt gewählt wird, dann wird die While-Schleife für jeden Knoten höchstens einmal ausgeführt.
+\end{itemize}
+Beweis a): Induktion über Schleifendurchläufe i=0,1,...
+Betrachte ein $v\not\in U$ nach dem i-ten Durchlauf:\\
+1. Fall: $v\not\in U$ vor dem i-ten Durchlauf: Für alle ausgehenden Kanten (v,w) gilt $DIST[v] + c(v,w) \geq DIST[w]$ und da $v\not\in U$ wurde DIST[v] nicht verändert. Für die Nachbarknoten w könnte DIST[w] höchstes vermindert worden sein.\\
+2. Fall: $v\in U$ vor dem i-ten Lauf: v wurde in Zeile 8 als u gewählt. Für alle ausgehenden Kanten wird die Dreiecksungleichung in der inneren Schleife hergestellt.\\
+Beweis b): Sei $s=v_0,..,v_l=v$ ein kürzester Pfad von s nach v, dann gilt $DIST[s]=dist(s,v_0) = 0$,d.h. korrekter DIST-Wert für $v_0=s$ und $DIST[v_k]>dist(s,v_k)$. Sei i maximal $0\leq i \leq k-1$ mit $DIST[v_i]=dist(s,v_i)$\\
+Annahme $v_i\not\in U$: Da $(v_i,v_i+1)$ auf kürzestem Pfad $\Rightarrow dist(s,v_{i+1} = dist(s,v_i)+c(v_i,v_{i+1}) \Rightarrow dist(s,v_{i+1}) = dist(s,v_i)+c(v_i,v_{i+1}) = DIST[v_i] + c(v_i,v_{i+1}) \geq DIST[v_{i+1}] \Rightarrow dist(s,v_{i+1}) = DIST[v_{i+1})$
+D.h. auch $v_{i+1}$ hat korrekten Wert -> Wiederspruch zur maximalen Wahl von i -> Annahme Falsch -> $v_i \in U$\\
 
 
 
@@ -781,6 +865,10 @@ $F_{i+2} =  F_{i+1} +F_i = 2+\sum_{j=2}^{i-1} F_j + F_i = 2 \sum_{j=2}^i F_j$\\
 b) $F_{i+1} \geq (\frac{1+\sqrt{5}}{2})^i=\Phi^i$\\
 Beh.: $\Phi^2 = \Phi+1$\\
 $F_{i+1} = F_i + F_{i+1} \geq \Phi^{i-1}+\Phi^{i-1}=\Phi^{i-1}(1+\Phi)=\Phi^{i-1}*\Phi^2 = \Phi^i$\\
+
+
+
+
 
 
 \end{document}

@@ -865,10 +865,64 @@ $F_{i+2} =  F_{i+1} +F_i = 2+\sum_{j=2}^{i-1} F_j + F_i = 2 \sum_{j=2}^i F_j$\\
 b) $F_{i+1} \geq (\frac{1+\sqrt{5}}{2})^i=\Phi^i$\\
 Beh.: $\Phi^2 = \Phi+1$\\
 $F_{i+1} = F_i + F_{i+1} \geq \Phi^{i-1}+\Phi^{i-1}=\Phi^{i-1}(1+\Phi)=\Phi^{i-1}*\Phi^2 = \Phi^i$\\
-
-
-
-
-
-
+c) Sei $v\in U$ beliebig:\\
+\begin{itemize}
+\item[Fall 1] $DIST[v]=dist(s,v)$ 
+\item[Fall 2] $DIST[v]>dist(s,v)$: Wende Teil b) an -> Es existiert ein $v_i$ auf kürzestem Pfad von s nach v mit $v_i\in U$ und $DIST[v_i]=dist(s,v)$, dann wähle $v=v_i$ (d.h. perfekte Wahl)
+\end{itemize}
+d) Falls immer ein Knoten gemäß Teil c) ausgewählt wird, wird dieser nicht nochmal nach U aufgenommen, da Knoten nur aufgenommen werden, wenn DIST-Wert vermindert wird. -> Hauptschleife wird dann für jeden Knoten höchstens ein mal ausgeführt.\\
+Gesamtlaufzeit: $\sum_{v\in V}$ Kosteen der Hauptschleife für v $\rightarrow$ "Operationen auf U" + outdeg(v)\\
+Problem: Wie findet man einen Knoten $u\in U$ (perfekte Wahl) mit korrektem DIST-Wert?\\
+Antwort: Im Allgemeinen aufwändig, im Spezialfall leichter.\\
+1. Azyklische Graphen (keine Kreise):\\
+Behauptung: $\exists $topol. Sortierung, num:$v\rightarrow\{1,...,n\}$ injektiv mit $\forall (v,w)\in E: num(v)<num(w)$\\
+Der Knoten $u\in U$ mit minimaler topologischer Sortierung ist perfekt, d.h. DIST[u]=dist(s,u)\\
+Beweis: Sei also $u\in U$ mit topnum[u] minimal\\
+  Annahme: $DIST[u] > dist(s,u)$\\
+  Lemma Teil b): $\exists$ Knoten v auf kürzestem Pfad von s nach u mit $v\in U$ und DIST[v]=dist(s,v)\\
+  $\Rightarrow$ topnum[v] < topnum[u] Widerspruch zu topnum[u] minimal\\
+  $\Rightarrow$ DIST[u] = dist(s,u)\\
+2. Nicht-negative Netzwerke: Kostenfunktion $c:E\rightarrow\mathbb{R}_0^+$\\\
+  Behauptung: $u\in U$ mit DIST[u] minimal it perfekt\\
+  Beweis: Annahme DIST[u] > dist(s,u) $\Rightarrow \exists v\in U$ auf kürzestem Pfad von s nach u mit DIST[v]=dist(s,v)\\
+  Dann gilt: I. DIST[v] $\geq$ DIST[u] (Wahl von u), II. dist(s,v) $\leq$ dist(s,u) (kürzester Pfat + nicht negative Kosten)\\
+  $\Rightarrow$ dist(s,u)$\geq$ dist(s,v) = DIST[v] $\geq$ DIST[u]. Da DIST$\geq$ dist, gilt DIST[u]=dist(s,u) -> Widerspruch\\
+$\Rightarrow$ Im Algorithmus Zeile 8: Verändere zu "Wähle $u\in U $ mit DIST[u] minimal (Delmin)"\\
+Realisierung von U (für nicht-negative Netzwerke) mti Fib heap:\\
+Operationen auf U: Insert (Knoten mimt DIST), Test auf leer, Delmin (entferne Knoten mit DIST min), Vermimdere DIST Wert.\\
+Priority Queue: PQ.Insert(v,d), PQ.empty(),PQ.delmin(),PQ.decrease(v,d') mit Information (Knoten) und Prioritäten (DIST)\\
+Algorithmus von Dijkstra (Variante des Grundalgorithmus):\\
+\begin{lstlisting}[escapechar=!,frame=single]
+forall v !$\in$! V do
+	DIST[v] !$\leftarrow \infty$!
+	PRED[v] !$\leftarrow$! null
+od
+DIST[s] !$\leftarrow$! 0
+PQ.insert(v,0)
+while not PQ.empty() do
+	!$u\leftarrow$! PQ.delmin() //liefert Info
+	forall !$v\in V$! mit !$(u,v)\in E$! do
+		d !$\leftarrow DIST[u]+c(u,v)$!
+		if !$d<DIST[v]$! then
+			if !$DIST[v] == \infty$! then
+				PQ.insert(v,d)
+			else
+				PQ.decrease(v,d)
+			fi
+			DIST[v] !$\leftarrow$! d
+		fi
+	od
+od
+\end{lstlisting}
+Laufzeitanalyse:
+\oh{\sum_{v\in V} (1+outdeg(v)) + PQ\_Operationen}
+$n*(T_{\text{insert}} + T_{\text{delmin}} + T_{\text{empty}}) + m*T_{\text{decrease}}$ \\
+$T_{\text{insert}} + T_{\text{delmin}}$: Jeder Knoten höchstens einmal\\
+$T_{\text{insert}} + T_{\text{delmin}}$: Innere Schleife\\
+Mögliche Implementierungen:\\
+\begin{itemize}
+\item Binärer Heap oder binärer Baum $\rightarrow$ \oh{n*log(n)+m*log(n)}=\oh{(n+m)*log(n)}
+\item Fibonacci-Heap: Amortisierte Analyse ist ok, da Gesamtlaufzeit betrachtet.\\
+\oh{n*log(n)+m}, insert+empty=\oh{1}, delmin=\oh{log(n)}, decrease=\oh{1}
+\end{itemize}
 \end{document}

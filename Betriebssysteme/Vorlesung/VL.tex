@@ -94,5 +94,12 @@ Nicht Preemptiv: Nicht optimal, preemptives EDF ist optimal.\\
 Passt gut zu aktuellen Betriebssystemen, da diese statische Prioritäten verwenden.\\
 Höhere Frequenz = Höhere Priorität. Je höher die Frequenz, desto kleiner ist die Ausführzeit (muss ja).\\
 Klausur: Beispiel warum nicht Preemptive nicht geht!
+\section{Dateisysteme}
+Stark zugeschnitten auf diesen bestimmten Verwendungszweck (meist lesend, sequentiell, Zugriffsrechte)\\
+Dateien haben Metadaten (Name, Daten etc.)\\
+Betriebssysteme speichern in einem Bit, ob die Festplatte/das Volume geöffnet war. Wenn das System hochfährt und dieses Bit 1 ist, kann es Inkonsistenzen geben. In-place Systeme müssen Block für Block durchgegangen werden.
+\subsection{ZFS}
+128Bit: Festplatte is aufgeteilt in Blöcke, 128Bit Adressierung.\\
+Atomare Transaktionen (Dateizugriffe) -> Keine Inkonsistenz\\
 
 \end{document}

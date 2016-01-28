@@ -97,7 +97,7 @@ FIND(x): Starte bei Element (Knoten) x und laufe bis zur Wurzel, dort steht der 
 $vater[i]=\left\lbrace \begin{array}{c}Vater\ von\ i\ in\ seinem\ Baum\\ 0,\ falls\ i\ Wurzel\end{array}\right.$\\ %HELP
 $name[i]=$Name des Blocks mit Wurzel i (at nur Bedeutung, falls i Wurzel)\\
 $wurzel[i]=$ Wurzel des Blocks mit Namen i\\
-\begin{tabular}{ l c r }
+\begin{tabular}{ l |c| r }
 Initialisierung: & FIND(x): & UNION(A,B,C):\\
 \begin{lstlisting}
 for i=1 to n do
@@ -132,7 +132,7 @@ Vermeide große Tiefen, dafür hänge den kleineren Baum (Anzahl Knoten) an den 
 Alternativ: Hänge den Baum mit kleinerer höhe an den tieferen.\\
 Realisierung: Zusätzliches Feld\\
 size[i] = Anzahl Knoten um Unterbaum mit Wurzel i\\
-\begin{tabular}{ l c r }
+\begin{tabular}{ l |c |r }
 Initialisierung: & FIND(x) (wie bei 3): & UNION(A,B,C):\\
 \begin{lstlisting}
 for i=1 to n do
@@ -910,6 +910,7 @@ while not PQ.empty() do
 				PQ.decrease(v,d)
 			fi
 			DIST[v] !$\leftarrow$! d
+			PRED[u] !$\leftarrow$! u
 		fi
 	od
 od
@@ -925,4 +926,56 @@ Mögliche Implementierungen:\\
 \item Fibonacci-Heap: Amortisierte Analyse ist ok, da Gesamtlaufzeit betrachtet.\\
 \oh{n*log(n)+m}, insert+empty=\oh{1}, delmin=\oh{log(n)}, decrease=\oh{1}
 \end{itemize}
+Allgemeiner Fall: Beliebiger Graph, beliebige Kosten\\
+Problem: Negative Zyklen möglich (Erkennen solcher Zyklen). Der Grundalgorithmus terminiert dann nicht.\\
+Lemma: Falls kein negativer Kreis existiert, dann existiert immer eine perfekte Wahl für $u\in U$\\
+Idee von Bellman/Ford: Zunächst nehemen wir an, dass es keine negativen Kreise gibt.\\
+Realisiere U als einfache FIFO Queue. Auswahl von u: U.pop(), wenn DIST[v] = d vermindert wird: U.append(v)\\
+Bei Append: Test, ob u bereits in Schlange U enthalten ist (verwende bool-Array dafür). Grund: i.A. können Knoten mehrfach U durchlaufen. (DIST[v]==$\infty$ geht nicht)\\
+Lemma: $\exists$ stets ein Knoten v in der Schlange U, mit korrektem DIST-Wert. D.h.: Zwischen zwei Entnahmen des selben Knotens aus der Queue, wird IMMER ein perfekter Knoten entnommen und kommt nicht wieder in die Queue hinein. $\rightarrow$ Ein beliebiger Knoten $v\in V$ wird maximal n mal aus U entfernt.\\
+Einfacher Test für Existenz eines negativen Kreises: Teste, ob ein Knoten mehr als n mal ausgewählt wird.\\
+Daten: Zusätzliches Feld count[v]=Zähler für Auswahl von v\\
+Algorithmus von Bellman/Ford:
+\begin{lstlisting}[escapechar=!,frame=single]
+Globale Variablen:
+	U: Schlange von Knoten
+	in_U: Bitvektor ob Knoten in U
+	count: Feld von Int
+	s: Startknoten
+forall v !$\in$!V do
+	DIST[v] !$\leftarrow \infty$!
+	PRED[v] !$\leftarrow$! null
+	count[v] !$\leftarrow$! 0
+	in_U[v] !$\leftarrow$! false
+od
+DIST[s] !$\leftarrow$! 0
+U.append(s)
+in_U[s]!$\leftarrow$! true
+while not U.empty() do
+	u !$\leftarrow$! U.pop()
+	in_U[u] !$\leftarrow$! false
+	if ++count[u] > n then
+		PRINT("Negativer Zyklus")
+		return
+	fi
+	forall !$v\in V$! mit (u,v) !$\in $! E do
+		d !$\leftarrow$! DIST[u]+c(u,v)
+		if d < DIST[v] then
+			DIST[v] !$\leftarrow$! d
+			PRED[v] !$\leftarrow$! u
+			if not in_U[v] then
+				U.append(v)
+				in_U[v] !$\leftarrow$! true
+			fi
+		fi
+	od
+od
+\end{lstlisting}
+Laufzeitanalyse:\\
+Da jeder Knoten höchstens n mal in der Hauptschleife ausgewählt werden kann: \oh{n*\sum_{v\in V} (1+outdeg(v))}=\oh{n^2+n*m}=\oh{n*m} wenn G zusammenhängend, dann ist $m\geq n-1$. In der Praxis bis zu \oh{n^3}\\
+Behandlung negativer Zyklen: Falls in Zeile 13 negativer Zyklus entdeckt wird, dann liegt v auf einem solchen Zyklus.\\
+Satz: Das allgemeine Single-Source Shortest Paths Problem kann in Zeit \oh{n*m} gelöst werden.\\
+Korollar: Auch in Zeit \oh{n*m} Test auf netgativen Zyklus und Berechnung eines neg. Zyklus.\\
+Allgemein: \oh{n*m}, nicht negativ: \oh{n*log(n)+m}, nicht zyklisch \oh{n+m}\\
+Andere Varianten: Single Source - Single Target: \oh{n^2m} all pairs.
 \end{document}

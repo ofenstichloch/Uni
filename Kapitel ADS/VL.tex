@@ -842,9 +842,7 @@ Annahme $v_i\not\in U$: Da $(v_i,v_i+1)$ auf kürzestem Pfad $\Rightarrow dist(s
 D.h. auch $v_{i+1}$ hat korrekten Wert -> Wiederspruch zur maximalen Wahl von i -> Annahme Falsch -> $v_i \in U$\\
 
 
-
-
-\subsubsection{Übung}
+Übung\\
 Erwartungswert: Summe aller möglichen Werte x multipliziert mit deren Wahrscheinlichkeit.\\
 Hier: $\sum_{k=1}^{\inf}(k*\frac{1}{2}k)$ Integrierende Reihe mit k=Anzahl der Versuche bis zum Erfolg\\
 6.2: Priority Queues:\\
@@ -977,5 +975,71 @@ Behandlung negativer Zyklen: Falls in Zeile 13 negativer Zyklus entdeckt wird, d
 Satz: Das allgemeine Single-Source Shortest Paths Problem kann in Zeit \oh{n*m} gelöst werden.\\
 Korollar: Auch in Zeit \oh{n*m} Test auf netgativen Zyklus und Berechnung eines neg. Zyklus.\\
 Allgemein: \oh{n*m}, nicht negativ: \oh{n*log(n)+m}, nicht zyklisch \oh{n+m}\\
-Andere Varianten: Single Source - Single Target: \oh{n^2m} all pairs.
+Andere Varianten: Single Source - Single Target: \oh{n^2m} all pairs.\\
+
+Übung\\
+8.1: Predecessor Verweise.\\
+Variante: Kürzeste Pfade als Folge von Kanten. PRED[v] zeigt auf die letzte eingehende Kante, die zur Verminderung von DIST[v] geführt hat.\\
+Durchlaufen des Pfades von v aus:
+\begin{lstlisting}[escapechar=!]
+e !$\leftarrow$! PRED[v]
+while e !$\neq$! null do
+	u !$\leftarrow $! source(e)
+	e !$\leftarrow$! PRED[u]
+od...
+\end{lstlisting}
+8.2: a) Pred-Verweise definieren Bauum mit Wurzel s. Beweis: Induktion über Ablauf:\\
+Am Anfang: Baum nur aus Wurzel s.\\
+Schritt: PRED[v] = u, 2 Fälle: 1. DIST[v]==$\infty$ vorher -> Baum\\
+b) Sei (v,w) Kante auf einem kürzesten Pfad, dann gilt:\\
+	dist(s,v)+c(v,w) = dist(s,w). Dreiecksungleichung gilt.\\
+	dist(s,$v_k$) = $\sum_{i=1}^k c(e_i)$ Definition von dist\\
+8.3: \begin{lstlisting}[escapechar=!]
+forall v !$\in $! V do
+	DIST[v] !$\leftarrow \infty$! 
+od
+DIST[s] !$\leftarrow$! 0
+for i=1 to n do
+	forall (v,w) !$\in$! E do
+		d !$\leftarrow$! DIST[v] + c(v,w)
+		if DIST[w] > d then
+			DIST[w] !$\leftarrow$! d
+		fi
+	od
+od
+\end{lstlisting}
+Behauptung: Falls keine negativen Kanten, berechnet der Algorithmus die kürzesten Wege (Variante von Bellman/Ford)\\
+Korrektheit: Zeige, dass in jedem Durchlauf der Hauptschleife ein weiterer Knoten den korrekten DIST-Wert erhält. Nach k Wiederholungen alle DIST-Werte korrekt.\\
+8.4: Nach Beendigung des Algorithmus muss für alle Kanten die Dreiecksungleichung getestet werden. Ist sie erfüllt, hat der Graph keine negativen Zyklen.
+\subsection*{Planare Graphen}
+Wir betrachten ungerichtete Graphen. Statt Paar $(v,w)\in E $ gilt hier $\{v,w\}\in E$\\
+Definition: 
+\begin{itemize}
+\item[a)]Ein ungerichteter Graph $G=(V,E)$ ist planar, wenn G eine planare Zeichnung besitzt.
+\item[b)]Eine planare Zeichnung von G ordnet jeden Knoten v einem Punkt $p\in \mathbb{R}^2$ zu und jeder Kante $\{v,w\}\in E $ eine stetige Kurve mit den Endpunkten Position(v) und Position(w), sodass sich diese Kurven paarweise nicht schneiden.
+\end{itemize}
+$K_{3,3}$: 2x3 Knoten (2 Seiten) mit Kanten von der einen in die andere oder umgekehrt, nicht untereinander. Kompletter Graph, d.h. alle möglichen Kanten die die Bedingung erfüllen. (Vollständiger bipartiter Graph mit jeweils 3 Knoten auf jeder Seite)\\
+$K_5$ Vollständiger Graph mit 5 Knoten\\
+In beiden Fällen führt das Entfernen einer Kante oder eines Knotens zur Planarität\\
+Offensichtliches Problem: Test auf Planarität:\begin{itemize}
+\item[1.]$\exists$ eine Planara Zeichnung für G
+\item[2.]Zeichne G planar
+\end{itemize}
+Bemerkungen:\begin{itemize}
+\item Es gibt effiziente Algorithmen \oh{n+m} 
+\item Diese Algorithmen liefern eine Zeichnung im positiven Fall
+\item Im negativen Fall liefern sie einen Beweis für Nicht-Planarität ($K_{3,3}$ oder $K_5$ in G enthalten)
+\item G ist planar $\Leftrightarrow \exists$ planare Zeichnung auf einer Kugeloberfläche (Fläche von Geschlecht 0)
+\item G ist planar = G hat Geschlecht 0
+\end{itemize}
+\textbf{Satz von Kuratowski}: G ist planar $\Leftrightarrow$ G enthält keinen $K_5$ oder $K_{3,3}$\\
+Wichtige Begriffe:
+\begin{itemize}
+\item[1. ]Zusammenhang eines Graphen\\
+G heißt (einfach) zusammenhängend, wenn es für jedes Paar (v,w) $\in V\times V$ einen Pfad zwischen v und w gibt.\\
+G heißt zweifach zusammenhängend, wenn $G\setminus \{v\}$ für jedes $v\in E$ zusammenhängend ist.
+G heißt dreifach zusammenhängend, wenn für beliebige Knoten $v,w\in V$ gilt: $G\setminus \{v,w\}$ ist zusammenhängend
+\item cut-vertex/Artikulationspunkt: Wenn dieser Knoten entfernt wird, zerfällt der Graph in mehrere Zusammenhangskomponenten
+Wenn das Entfernen zweier Knoten die Teilung des Graphen auslösen -> Separation Pair. Die resultierenden Teilgraphen heißen split-graphen
+\end{itemize}
 \end{document}

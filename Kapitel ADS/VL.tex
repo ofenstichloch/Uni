@@ -1042,4 +1042,26 @@ G heißt dreifach zusammenhängend, wenn für beliebige Knoten $v,w\in V$ gilt: 
 \item cut-vertex/Artikulationspunkt: Wenn dieser Knoten entfernt wird, zerfällt der Graph in mehrere Zusammenhangskomponenten
 Wenn das Entfernen zweier Knoten die Teilung des Graphen auslösen -> Separation Pair. Die resultierenden Teilgraphen heißen split-graphen
 \end{itemize}
+Beobachtung: Ein nicht 2-fach zusammenhängender Graph ist planar genau dann, wenn alle 2-fach Zusammenhangskomponenten (Blöcke) planar sind\\
+Idee: \begin{itemize}
+\item[i] Konstruiere planare Zeichnung für alle Blöcke sodass alle Artikulationspunkte außen sind.
+\item[ii] Klebe diese Zeichnungen an diesen Punkten zusammen
+\end{itemize}
+Folgerung: Für den Planaritätstest dürfen wir annehmen, dass der Graph 2-fach zusammenhängend ist (weil in anderen Fällen auch nur jeder Block getestet wird)\\
+Definition Planare Einbettung: Sei G ein planarer Graph. Eine planare Einbettung von G wird definiert durch eine zyklische Sortierung der adjazenten Kanten für jeden Knoten v, sodass eine planare Zeichnung für G existiert, in der die Kanten in dieser Reihenfolge gegen den Uhrzeigersinn um den Knoten v angeordnet sind.\\
+\includegraphics[scale=0.05]{12.png}\\
+Eine planare Einbettung legt die Flächen fest, in jeder entpsrechenden Zeichnung.\\
+Hier: 6 Flächen (Angegeben durch Knotenzyklus: ace, ace,cde,bdc,eba,bed\\
+Flächendarstellung und Kantenlisten sind äquivalent (Adjazenzliste $\Leftrightarrow$ Fläche)\\
+Im Allgemeinen existieren verschiedene planare Einbettungen für einen planaren Graphen G\\
+Planare Einbettung ist eindeutig, falls G 3-Fach zusammenhängend\\
+Euler Formel: Sei G eine zusammenhängende planare Einbettung mit n Knoten, m Kanten und f Faces, dann gilt: $n-m+f=2$\\
+Beweis: Induktion über m\\
+m=0: $n=1, f=1 $ ok\\
+m=1: $n=2, f=1 $ ok\\
+$m\geq 2$ IA: Für jede planare Einbettung mit weniger als m Kanten gilt die Formel. Sei nun G eine planare Einbettung mit m Kanten n Knoten und f Faces.\\
+Fall1: G ist Baum d.h. azyklisch: $f=1$ Dann besitzt G einen Knoten v mit degree(v)=1 (Blatt)\\
+Planare Einbettung $G\setminus \{v\}$ ist zusammenhängend und hat n-1 Knoten, m-1 Kanten und f=1 Faces\\
+Fall2: G ist kein Baum -> $f>1$. Betrachte eine Kante e auf dem Zyklus. Betrachte die planare Einbettung $F\setminus\{e\}$ mit $m-1$ Kanten, n Knoten und $f-1$ Faces. $n-(m-1)+(f-1)=2$\\
+Folgerung: Für jeden planaren Graph gilt $m\leq 3n -6$
 \end{document}

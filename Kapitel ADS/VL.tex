@@ -1063,5 +1063,57 @@ $m\geq 2$ IA: Für jede planare Einbettung mit weniger als m Kanten gilt die For
 Fall1: G ist Baum d.h. azyklisch: $f=1$ Dann besitzt G einen Knoten v mit degree(v)=1 (Blatt)\\
 Planare Einbettung $G\setminus \{v\}$ ist zusammenhängend und hat n-1 Knoten, m-1 Kanten und f=1 Faces\\
 Fall2: G ist kein Baum -> $f>1$. Betrachte eine Kante e auf dem Zyklus. Betrachte die planare Einbettung $F\setminus\{e\}$ mit $m-1$ Kanten, n Knoten und $f-1$ Faces. $n-(m-1)+(f-1)=2$\\
-Folgerung: Für jeden planaren Graph gilt $m\leq 3n -6$
+Folgerung: Für jeden planaren Graph gilt $m\leq 3n -6$\\
+
+Übung:\\
+9.1: Kürzeste Wege in ayzklischen Graphen. Perfekte Wahl: Knoten aus U mit kleinster topologischer Nummer.\\
+1. Idee: Berechne topologiesche Sortierung. Verwende PQ für U -> \oh{n*log(n)+m}\\
+Besser: Kombination Topsort + kürzeste Pfade
+\begin{lstlisting}[escapechar=!]
+forall !$v\in V$! do
+	INDEG[v] = indeg(v)
+	if INDEG[v] == 0 then
+		ZERO = ZERO !$\cup $! {v}
+	fi
+	DIST[v] = !$\infty$!
+od
+DIST[s] = 0
+while ZERO !$\neq \emptyset$! do
+	u = bel. Knoten aus ZERO
+	ZERO = ZERO !$\setminus $!{u}
+	forall !$v\in V$! mit !$(u,v) \in E$! do
+		if --INDEG[v] == 0 then
+			ZERO = ZERO !$\cup $!{v}
+		fi
+		d = DIST[u] + c(u,v)
+		if d < DIST[v] then
+			DIST[v] = d
+		fi
+	od
+od
+\end{lstlisting}
+\oh{n+m}\\
+9.2: pred-Verweise\\
+Bellman/Ford + Algorithmus:\\
+Falls count[v] > n: Durchlaufe die Pred-Verweise, starte in v. Markiere alle besuchten Knoten. Sobald wir auf bereits markierten treffen -> negativer Kreis\\
+9.3/9.4: Negative Kosten bei Dijkstra\\
+\hspace*{1cm}\\
+\textbf{Euler Formel:} Planare Einbettung $n-m+f=2$\\
+Folgerung 1: Sei G ein planarer Graph mit n Knoten und m Kanten, dann gilt $m\leq 3n-6$ mit m=\oh{n} Kanten -> viele Graphenprobleme können effizient gelöst werden.\\
+Beweis: G besitzt eine planare Einbettung mit n Knoten, m Kanten und f Faces.\\
+Definition: Ein planarer Graph heißt maximal planar, wenn er durch hinzufügen einer beliebigen Kante nicht mehr planar ist.\\
+Beobachtung: In jeder planaren Einbettung eines max. planaren Graphen sind alle Faces Dreiecke.\\
+$\Rightarrow$ Jede Fläche besitzt genau 3 Kanten. jede Kante gehört zu genau 2 Flächen.\\
+Daraus folgt: $3f=2m \Rightarrow f=\frac{2}{3}m$. Eingesetzt in Eulerformel: $n-m+\frac{2}{3}m=2 \Rightarrow m=3n-6$\\
+Folgerung 2: Sei G ein bipartiter planarer Graph dann gilt: $m\leq 2n-4$\\
+Beweis: bipolar -> $\exists$ kein Kreis ungerader länge.\\
+$\Rightarrow$ kleinste Flächen in planarer Einbettung von bipartiten Graphen sind Vierecke. Damit bestehen maximal planare bipartite Graphen nur aus Vierecken. $\Rightarrow 4f=2m \Rightarrow f=\frac{1}{2}m \Rightarrow m=2n-4$\\
+Folgerung 3: Jeder planarer Graph besitzt einen Knoten v mit deg(v)$\leq$ 5\\
+Foglerung 4: $K_5$ ist nicht planar. Für $K_5$ gilt n=5, m=10. Ein planarer Graph mit 5 Knoten hat maximal 9 Kanten.\\
+Folgerung 6: $K_{3,3}$ ist nicht planar. n=6,m=9. $\Rightarrow$ bipartiter planarer Graph mit 6 Knoten hat max 8 Kanten.\\
+
+Definition: Eine Knotenfärbung eines Graphen G=(V,E) ist eine Abbildung $num: V\rightarrow\{1,..,k\}$ sodass für jede Kante $(v,w)\in E$ gilt $num(v)\neq num(w)$. D.h. die durch eine Kante verbundenen Knoten haben stets verschiedene Farben\\
+Problem: Finde minimales k, sodass eine Knotenfärbung existiert.\\
+Bei planaren Graphen ist k=4 (Vierfarben-Problem). Wir zeigen k=5, ist einfacher.
+
 \end{document}

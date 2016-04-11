@@ -1,0 +1,91 @@
+\documentclass[a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{a4wide}
+\usepackage{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\geometry{a4paper,left=2cm,right=2cm, top=3cm, bottom=3cm}
+\usepackage{listings}
+\lstset{language=xml}
+\newcommand{\oh}[1]{$\mathcal{O}(#1)$}
+\newcommand{\titel}[1]{\fancyhead[C]{#1}}
+\newcommand{\name}{\fancyhead[L]{Alexander Landmesser}}
+\newcommand{\matrikel}{\fancyhead[R]{}}
+\newcommand{\pl}{\hspace*{1cm}}
+\lstset{literate=
+  {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+  {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+  {à}{{\`a}}1 {è}{{\`e}}1 {ì}{{\`i}}1 {ò}{{\`o}}1 {ù}{{\`u}}1
+  {À}{{\`A}}1 {È}{{\'E}}1 {Ì}{{\`I}}1 {Ò}{{\`O}}1 {Ù}{{\`U}}1
+  {ä}{{\"a}}1 {ë}{{\"e}}1 {ï}{{\"i}}1 {ö}{{\"o}}1 {ü}{{\"u}}1
+  {Ä}{{\"A}}1 {Ë}{{\"E}}1 {Ï}{{\"I}}1 {Ö}{{\"O}}1 {Ü}{{\"U}}1
+  {â}{{\^a}}1 {ê}{{\^e}}1 {î}{{\^i}}1 {ô}{{\^o}}1 {û}{{\^u}}1
+  {Â}{{\^A}}1 {Ê}{{\^E}}1 {Î}{{\^I}}1 {Ô}{{\^O}}1 {Û}{{\^U}}1
+  {œ}{{\oe}}1 {Œ}{{\OE}}1 {æ}{{\ae}}1 {Æ}{{\AE}}1 {ß}{{\ss}}1
+  {ű}{{\H{u}}}1 {Ű}{{\H{U}}}1 {ő}{{\H{o}}}1 {Ő}{{\H{O}}}1
+  {ç}{{\c c}}1 {Ç}{{\c C}}1 {ø}{{\o}}1 {å}{{\r a}}1 {Å}{{\r A}}1
+  {€}{{\EUR}}1 {£}{{\pounds}}1
+}
+\begin{document}
+\title{Netzwerkalgorithmen}
+\maketitle
+\section{Zusätzliches blabla}
+Makros in C/C++: \#define alias replace, wobei replace auch Code sein kann.\\
+
+\section{Datentypen für Graphen und Netzwerke (LEDA)}
+\subsection*{Definition eines Datentyps}
+Definition der Objekte des Typs: $stack<T>$ \\
+Konstruktion: $stack<int>$ S(100) (max Größe)\\
+Operationen: $s.push(T x)$, $T s.pop()$\\
+Bemerkung zu Implementierung\\
+\subsection*{Graph-Datentyp in LEDA}
+Der Typ graph repräsentiert gerichtete Graphen.\\
+Ein Graph g besteht aus zwei Typen von Objekten: node und edge\\
+Mit jedem Knoten v sind zwei Listen von Kanten ($list<edge>$) verbunden (eingehend und ausgehend)\\
+Mit jeder Kante e werden 2 Knoten source und target gespeichert.\\
+\subsubsection*{Operationen auf G}
+Update:\\
+\pl node G.new\_node(), erzeugt einen neuen Knoten in G und gibt ihn zurück.
+\pl edge G.new\_edge(node v, node w)\\
+\pl void G.del\_edge(edge)\\
+Access:\\
+\pl $list<edge>$ G.out\_edges(node v);\\
+\pl int G.outdeg(node v);\\
+\pl node G.source(edge);\\
+\pl node G.target(edge);\\
+Iteration:\\
+\pl forall\_nodes(v,G)\\
+\pl forall\_edges(e,G)\\
+\pl forall\_out\_edges(e,v)\\
+\pl forall\_in\_edges(e,v)\\
+\subsubsection*{1. Problem}
+Gegeben: Graph G=(V,E)\\
+Frage: Ist G azyklisch?\\
+Algorithmus siehe Topologisches Sortieren: Entferne jeweils einen Knoten v mit indeg(v)=0 bis der Graph leer ist. Falls wir keinen solchen Knoten finden dann ist der Graph zyklisch, falls G am Ende leer, ist er azyklisch.\\
+C++:\\
+\begin{lstlisting}[language=c++]
+bool ACYCLIC(graph G){ 		//Call by value damit G nicht zerstört
+	list<node> zero;
+	node v;
+	forall_nodes(v,G){
+		if (G.indeg(v)==0) zero.append(v);
+	}
+	while (!zero.empty()){
+		node u = zero.pop();
+		edge e;
+		forall_out_edges(e,u){
+			node w=G.target(e);
+			G.del_edge(e);
+			if (G.indeg(w) == 0){
+				zero.append(w);
+			}
+		}
+	}
+	return G.empty();
+}
+\end{lstlisting}
+
+
+\end{document}

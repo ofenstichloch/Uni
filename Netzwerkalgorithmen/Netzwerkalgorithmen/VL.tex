@@ -147,5 +147,43 @@ void dfs(const graph& g, node v, int& count1, int& count2,node_array<int>& dfsnu
 \end{lstlisting}
 \subsubsection*{Berechnung starker Zusammenhangskomponenten}
 Definition: Ein gerichteter Graph ist stark zusammenhängend, wenn $\forall v,w \ in V: v\rightarrow^* w$ (es existiert ein Pfad von v nach w)\\
-Die starken Zusammenhangskomponenten (SZK) von G sind die maximalen SZK Teilgraphen von G.
+Die starken Zusammenhangskomponenten (SZK) von G sind die maximalen SZK Teilgraphen von G.\\
+Idee für Algorithmus:\\
+\begin{enumerate}
+\item führe DFS mit $G'=(V',E')$ dem Teilgraphen aufgespannt von bereits besuchten Knoten
+\item Verwalte SZK von $G'$ während DFS ausgeführt wird.
+\end{enumerate}
+Ablauf:\\
+Sei (v,w) die nächste in dfs betrachtete Kante\\
+1. Fall: $(v,w)\in T$ (Baumkante), w noch nicht besucht.  $V' = V'\cup \{w\}, E' = E'\cup \{(v,w)\},SZK=SZK\cup \{\{w\}\}$\\
+2. Fall: $(v,w)\not\in T$,d.h. w wurde schon besucht, ist also in $V'$ enthalten.$E'=E'\cup\{(v,w)\}$. Nun kann (v,w) meherere bereits bekannte SZK vereinigen (Rückwärtskante oder Cross-Kante). Bemerkung: Vorwärtskanten generieren keine neuen Pfade in $G'$, deswegen dabei keine änderung der SZK.\\
+Bezeichnungen:\\
+\begin{enumerate}
+\item Eine SKZ K heißt abgeschlossen, falls die Aufrufe von dfs für alle Knoten v in K beendet sind.
+\item Die Wurzel einer SZK K ist der Knoten mit der kleinsten dfsnum in K.
+\item "Unfertig" ist die Folge aller Knoten für die dfs aufgerufen wurde, aber deren SZK in der sie sich befinden noch nicht abgeschlossen ist.
+\item "Wurzeln" ist die Folge aller Wurzeln der nicht abgeschlossenen SZK nach dfsnum sortiert.
+\end{enumerate}
+Situation, wenn DFS beim Knoten g angekommen ist:\\
+%TODO Beispiel hier
+Unfertig: a,b,c,e,f,g\\
+Wurzeln: 1,b,e,g\\
+Der Algorithmus betrachtet danach dei Kanten aus g $(g,d)\in C$: es passiert nichts, da d in einer abgeschlossenen SZK ist;$(g,c)\in C$ Vereinigt die 3 SZK mit den Wurzeln b,e,g durch entfernen von e,g aus der Wurzelfolge.\\
+Beobachtung: Hinzufügen und Streichen nur am Ende $\rightarrow$ Stack eignet sich als Datenstruktur.\\
+Allgemeine Situation für $(v,w)\in T$:\\
+%TODO Bild
+$K' = K_2\cup K_3\cup K_4$.\\
+\begin{tabular}{c|c|c|c}
+$K_1$&$K_2$&$K_3$&$K_4$\\
+$r_1$|||&$r_2$|||&$r_3$|||&$r_4$|||\\
+\end{tabular}\\
+Ergänzungen von DFS für SZK:\\
+1. Aktion: while dfsum[wurzel.top()] $>$ dfsnum[w] do wurzeln.pop() od\\
+2. Falls $(v,w)\in T$: Wurzeln.push(w); Unfertig.push(v)\\
+3. Abschluss eine SZK: SZK von v wird endgültig verlassen, sie ist nun abgeschlossen.\\
+\pl Am Ende von dfs(v): if v == Wurzel.top() then \\
+\pl \pl Wurzeln.pop();\\
+\pl \pl repeat w = unfertig.pop() until w==v\\
+\pl fi\\
+Übung 2: Algo zu SZK.
 \end{document}

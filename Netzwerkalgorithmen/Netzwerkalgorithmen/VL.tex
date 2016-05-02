@@ -185,5 +185,47 @@ Ergänzungen von DFS für SZK:\\
 \pl \pl Wurzeln.pop();\\
 \pl \pl repeat w = unfertig.pop() until w==v\\
 \pl fi\\
-Übung 2: Algo zu SZK.
+Übung 2: Algo zu SZK.\\
+Darstellung der einzelnen SZKs: node\_array$<int>$ szknum(G); k=\#kompnum $forall v\in V szknum[v] = i \Leftrightarrow $v in der Komponente i\\
+$\rightarrow$  int SZK(const graph\& G, node\_array$<int>$\& sznum)\\
+\section{Kürzeste Wege / Billigste Wege}
+Allgemeines Problem: Sei gegeben ein gerichteter Graph $G=(V,E)$, eine Kostenfunktion $cost:E\rightarrow \mathbb{R}$ mit $cost(e)=$Kosten der Kante e.\\
+Beispiel:\\
+%TODO Bild
+\includegraphics[scale=0.05]{3.jpg} k=3\\
+Kosten eines Pfades P: $cost(P):= \sum_{e\in P} cost(e)$\\
+\textbf{Billigste-Wege Problem:}Finde einen Pfad P mit cost(P) minimal
+\begin{itemize}
+\item[a)] Zwischen zwei gegebenen Knoten
+\item[b)] Von einem Knoten s zu allen anderen Knoten (single source shortest paths)
+\item[c)] Zwischen allen Paaren $(v,w)\in V\times V$
+\end{itemize}
+Im Beispiel: $dist(a,f) = 2$, $dist(a,e) = -\infty$ weil $a\rightarrow b \rightarrow (c\rightarrow d\rightarrow b\rightarrow c)^i \rightarrow e$\\
+Definition: $dist(v,w) := inf\lbrace cost(P)|P \text{ist Pfad von v nach w}\rbrace$ d.h. wenn es einen negativen Zyklus gibt = $-\infty$, wenn kein Pfad existiert: $\infty$.\\
+Wir betrachten hier die Single-Source Variante:\\
+Eingabe: $G=(V,E), s\in V, cost:E\Rightarrow\mathbb{R}$\\
+Ausgabe: $\forall v\in V: dist(s,v)$\\
+Beobachtung: Die dist-Funktion erfüllt die Dreiecksungleichung: $dist(s,w)\leq dist(s,v)+cost(v,w)$\\
+Idee für allgemeinen Algorithmus (Label Correcting):\\
+Überschätze die dist-Werte (DIST=$\infty$). Solange eine Kante (u,v) die Dreiecksungleichung verletzt, korrigiere DIST[v]\\
+\begin{lstlisting}[escapechar=!]
+forall v in V do
+	DIST[v] = !$\infty$!
+od
+DIST[s] = 0
+while !$\exists (u,v)\in E$! mit !$DIST[v]>DIST[u]+cost(u,v)$!
+	DIST[v] = DIST[u]+cost(u,v)
+od
+\end{lstlisting}
+Eigenschaften
+\begin{itemize}
+\item[a)] Es gilt immer $DIST[v] \geq dist(s,v)$
+\item[b)] Wenn $DIST[v] < \infty$, dann existiert ein Pfad von s nach v mit den Kosten DIST[v]
+\item[c)] Die kürzesten Pfade bilden einen Baum T mit Wurzel s. Begründung: In jeden Knoten mit $DIST[v] < \infty$ mündet genau ein kürzester Pfad. Bei korrigieren von DIST-Wert wird die eingehende Kante von T definiert.
+\item[d)] Für jede Kante $(v,w)$ auf einem Kürzesten Pfad gilt: $dist(s,w) = dist(s,v)+cost(v,w)$
+\end{itemize}
+Effizienter Algorithmus: Kandidatenmenge\\
+Wir speichern alle Knoten aus denen Kanten ausgehen können, die die Dreiecksungleichung verletzen in einer Menge U.\\
+Am Anfang gilt: $U=\{s\}$
+
 \end{document}

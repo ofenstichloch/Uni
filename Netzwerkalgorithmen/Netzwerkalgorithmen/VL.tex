@@ -226,6 +226,44 @@ Eigenschaften
 \end{itemize}
 Effizienter Algorithmus: Kandidatenmenge\\
 Wir speichern alle Knoten aus denen Kanten ausgehen können, die die Dreiecksungleichung verletzen in einer Menge U.\\
-Am Anfang gilt: $U=\{s\}$
-
+Am Anfang gilt: $U=\{s\}$. Immer wenn DIST[v] vermindert wird, nimm v nach U auf.
+Verfeinerter Algorithmus:
+\begin{lstlisting}[escapechar=!]
+1. forall v !$\in$! V do
+	DIST[v] = !$\infty$!
+   od
+2. DIST[s] = 0
+3. U = {s}
+4. while !$U\neq \emptyset$!
+5. 	wähle und entferne ein u !$\in$! U
+6	forall !$v\in V$! mit !$(u,v)\in E$! do
+7.	  c = DIST[u]+cost(u,v)
+8.	  if c < DIST[v] then
+9.	  	DIST[v]=c
+10.		U = U!$\cup$! {v}
+11.	  fi
+12.	od
+13.od
+\end{lstlisting}
+Eigenschaften des Algorithmus während Laufzeit (Lemma):\\
+Falls der Graph G keine negativen Zyklen enthält, dann gilt: \\
+a) Falls $v\not\in U$, dann gilt für alle ausgehenden Kanten (v,w): DIST[w]$\leq$ DIST[v]+c(v,w).\\
+b) Sei $v_0,...,v_k$ ein billigster Pfad von s nach v. Falls nun DIST[v]$>$ dist(s,v), dann existiert ein i $0\leq i \leq k-1$ mit DIST[$v_i$] = dist(s,$v_i$) und $v_i\in U$\\
+c) Es existiert immer ein $u\in U$ mit DIST[u]=dist(s,u) und wenn in Zeile 5 des Algorithmus ein solches u gewählt wird (perfekte Wahl), dann wird die while-Schleife für jeden Knoten höchstes einmal ausgeführt.\\
+Beweis: \\
+a) Induktion über Schleifendurchläufe i (while)\\
+i=0: Vor dem ersten Durchlauf gilt die Behauptung, da DIST[s]=0 und DIST[v]=$\infty\forall v\in V$, U=$\{s\}$\\
+i=i+1: Betrachte ein beliebiges $v\not\in U$ nach der i+1-ten Ausführung\\
+\pl $v\not\in U$ vor der (i+1)-ten Ausführung -> Nach IA: DIST[v]+c(v,w)$\geq$ DIST[w] für alle ausgehenden Kanten (v,w) und DIST[v] wurde in diesem Durchlauf nicht verändert. Die  DIST-Werte der Nachbarn w von v wurden eventuell verändert $\Rightarrow DIST[v]+c(v,w) \geq DIST[w]$ für alle ausgehenden Kanten \\
+\pl $v\in U$ vor der (i+1)-ten Iteration: v wurde in Zeile 5 ausgewählt, dann stellt die innere Schleife die Dreiecksungleichung für alle ausgehenden Kanten wieder her.\\
+b) Sei $s=v_0,...,v_k=v$ ein billigster Pfad von s nach v mit $DIST[v_k]>dist(s,v_k)$\\
+Sei i maximal mit $DIST[v_i] = dist(s,v_i) \Leftarrow 0\leq i<k$ ($v_0$ hat korrekten Wert)\\
+Wir zeigen $v_i\in U$:\\
+Annahme $v_i \not\in U$: $DIST[v_i]+c(v_i,v_{i+1})\geq DIST[v_{i+1}]$ Außerdem gilt: dist(s,$v_{i+1}$) = $dist(s,v_i)+c(v_i,v_{i+1})$.\\
+Daraus folgt: $dist(s,v_{i+1}) = dist(s,v_i)+c(v_i,v_{i+1}) = DIST[v_i]+c(v_i,v_{i+1}) \geq DIST[v_{i+1}]\Rightarrow dist(s,v_{i+1}) = DIST[v_{i+1}]$ Widerspruch zur Wahl von i.\\
+c) Sei $v\in U$ beliebig\\
+Falls DIST[u] = dist(s,u) ok.\\
+Falls DIST[u] $>$ dist(s,u): Betrachte einen billigsten Pfad von s nach u, auf dem nach b) ein $v_i\in U $ existiert, mit DIST[$v_i$] = dist(s,$v_i$)\\
+Perfekte Wahl: Falls in Zeile 5 immer ein solcher Knoten $u\in U$ gewählt wird, dann kann u kein zweites Mal nach U angefügt werden.\\
+Perkefte Wahl $\Rightarrow$ Gesamtaufwand: \oh{\sum_{v\in V}(1+outdeg(v)+Verwaltung\ der\ Menge\ U} = $n+m+?$
 \end{document}

@@ -265,5 +265,58 @@ c) Sei $v\in U$ beliebig\\
 Falls DIST[u] = dist(s,u) ok.\\
 Falls DIST[u] $>$ dist(s,u): Betrachte einen billigsten Pfad von s nach u, auf dem nach b) ein $v_i\in U $ existiert, mit DIST[$v_i$] = dist(s,$v_i$)\\
 Perfekte Wahl: Falls in Zeile 5 immer ein solcher Knoten $u\in U$ gewählt wird, dann kann u kein zweites Mal nach U angefügt werden.\\
-Perkefte Wahl $\Rightarrow$ Gesamtaufwand: \oh{\sum_{v\in V}(1+outdeg(v)+Verwaltung\ der\ Menge\ U} = $n+m+?$
+Perkefte Wahl $\Rightarrow$ Gesamtaufwand: \oh{\sum_{v\in V}(1+outdeg(v)+Verwaltung\ der\ Menge\ U} = $n+m+?$\\
+1. Allgemeiner Fall: beliebiger Graph mit beliebiger cost-fUnktion: Realisiere U als Schlange (FIFO)\\
+Keine Negativen Zyklen $\Rightarrow$ in der Schlange existiert mindestens ein perfekter Knoten $\Rightarrow$ Zwischen 2 aufeinanderfolgenden Entnahmen des selben Knoten u wurde mindestens ein perfekter Knoten entfernt. $\Rightarrow$ Jeder Knoten wird maximal n-mal entfernt (spätestens dann ist U leer).\\
+Beobachtung: Wird ein Knoten öfters als n-mal entfernt, existiert ein negativer Zyklus\\
+Bellman/Ford Algorithmus:
+\begin{lstlisting}
+bool BELLMAN(const graph& G, node s, const edge_array<int>& cost, node_array<int>& DIST){
+	queue<node> Q; \\Menge U
+	node_array<bool> inQ(G,false);
+	node_array<int> count;
+	DIST[s]=0;
+	Q.append(s);
+	inQ[s] = true;
+	while (!Q.empty()){
+		node u = Q.pop()
+		inQ[] = false;
+		if (++count[u] > G.number_of_nodes()){
+			return false;
+		}
+		edge e;
+		forall_out_edges(e,u){
+			node v=G.target()
+			int c = DIST[u]+cost[e]
+			if (c<DIST[v]){
+				DIST[v] = c; 
+				//PRED würde hier gesetzt
+				if (!inQ[v]){
+					Q.append(v)
+					inQ[v]=true
+				}
+			}
+		}
+	}
+	return true;
+}
+\end{lstlisting}
+Laufzeitanalyse: n*(Iterationen über alle Knoten + deren ausgehenden Kanten) = \oh{\sum_{v\in V}(1+outdeg(v))}\\
+Gesamt: \oh{n^2+n*m}\\
+Wenn G zusammenhängend gilt $m\geq n-1 \Rightarrow$ \oh{n*m}\\
+Problem: Falls negativer Zyklus existiert, gebe einen oder alle aus.
+2. Azyklische Graphen: Es existiert eine topologische Sortierung.\\
+Behauptung: Der Knoten $u\in U$ mit kleinster topologischer Nummer ist eine perfekte Wahl mit DIST[u] = dist(s,u)\\
+Beweis: Sei $u\in U$ mit topnum[u] minimal\\
+\pl Annahme: DIST[u] $>$ dist(s,u)
+\pl $\Rightarrow \exists$ Knoten v auf dem kürzesten Pfad von s nach u mit DIST[v] = dist(s,u) und $v\in U$\\
+\pl $\Rightarrow $ topnum[v] $<$ topnum[u] Widerpsruch.\\
+3. Nicht-Negative Netzwerke: Beliebiger Graph aber Kosten $\geq 0$\\
+Dijksra...\\
+Wähle in Zeile 5 einen Knoten $u\in U$ mit DIST[u] minimal. $\Rightarrow$ Priority-Queue.\\
+Behauptung: $u\in U$ mit DIST[u] minimal ist perfekt d.h. DIST[u] = dist(s,u)\\
+Beweis:
+\pl Annahme: DIST[u] $>$ dist(s,u) $\Rightarrow \exists v\in U$ mit DIST[v] = dist(s,v) auf einem kürzesten Pfad von s nach u.\\
+\pl Dann gilt: dist(s,u) $\geq_{nichtNegativ}$ dist(s,u) $=_{Lemma}$ DIST[v] $\geq_{minmalwahl} $ DIST[u]\\
+\pl $\Rightarrow$ dist(s,u) = DIST[u] da DIST-Label nie zu klein werden.
 \end{document}

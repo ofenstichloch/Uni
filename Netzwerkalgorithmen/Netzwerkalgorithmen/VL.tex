@@ -224,6 +224,7 @@ Eigenschaften
 \item[c)] Die kürzesten Pfade bilden einen Baum T mit Wurzel s. Begründung: In jeden Knoten mit $DIST[v] < \infty$ mündet genau ein kürzester Pfad. Bei korrigieren von DIST-Wert wird die eingehende Kante von T definiert.
 \item[d)] Für jede Kante $(v,w)$ auf einem Kürzesten Pfad gilt: $dist(s,w) = dist(s,v)+cost(v,w)$
 \end{itemize}
+Da DIST[v] $<\infty$ existiert ein Pfad von s nach v mit cost(P)=DIST[v]. Daraus folgt DIST[v]$\geq$ dist(s,v), da dist(s,v)=inf\{cost(P) mit P ist Pfad von s nach v\}\\
 Effizienter Algorithmus: Kandidatenmenge\\
 Wir speichern alle Knoten aus denen Kanten ausgehen können, die die Dreiecksungleichung verletzen in einer Menge U.\\
 Am Anfang gilt: $U=\{s\}$. Immer wenn DIST[v] vermindert wird, nimm v nach U auf.
@@ -318,5 +319,40 @@ Behauptung: $u\in U$ mit DIST[u] minimal ist perfekt d.h. DIST[u] = dist(s,u)\\
 Beweis:
 \pl Annahme: DIST[u] $>$ dist(s,u) $\Rightarrow \exists v\in U$ mit DIST[v] = dist(s,v) auf einem kürzesten Pfad von s nach u.\\
 \pl Dann gilt: dist(s,u) $\geq_{nichtNegativ}$ dist(s,u) $=_{Lemma}$ DIST[v] $\geq_{minmalwahl} $ DIST[u]\\
-\pl $\Rightarrow$ dist(s,u) = DIST[u] da DIST-Label nie zu klein werden.
+\pl $\Rightarrow$ dist(s,u) = DIST[u] da DIST-Label nie zu klein werden.\\
+
+Darstellung der billigsten Pfade durch pred-Verweise: Merke für jeden Knoten die eingehende Kante des kürzesten Weges.
+\begin{lstlisting}
+Def: node_array<edge> PRED
+Init: foreall_nodes(v,G) PRED[v] = NULL
+in der inneren Schleife (forall_out_Edges(e,u): if(c<DIST[v]){ DIST[v] = c; PRED[v] = e}
+Durchlaufen der Pfade:
+while(PRED[v] != NULL){
+	edge e=PRED[v]
+	print e 
+	v=G.source(e)
+}
+\end{lstlisting}
+
+
+%Vorlesung vom 30. 
+Knoten \{1,...,n\} Kanten (i,j), Kapazitäten $u_{ij}$, Flüsse $x_{ij}$\\
+\textbf{Definition:} Restnetzwerk (residual network): beschreibt mögliche Flussrichtungen. Sei x eine aktuelle Flussfunktion, d.h. x erfüllt die Kapazitätsbedingungen (z.B. Nullfluss x=0). Das Restnetzwerk G(x) besteht aus allen Knoten von G und folgenden Kanten: Für jede Kante (i,j) in G existieren in G(x) 2 Kanten (i,j) und (j,i) mit Restkapazitäten $r_{ij} = u_{ij} - x_{ij}$ und  $r_{ji} = x_{ij}$. Beschreibt mögliche Flussänderungen der Flussfunktion, ingnoriert of alle Kanten mit Restkapazität 0.\\
+%Graph beispiel
+\includegraphics[scale=0.1]{4.jpg}\\
+Beobachtung: Jeder Pfad in G(x) von s nach t beschreibt eine mögliche Erhöhung des Gesamtflusses f.\\
+Im Beispiel, ohne 0-Kanten, existieren 3 Pfade, 1-3-2-4 mit den Restkapazitäten 1,2,1. Die mögliche Erhöhung ist das Minimum dieser Pfade.\\
+Wenn in G(x) ohne 0-Kanten kein Pfad von s nach t existiert, ist keine Erhöhung möglich $\Rightarrow$ f maximal.\\
+Für x = 0 gilt: G(x)=G\\
+Saturation einer Kante (i,j) in G $\Rightarrow x_{ij}\leftarrow u_{ij}$ entfernt (i,j) aus G(x)\\
+Auf Null setzen $x_{ij}\leftarrow 0$ entfernt die Gegenkante (i,j) aus G(x).\\
+Bemerkung: Effiziente Implementierungen verwenden später keinen expliziten Restgraphen G(x).\\
+\textbf{Begriff des Schnitts} CUT:\\
+intuitiv: Betrachte einen Schnitt der s und t trennt\\
+Alles was von s nach t fließt, fließt über diesen Schnitt $\rightarrow$ Kapazität des Schnittes ist obere Schranke, das gilt für alle Schnitte und damit auch den minimalen Schnitt.\\
+\textbf{Formale Definition:} (s,t)-Schnitt: Ein (s,t)-Schnitt $[S,\overline{S}]$ ist eine Partitionierung der Knoten V in 2 disjunkte Teilmengen $S$ und $\overline{S}=\{V\setminus S\}$ mit $s\in S$ und $t\in \overline{S}$. NOtation: $(i,j)\in (S,\overline{S})$\\
+Fluß von s nach t muss über die Kanten ($S,\overline{S}$). \\
+Definition: Kapazität von $[S,\overline{S}]: u[S,\overline{S}] = \sum_{(i,j)\in [S,\overline{S}]} u_{ij}$. Analog Restkapazität $r[S,\overline{S}]=\sum_{(i,j)\in [S,\overline{S}]}$. Fluss über den Schnitt $f=\sum_{(i,j)\in [S,\overline{S}]}x_{ij} -\sum_{(i,j)\in [\overline{S},S]}x_{ij}$, wobei $\sum_{(i,j)\in [S,\overline{S}]}x_{ij}$ maximal $\sum_{(i,j)\in [S,\overline{S}]}u_{ij}=u[S,\overline{S}]$ ist.\\
+Für alle (s,t)-Schnitte gilt $f\leq u[S,\overline{S}]$, insbesondere für den mit minimaler Kapazität. $\Rightarrow$ Der Wert eines maximalen Flusses f ist nicht größer, als die Kapazität eines minimalen Schnittes. ($f_{max}\leq minCut$, schwache Variante von MaxFlowMinCut)\\
+
 \end{document}

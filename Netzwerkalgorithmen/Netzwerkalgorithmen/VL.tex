@@ -334,8 +334,61 @@ while(PRED[v] != NULL){
 }
 \end{lstlisting}
 
+Dijkstra-Algorithmus: Wähle Koten u mit DIST[u] minimal.\\
+Datenstruktur: Priority Queue\\
+LEDA: $node_pq<P> PQ$ Knoten-Priority-Queue.\\
+Operationen: 
+\begin{itemize}
+\item Konstruktor $node_PQ<P> PQ(Graph G)$ Mit leerer PQ für Knoten von G\\
+\item void insert (node v,P p)
+\item node PQ.del\_min() entfernt einen Knoten v mit kleinster Priorität und gibt diesen zurück
+\item node PQ.find\_min() 
+\item void PQ.decrease\_p(node v P p) vermindert die Priorität von v auf p
+\item bool PQ.empty()
+\end{itemize}
+\begin{lstlisting}
+void DIJKSTRA(const graph& G, node s, const edge_array<int>& cost, node_array<int>& dist, node_array<edge>& pred){
+	node_pq<int> PQ(G);
+	node v;
+	forall_nodes(v,G){
+		dist[v] = MAXINT
+		pred[v] = NULL
+	}
+	dist[s] = 0
+	PQ.insert(s,0);
+	while(!PQ.empty()){
+		node u = PQ.del_min()
+		edge e
+		forall_out_edges(e,u){
+			node v = G.target(e)
+			int c = dist[u]+cost[e]
+			if(c < dist[v]){
+				if(dist[v] == MAXINT){
+					PQ.insert(v,c)
+				}else{
+					PQ.decrease(v,c)
+				}
+				dist[v] = c
+				pred[v] = e
+			}
+		}
+	}
+}
+\end{lstlisting}
+Laufzeitanalyse: Operationen auf dem Graphen \oh{n+m}. PQ-Operationen: 1x Konstruktor, nx insert, nx del\_min nx empty, $leq mx$ decrease\\
+Gesamtlaufzeit: \oh{n*(T_{insert}+T_{delmin}+T_{empty})+m*T_{decrease}}\\
+Varianten Datentyp: binärer min-heap, balancierter Baum, Fibonacci-Heap\\
+Varianten Verfahren: All-Pairs-Problem, Single-source-signle-target\\
 
-%Vorlesung vom 30. 
+\section{MaxFlow}
+Transport-Problem: Wie viele Einheiten können von s nach t in einer Zeiteinheit transportiert werden. Jede Kante hat eine Kapazität, die Menge die pro Zeiteinheit über diese Kante laufen kann.\\
+Definition (Network flows): Gegeben sei ein gerichteter Graph $G=(V,E)$, eine Kapazitätsfunktion $u:E\rightarrow \mathbb{R}^+_0$ und zwei Knoten $s,t\in V$ mit $s\neq t$. $u((v,w))$ heißt Kapazität von (v,w). s heißt Quelle(Source), t heißt Senke(target).\\
+Gesucht: Flussfunktion $x:E\rightarrow \mathbb{R}^+_0$ mit den Eigenschaften:\\
+\pl 1. $\forall e\in E: 0\leq x(e)\leq u(e)$ Kapazitätsbedingung\\
+\pl 2. Sei $v\in V: \sum_{(v,u)\in E} x(v,u) - \sum_{(w,v)\in E} x(w,v) = \{ F: v=s; 0: v\not\in \{s,t\};-F:v=t\}$ Mit dem Fluss F. (Massenbalancebedingung)\\
+\pl 3. F soll maximal sein.\\
+Bemerkung mit F=0 ist das Problem trivial.\\
+Notation: Links der Kante steht die Kapazität, rechts der Fluss.\\
 Knoten \{1,...,n\} Kanten (i,j), Kapazitäten $u_{ij}$, Flüsse $x_{ij}$\\
 \textbf{Definition:} Restnetzwerk (residual network): beschreibt mögliche Flussrichtungen. Sei x eine aktuelle Flussfunktion, d.h. x erfüllt die Kapazitätsbedingungen (z.B. Nullfluss x=0). Das Restnetzwerk G(x) besteht aus allen Knoten von G und folgenden Kanten: Für jede Kante (i,j) in G existieren in G(x) 2 Kanten (i,j) und (j,i) mit Restkapazitäten $r_{ij} = u_{ij} - x_{ij}$ und  $r_{ji} = x_{ij}$. Beschreibt mögliche Flussänderungen der Flussfunktion, ingnoriert of alle Kanten mit Restkapazität 0.\\
 %Graph beispiel

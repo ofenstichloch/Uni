@@ -407,5 +407,111 @@ Alles was von s nach t fließt, fließt über diesen Schnitt $\rightarrow$ Kapaz
 Fluß von s nach t muss über die Kanten ($S,\overline{S}$). \\
 Definition: Kapazität von $[S,\overline{S}]: u[S,\overline{S}] = \sum_{(i,j)\in [S,\overline{S}]} u_{ij}$. Analog Restkapazität $r[S,\overline{S}]=\sum_{(i,j)\in [S,\overline{S}]}$. Fluss über den Schnitt $f=\sum_{(i,j)\in [S,\overline{S}]}x_{ij} -\sum_{(i,j)\in [\overline{S},S]}x_{ij}$, wobei $\sum_{(i,j)\in [S,\overline{S}]}x_{ij}$ maximal $\sum_{(i,j)\in [S,\overline{S}]}u_{ij}=u[S,\overline{S}]$ ist.\\
 Für alle (s,t)-Schnitte gilt $f\leq u[S,\overline{S}]$, insbesondere für den mit minimaler Kapazität. $\Rightarrow$ Der Wert eines maximalen Flusses f ist nicht größer, als die Kapazität eines minimalen Schnittes. ($f_{max}\leq minCut$, schwache Variante von MaxFlowMinCut)\\
+Restnetzwerkberechnen: Explizit teuer, besser implizit.\\
+Algorithmus zur Berechnung des Restnetzwerks:\\
+\begin{lstlisting}
+forall_out_edges(e){
+	r = cap[e]-flux[e]
+	if r==0 continue
+	baue Graph
+}
+forall_in_edges(e){
+	r=flow[e]
+	if r==0 continue
+\end{lstlisting}
+Algorithmus für MaxFlow (Labeling-Algorithmus):
+1. x=0\\
+2. while G(x) enhält einen Pfad von s nach t do\\
+3.   Sei P ein solcher erhöhender Pfad\\
+4.   $S=min\{r_{ij}| (i,j)\in P\}$\\
+5.   Erhöhe den Fluss x entlang von P um r Einheiten.\\
+6.   berechne G(x) neu.\\
+7. od\\
+Idee für Implementierung: Sei S die Menge der von s aus erreichbaren Knoten. Wenn t markiert wurde gibt es einen Pfad von s nach t und t liegt in S. Pfade werden in Pred-Array gespeichert.
+\begin{lstlisting}
+void MF_Labeling(const graph& G, node s, node t, const edge_array<int>& cap, edge_array<int>& flow){
+	list<node> L; //Menge S
+	node_array<bool> labeled (G,false)
+	node_array<edge> pred (G,Null)
+	while(true){
+		labeled[s]=true
+		L.append(s)
+		while(!L.empty()){
+			node v = L.pop()
+			edge e
+			forall_out_edges(e,v){
+				if(flow[e]==cap[e]) continue
+				node w = G.target(e)
+				if(labeled[w]) then continue
+				labeled w = true
+				pred[w]=e
+				L.append(w)
+			}
+			forall_in_edges(e,v){
+				if(flow[e]==0) continue
+				node w = G.source(e)
+				if(labeled[w]) then continue
+				labeled w = true
+				pred[w]=e
+				L.append(w)
+			}
+			if (labeled[t]) L.clear()
+		}
+		if (labeled[t]) AUGMENT(G,s,t,pred,cap,flow) //Pfaderhöung
+		else break
+	}
 
+}
+void AUGMENT( const graph& G, node s, node t, const node_array<edge>& pred, const node_array<int>& cap, const node_array<int>& flow){
+	int delta = MAXINT
+	node v = t
+	while (v != s){
+		int r
+		edge e = pred[v]
+		if(v == G.source(e)){
+			r = flow[e]
+			v = G.target(e)		
+		}else{
+			r = cap[e]-flow[e]
+			v = G.source(e)
+		}
+		if(r<delta) delta = r
+	}
+	v=t
+	while(v!=s){
+		edge e = pred[v]
+		if (v==G.source(e)){
+			flow[e] -= delta
+			v = G.target(e)
+		}else{
+			flow[e] += delta
+			v=G.source(e)
+		}
+	}
+}
+\end{lstlisting}
+
+\subsection{Labeling-Algorithmus}
+\subsubsection*{Korektheit}
+In jedem Schritt (Hauptschleife) gibt es 2 Möglichkeiten:\\
+a) Algorithmus findet einen erhöhenden Pfad. $\rightarrow$ AUGMENT\\
+b) Kein erhöhender Pfad (t wird nicht gelabeled) $\rightarrow$ STOP\\
+Zu zeigen: Im Fall b ist der berechnete Fluss maximal.\\
+Knoten die gelabeled sind ($S$) und solche die nicht gelabeled sind ($\overline{S}$) ist ein (s,t)-Schnitt.\\
+Beobachtung: $\forall (i,j)\in [S,\overline{S}]$ gilt: $v_{ij}=0$ (deshalb werden diese Kanten vom Algorithmus nicht mehr benutzt, um weitere Knoten zu labeln.\\
+Bei uns bedeutet dies: $\forall$ Kanten $e \in (S,\overline{S}):flow[e]==cap[e]$ und $\forall e\in (\overline{S},S): flow[e]=0$\\
+Beobachtung über Flüsse und Schnitte: $F=\sum x_{ij} - \sum x_{kl} (ij)\in (S,\overline{S}), (k,l)\in (\overline{S},S)$\\
+Hier gilt also: $F=\sum u_{ij} - \sum 0 = u[S,\overleftarrow{S}]$\\
+Aus der schwachen Version des Maxflow/MinCut Theorems ($F_{max} \leq U_{min}$) folgt F ist maximal und $u[S,\overline{S}]$ minimal.\\
+Allgemein: Der Algorithmus liefert zusätzlich zur optimalen Lösung des primalen Problems (Maxflow) eine optimale Lösung des dualen Problems (MinCut).\\
+\textbf{Satz (MaxFlow-MinCut Theorem}: Der Wert eines maximalen Flusses ist gleich der Kapazität eines minimalen (s,t)-Schnittes. Beweis durch Korrektheit des Labeling-Algorithmus.\\
+\textbf{Satz (Augmenting-Path-Theorem}: Ein Fluss x ist maximal genau dann, wenn es im Restnetzwerk G(x) keinen erhöhenden Pfad gibt.\\
+Beweis APT: Falls es einen erhöhenden Pfad gibt, ist x nicht maxmial. Rückrichtung: $\not\exists$ erhöhender Pfad, führe Labeling aus, dann bekommt man einen (s,t)-Schnitt $[S,\overline{S}]$ mit S gelabeled und $\overline{S}$ nicht labeled, mit $F(x)=u[S,\overline{S}]$\\
+\textbf{Satz (Ganzzahligkeit)}
+Wenn alle Kapazitäten ganzzahlig, dann existiert ein maximaler Fluss x mit $x_{i,j}\in \mathbb{N}$ für all $(i,j)\in E$\\
+\subsubsection*{Laufzeitanalyse}
+Sei $U:= max\{u_{ij}| (i,j)\in E\}$ obere Schranke für $F_{max}$. Wir wissen $F_{max}\leq u[S,\overline{S}]$ für ale (s,t)-Schnitte.\\
+Beobachtung: Höchstens n-1 Kanten verlaufen über den Schnitt (von s nach t). $\Rightarrow F_{max} \leq n*U$. In jeder Iteration von AUGMENT erhöht der Algorithmus den Flusswert F um mindestens 1. Daraus folgt: weniger als $F_{max}$ Iterationen $\leq n*U$. \\
+Eine Iteration (Labeling) kostet Zeit \oh{n+m} (Wie DFS/BFS etc.) $\Rightarrow$ Gesamtlaufzeit \oh{n^2U+nmU}. Annahme G ist zusammenhängend $\Rightarrow m\geq n-1 \rightarrow$ \oh{nmU}
 \end{document}
+

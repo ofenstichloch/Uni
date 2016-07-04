@@ -513,5 +513,60 @@ Wenn alle Kapazitäten ganzzahlig, dann existiert ein maximaler Fluss x mit $x_{
 Sei $U:= max\{u_{ij}| (i,j)\in E\}$ obere Schranke für $F_{max}$. Wir wissen $F_{max}\leq u[S,\overline{S}]$ für ale (s,t)-Schnitte.\\
 Beobachtung: Höchstens n-1 Kanten verlaufen über den Schnitt (von s nach t). $\Rightarrow F_{max} \leq n*U$. In jeder Iteration von AUGMENT erhöht der Algorithmus den Flusswert F um mindestens 1. Daraus folgt: weniger als $F_{max}$ Iterationen $\leq n*U$. \\
 Eine Iteration (Labeling) kostet Zeit \oh{n+m} (Wie DFS/BFS etc.) $\Rightarrow$ Gesamtlaufzeit \oh{n^2U+nmU}. Annahme G ist zusammenhängend $\Rightarrow m\geq n-1 \rightarrow$ \oh{nmU}
+
+PREFlow (excess):$e(i)=\sum x_{ji} - \sum x_{ik} \leq 0$\\
+Wenn $e(i)>0$ dann ist i aktiv ($i\not\in \{s,t\}$\\
+Idee für Algorithmus:\\
+1. Schiebe (push) Fluss von s nach t\\
+2. Während des Ablaufs ensteht dadurch ein Preflow mit ExcessKnoten\\
+3. am Ende soll der Preflow ein echter Fluss sein, d.h. keine aktiven Knoten\\
+Für die Richtung s nach t verwenden wir eine Distanzfunktion (Distanz=Länge von Pfaden von s nach t)\\
+\textbf{Definition: (Distanz-Label):}\\
+Für einen Preflow x definieren wir in G(x) eine Distanzfunktion $d: V\rightarrow \mathbb{N}_0$ mit:
+\begin{itemize}
+\item[1.]d(t) = 0
+\item[2.]$d(i)\leq d(j)+1$ für alle $(i,j)\in G(x)$
+\end{itemize}
+Beobachtung: 1. d ist eine untere Schranke für exakte Distanzwerte. 2. Die Nullfunktion ist ein gültiges Distanz-Label.\\
+Intuition: d = Höhe/Level von Knoten\\
+\textbf{Definition: admissible/zulässig}\\
+Eine Kante (i,j) in G(x) heißt admissible gdw $d(i)=d(j)+1$\\
+Preflow-Push Algorithmus:\\
+1. Saturiere alle von s ausgehenden Kanten\\
+2. Setze $d(i) = 0 $für $i\neq 0$ oder n für $i=s$\\
+3. Betrachte einen aktiven Knoten i und schiebe Fluss über eine admissible Edge.\\
+4. Falls ein aktiver Knoten i keine ausgehende admissible Edge hat -> Relabel $d(i)\leftarrow min\{d(j)|\text{j Nachbar in G(x)}\}+1$\\
+Der generische Preflow-Push-Algorithmus:\\
+\begin{lstlisting}[numbers=left,escapechar=!]
+x=0;e=0;d=0;
+forall j in V mit (s,j) in E do
+	x_sj = u_sj //Volle Kapazität
+	e(j) += x_sj
+od
+d(s) = n
+while !$\exists$! aktive Knoten do
+	wähle einen aktiven Knoten i //am besten highest label
+	PUSH/RELABEL(i)
+od
+\end{lstlisting}
+PUSH/RELABEL(knoten i):
+\begin{lstlisting}[numbers=left,escapechar=!]
+if !$\exists $! admissible Edge (i,j) in G(x) then
+	wähle eine solche Kante (i,j)
+	delta = min{e(i),r_ij}
+	x_ij += delta
+	e(i) -= delta
+	e(j) += delta
+else //Relabel
+	d(i) = min{d(j)|(i,j) in G(x)}+1
+fi
+\end{lstlisting}
+Laufzeit: \oh{\#Push+\#Relabel}\\
+Lemma: Falls $e(i)>0$ dann existiert ein Pfad von i nach s im Restnetzwerk G(x).\\
+Lemma2: Für alle aktiven Knoten $i\in V: d(i)<2n$ folgt aus Lemma 1.\\
+Lemma3: Maximal $2n^2$ Realbels (Folgt aus Lemma2). Für jeden einzelnen Knoten maximal 2n.\\
+Lemma4: $\leq n*m$ saturierende Pushes\\
+Lemma5: \oh{n^2*m} nicht saturierende Pushes\\
+Der Generische Algorithmus hat\oh{n^2*m}
 \end{document}
 

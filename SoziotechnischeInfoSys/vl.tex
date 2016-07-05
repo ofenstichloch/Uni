@@ -48,7 +48,35 @@ Wenn A B kennt und B kennt C, dann ist es sehr wahrscheinlich, dass A auch C ken
 Clustering-Koeffizient:\\
 $\forall$3 Konten, mit 2 kanten = Offen, mit 3 Kanten = geschlossen\\
 Für alle Knoten: closed/(closed-open) = globaler Clusterkoeffizient\\
-\subsection{Preferential Attachement}
+\subsection{Preferential Attachment}
 to be filled
+\section{Zusätzliches}
+
+\subsection{XML RPC (Web services)}
+Sowohl Interfacebeschreibung, als auch Netzwerkstandard basieren auf XML. 
+\subsection{Relationale Datenbankensysteme}
+Nicht einfach verteilbar, kein Performancegewinn bei Joins. In Realität maximal bis zu 10-20 nodes\\
+\subsection{NoSQL Datenbanken}
+Aggregation Beispiel: Spiel speichert seine Spieler redundant.\\
+Updates in Schemalosen DB sind schwer.\\
+Kostet relativ viel Zeit als basis, skaliert aber\\
+Transaktion: Wenn mehrere Transaktionen bearbeitet werden gilt: Es gibt eine Sequentielle anordnung der Transaktionen, die zum neuen konsistenten Zustand führen.\\
+ACID vs BASE\\
+Aggregation, .,., Durability\\
+Eventual consistency: Irgendwann wenn keine Updates mehr kommen entsteht konsistenz\\
+\subsection{Distributed Hashtables}
+Daten werden im Ring verteilt. Z.B. das erste Byte entscheidet den Server...\\
+\subsection{CAP-Theorem}
+KLAUSUR MEEP MEEP BIIIDUUUBIIIDU\\
+CA: Vertikal, klassische Datenbanksysteme\\
+CP: Konsistenz wichtig, Geldautomaten\\
+AP: Verfügbarkeit, Viel Replikation, Inkonsistenzen tolerieren, DNS, NOSQL\\
+\subsection{Datenbanktypen}
+Key-Value: Größte Gruppe, Values opaque (DB weiß nicht was Value ist)\\
+Key-Document: Value ist semi-strukturiert, z.B. JSON\\
+Column-Family:Nicht normalisierte Matrizen, Google big table
+\subsection{Polyglotte Persistenz}
+Ein System verwendet verschiedene Datensysteme (relational, Nosql etc)\\
+SQL+NOSQL = NEWSQL, SQL generiert NOSQL Datenbanken\\
 
 \end{document}

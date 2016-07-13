@@ -1,0 +1,24 @@
+Six Degrees of Separation
+Cluster-Koeffizient
+CAP
+Hadoop (aufbau+funktion)
+MapReduce
+HBase
+SQL/NOSQL
+
+Authentifizierung: Bin ich ich?
+Autorisierung: Darf ich das?
+
+BASE:
+BA: Basically Available: muss nicht immer available sein, sollte aber
+E: Eventual consistency: es gibt durchaus mehrere unterschiedliche replikate, die irgendwann wohl konsistent werden
+S: Soft state: Sind nicht durable, state kann verloren gehen; Man geht davon aus, dass eine abgestürzte Node die Daten von anderen nodes replizieren kann, und nicht backup-sicher sein. Zustandsinformation verteilt sich im System durch gesprächige Nodes
+
+OAuth: Cross-Authentifizierung (Passwort antipattern) -> Auth ohne passwort für jeden service. Man gibt einem Service das Recht via Token die eignene Daten abzurufen. Kann beim OAuth provider jedem token rechte geben/entziehen
+
+Strong ties: Enge beziehungen, meistens resultierend in triaden
+Weak ties: Schwache beziehungen/bekannte
+Weak ties sind für soz.netze wichtig -> Weak ties bilden Brücken zwischen den Clustern/Cliquen der strong ties. Weak ties lassen sich mithilfe von sozialen netzen einfacher aufrechthalten. Können viel interessanter für eine Person sein, ohne soziale Netze würde man das uU gar nicht erfahren.
+ 
+
+ Preferential attachement: Kantengrade sind exponentiell verteilt

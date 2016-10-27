@@ -14,3 +14,5 @@ Verteilte Systeme/Uebungen/Mandelbrot1/Mandelbrot1/Properties/AssemblyInfo.cs
 Verteilte Systeme/Uebungen/Mandelbrot1/packages/repositories.config
 Verteilte Systeme/Uebungen/Mandelbrot1/packages/NetMQ.3.3.0.11/NetMQ.3.3.0.11.nupkg
 Verteilte Systeme/Uebungen/Mandelbrot1/packages/NetMQ.3.3.0.11/lib/net40/NetMQ.dll
+*.bbl
+*.blg

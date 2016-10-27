@@ -1,0 +1,30 @@
+\documentclass[a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{a4wide}
+\usepackage{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\geometry{a4paper,left=2cm,right=2cm, top=3cm, bottom=3cm}
+
+\newcommand{\titel}[1]{\fancyhead[C]{#1}}
+\newcommand{\name}{\fancyhead[L]{Alexander Landmesser}}
+\newcommand{\matrikel}{\fancyhead[R]{Matrikelnummer: 1096552}}
+\newcommand{\pl}{\hspace*{1cm}}
+\pagestyle{fancy}
+\begin{document}
+\matrikel
+\titel{Netzwerkalgo - Übung 1}
+\name
+
+4.1: Sei x ein maximaler Fluss:\\
+a) $0\leq x_{ij}\leq u_{ij}$ für alle $(i,j)\in E$\\
+b) Für alle $i\in V\setminus \{s,t\}: \sum x_{ij} = \sum x_{k,i}$ und $F:=\sum_{(s,i)\in E}x_{si} -\sum_{(j,s)\in E}x_{js}$ mit F maximal.\\
+Wie findet man den passenden MinCut (s,t)-Schnitt in Zeit O(m)\\
+Lösung: 1 Iteration (die Letzte) des Labeling-Algorithmus. S=alle gelabelten, $\overline{S}$=andere\\
+4.2: Umwandlung eines nicht-ganzzahligen max Flusses x in ganzzahligen\\
+Beobachtung: 1. Flussänderung entlang von Kreisen in G(x) möglich, ohne den Flusswert $F_{max}$ zu verändern.\\
+2. Sei (i,j) eine Kante, sodass $x_{ij}$ nicht ganzzahlig $\Rightarrow$ mindestens eine Kante inzident zu i und mindestens eine inzident zu j in G(x) hat ebenfalls ein nicht ganzzahliges x (Massenbalance)\\
+Alle dieser Kanten liegen auf einem Kreis. Starte auf einer Kante wo $x_{ij}$ nicht ganzzahlig, laufe über nicht ganzzahlige Nachbarkanten, bis Kreis geschlossen ist. Kreis besitzt Restkapazität $\delta \rightarrow$ Flusserhöhung entlang dieses Kreises.
+\end{document}

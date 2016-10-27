@@ -1,0 +1,81 @@
+\documentclass[a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{a4wide}
+\usepackage{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\geometry{a4paper,left=2cm,right=2cm, top=3cm, bottom=3cm}
+
+\newcommand{\titel}[1]{\fancyhead[C]{#1}}
+\newcommand{\name}{\fancyhead[L]{Alexander Landmesser}}
+\newcommand{\matrikel}{\fancyhead[R]{Matrikelnummer: 1096552}}
+\newcommand{\pl}{\hspace*{1cm}}
+\pagestyle{fancy}
+\begin{document}
+\matrikel
+\titel{Netzwerkalgo - Übung 1}
+\name
+
+\begin{itemize}
+\item[1.3]Nicht-rekrusives DFS\\
+s $->$ besucht[v]\\
+$\tilde{S}\subseteq S$\\
+Stack = DFS, Queue = BFS\\
+\begin{lstlisting}
+void dfs(const graph& G, node u, node_array<int>& dfsnum, compnum, node_array<edge>& current_edge, int& dfs_count, int& comp_count)
+stack<node> S
+S.push(u)
+dfsnum[u] = ++dfs_count
+while(!S.empty()) {
+	node v = s.top()
+	edge e = current_edge[v]
+	if (e == NULL){
+		s.pop()
+		compnum[v] = ++comp_count	
+	}else{
+		node w = G.target(e)
+		if(dfsnum[w]==0){
+			s.push(w)	
+			dfsnum[w] = ++dfsnum
+			current_edge[w] = G.out_succ(e)
+		}
+	}
+}
+void DFSNUM(const graph& G, node_array<int>& dfsnum, compnum)
+int dfs_count = 0
+int comp_count = 0
+node_array<edge> current_edge(G)
+node v
+forall_nodes(v,G){
+	dfsnum[v] = 0
+	current_edge[v] = G.first_out_edge(v)
+}
+forall_nodes(v,G){
+	if(dfsnum[v]==0){
+		dfs(G,v,dfsnum,compnum,current_edge,dfs_count,comp_count)
+	}
+}
+\end{lstlisting}
+\item[1.4]BFS
+\begin{lstlisting}
+void bfs(const graph& G, node u ,node_array<int>& level){
+	queue<node> Q
+	Q.append(u)
+	level[u] = 0
+	while(!Q.empty(){
+		node v = Q.pop()
+		edge e
+		forall_out_edges(e,v){
+			node w = G.target(e)
+			if(level[w]== -1){
+				q.append(w)
+				level[w] = level[v] + 1
+			}
+		}
+	}
+}
+\end{lstlisting}
+\end{itemize}
+\end{document}

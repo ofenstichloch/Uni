@@ -1,0 +1,53 @@
+\documentclass[a4paper]{article}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{fancyhdr}
+\usepackage{a4wide}
+\usepackage{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\geometry{a4paper,left=2cm,right=2cm, top=3cm, bottom=3cm}
+\usepackage{listings}
+\lstset{language=xml}
+\newcommand{\oh}[1]{$\mathcal{O}(#1)$}
+\newcommand{\titel}[1]{\fancyhead[C]{#1}}
+\newcommand{\name}{\fancyhead[L]{Alexander Landmesser}}
+\newcommand{\matrikel}{\fancyhead[R]{}}
+\newcommand{\pl}{\hspace*{1cm}}
+\lstset{literate=
+  {á}{{\'a}}1 {é}{{\'e}}1 {í}{{\'i}}1 {ó}{{\'o}}1 {ú}{{\'u}}1
+  {Á}{{\'A}}1 {É}{{\'E}}1 {Í}{{\'I}}1 {Ó}{{\'O}}1 {Ú}{{\'U}}1
+  {à}{{\`a}}1 {è}{{\`e}}1 {ì}{{\`i}}1 {ò}{{\`o}}1 {ù}{{\`u}}1
+  {À}{{\`A}}1 {È}{{\'E}}1 {Ì}{{\`I}}1 {Ò}{{\`O}}1 {Ù}{{\`U}}1
+  {ä}{{\"a}}1 {ë}{{\"e}}1 {ï}{{\"i}}1 {ö}{{\"o}}1 {ü}{{\"u}}1
+  {Ä}{{\"A}}1 {Ë}{{\"E}}1 {Ï}{{\"I}}1 {Ö}{{\"O}}1 {Ü}{{\"U}}1
+  {â}{{\^a}}1 {ê}{{\^e}}1 {î}{{\^i}}1 {ô}{{\^o}}1 {û}{{\^u}}1
+  {Â}{{\^A}}1 {Ê}{{\^E}}1 {Î}{{\^I}}1 {Ô}{{\^O}}1 {Û}{{\^U}}1
+  {œ}{{\oe}}1 {Œ}{{\OE}}1 {æ}{{\ae}}1 {Æ}{{\AE}}1 {ß}{{\ss}}1
+  {ű}{{\H{u}}}1 {Ű}{{\H{U}}}1 {ő}{{\H{o}}}1 {Ő}{{\H{O}}}1
+  {ç}{{\c c}}1 {Ç}{{\c C}}1 {ø}{{\o}}1 {å}{{\r a}}1 {Å}{{\r A}}1
+  {€}{{\EUR}}1 {£}{{\pounds}}1
+}
+\lstset{language=c++}
+\begin{document}
+\title{Algorithmische Geometrie}
+\maketitle
+\section{Konvexe Hüllen}
+\subsection{Konvexe Hülle von Punktmengen}
+\underline{Definition} Sei $S\subseteq \mathbb{R}^2$ eine Punktmenge in der Ebene. S heißt konvexe Hülle, genau dann, wenn $\forall p,q\in S: \overline{pq} \subseteq S$ wobei $\overline{pq}$ eine Gerade von p nach q ist.\\
+Die Konvexe Hülle CH(s) einer Menge $S\subseteq \mathbb{R}^2$ ist die kleinste (in Benzug auf Inklusion) konvexe Menge die S enthält.\\
+
+Eingabe: n Punkte, $S=\{q_1,..,q_n\}$\\
+Ausgabe: Ecken $p_1,..,p_k$ der Konvexen Hülle CH(s). Wir wissen, dass $p_i \in S$ für $i=1,..,k$. Ausgabe als Folge gegen den Uhrzeigersinn entlang des Randes von $CH(S)\Rightarrow \overline{p_ip_{i+1}}$ Randsegmente.\\
+\underline{Komplexität des Problems}: Satz: Die Berechnung der Konvexen Hülle von n Punkten im $\mathbb{R}^2$ ist mindestens so schwer wie das Sortieren von n reelen Zahlen.\\
+Beweis: Reduktion des Sortierens auf CH. Sei CONVEX\_HULL(S) ein ALgorithmus für CH. Zeige, wie man diesen Algorithmus verwenden kann, um n reele Zahlen $x_1,..,x_n$ aufsteigend zu sortieren.\\
+Betrachte die Punktmenge $S=\{(x_i,x_i^2)|i=1,...,n\}$. CH(S) liefer alle Punkte in S gegen den Uhrzeigersinn zyklisch sortiert. Wandle die zyklisch sortierte Folge in Linearzeit in eine von "rechts" sortierte Folge um (X-Koordinate aufsteigend sortiert).\\
+Folgerung: Die Komplexität des konvexe Hülle Problems ist $\Omega$(n log n) (untere Schranke).
+\subsubsection{Gift-Wrapping}
+In $\mathbb{R}^3$ oder $\mathbb{R}^2$\\
+Idee: Extrempunkt suchen, Strahl anlegen und drehen bis er einen weiteren extremen Punkt erreicht.\\
+Lexikographische Ordnung von Punkten p und q $p=(p_x,p_y), p<_{xy} q \Leftrightarrow p_x < q_x \vee (p_x=q_x \wedge p_y<q_y)$.\\
+Beobachtung: Der min/max  Punkt in der (xy) oder (yx)-Ordnung ist eine Exke der konvexen Hülle.
+
+\end{document}
+

@@ -577,6 +577,12 @@ $b(i)=\lbrace >0, $supply-Knoten,$=0, $Transport-Knoten, $<0,$ Demand-Knoten.\\
 FeasibleFlow $x:E\rightarrow\mathbb{N}_0$ muss Bedingungen erfüllen:\\
 1. $0\leq x_{ij} \leq u_{ij}$ für alle Kanten\\
 2. Massenbalance: $\forall i\in V: b(i)=\sum x_{ij} - \sum x_{ki}$ mit (i,j) ausgehende und (k,i) eingehende Kanten.\\
+Offensichtlich: $\sum_{i\in V} b(i) = 0$\\
+Berechne Maxflow für dieses Netzwertk -> x*\\
+2 Fälle:\\
+1. x* saturiert alle aus s ausgehen Kanten, und damit auch alle in t gehenden\\
+Dann ist x* eingeschränkt auf Originalnetzwerk ein feasible flow.\\
+2. Sonst (nicht alle durch Maxflow x* saturiert) -> Es existiert kein Feasible flow.
 
 \end{document}
 

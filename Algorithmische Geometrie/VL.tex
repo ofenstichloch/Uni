@@ -47,7 +47,76 @@ Folgerung: Die Komplexität des konvexe Hülle Problems ist $\Omega$(n log n) (u
 In $\mathbb{R}^3$ oder $\mathbb{R}^2$\\
 Idee: Extrempunkt suchen, Strahl anlegen und drehen bis er einen weiteren extremen Punkt erreicht.\\
 Lexikographische Ordnung von Punkten p und q $p=(p_x,p_y), p<_{xy} q \Leftrightarrow p_x < q_x \vee (p_x=q_x \wedge p_y<q_y)$.\\
-Beobachtung: Der min/max  Punkt in der (xy) oder (yx)-Ordnung ist eine Exke der konvexen Hülle.
-
+Beobachtung: Der min/max  Punkt in der (xy) oder (yx)-Ordnung ist eine Ecke der konvexen Hülle.\\
+Idee für Algorithmus: $S=\{q_1,..,q_n\}$ mit Ecken $p_1,..,p_n$.\\
+Startpunkt $p_1\leftarrow min_{xy}(S)$ (unten links).\\
+Wie finet man $p_2$: 1. Betrachte horizontalen Strahl nach rechts, der in $p_1$ startet. 2. Drehe diesen gegen den Uhrzeigersinn bis er auf einen Punkt von S trifft. Wiederhole vom so gefundenen $p_2$ aus.\\
+Schritt 2 benötigt \oh{n}.\\
+Worst-case: h=n (Anzahl Ecken): \oh{n^2}, best-case: h konstant.\\
+Details der Implementierung:\\
+1. Vergleiche in der linearen Suche: Winkelvergleich, bei Gleichheit Entfernung. Besser: Statt Winkel verwenden wir Orientierung.\\
+Definition: Orientation-Prädikat:\\
+Gegeben sind drei Punkte $a,b,c \in \mathbb{R}^2$. \\
+orientation(a,b,c)=-1 $\Rightarrow$ c liegt rechts der Gerade a,b\\
+orientation(a,b,c)=0 $\Rightarrow$ a,b,c liegen auf einer Gerade.\\
+orientation(a,b,c)=1 $\Rightarrow$ c liegt links der Gerade a,b\\
+%3. Vorlesung (mittwoch 02.11) hier einfügen
+\subsubsection{Graham-Scan}
+Trick: Lege am Anfang $p_n$ und $p_1$ auf den Stack. Dann haben wir immer $\geq 2$ Punkte auf dem Stack.\\
+Der komplette Algorithmus:\\
+Vorbedingung: 1. $p_2,...,p_n$ sind aufsteigend nach xy-Ordnung sortiert. 2. $p_i$ liegt oberhalb bzw. auf der Geraden durch $p_2$ und $p_n$
+\begin{lstlisting}[escapechar=@]
+UPPER_HULL(@$p_1,...,p_n$@)
+	Stack S
+	s.push(@$p_n$@)
+	s.push(@$p_1$@)
+	s.push(@$p_2$@)
+	for i=3 to n-1 do
+		a <- S.top()
+		b <- S.top_pred() 
+		while (orientation(b,a,@$p_i$@) @$\geq 0$@ do
+			S.pop()
+			a <- b
+			b <- S.top_pred()
+		od
+		S.push(@$p_i$@)
+	od
+	return S
+\end{lstlisting}
+Laufzeitanalyse:\\
+Beobachtung: Jeder Punkt wird genau einmal auf den Stack gepusht. Jeder Punkt wird höchstens einmal vom Stack entfernt.\\
+$\Rightarrow$ DIe innere Schleife wird insgesamt höchstens n mal ausgeführt. \\
+Laufzeit: \oh{n}\\
+Analog dazu LOWER\_HULL mit orientation $\leq 0$.\\
+Vorbereitung: \\
+1. Sortiere die Gesamtmenge S \\
+2. Filtere S in S' und S'' (Upper/Lower) \\
+3. Berechne UPPER\_HULL(S'), LOWER\_HULL(S'')\\
+4. Konstruiere CH(S) aus den beiden Resultaten.\\
+Gesamtlaufzeit inklusive Sortieren: \oh{nlog(n)} plus der Rest \oh{n}\\
+Satz (Graham):\\
+1. Die konvexe Hülle von n Punkten in $\mathbb{R}^2$ kann in Zeit \oh{nlog(n)} berechnet werden.\\
+2. Die Laufzeit reduziert sich auf \oh{n}, falls die Punkte sortiert sind.\\
+Bemerkungen:\\
+1. Varianten: Gleichzeitig obere und untere Hälfte berechnen (2 Stacks). Oder gesamte Hülle in einem zirkulären Scan.\\
+2. UPPER\_HULL und LOWER\_HULL sind auch für sich alleine interessant.\\
+3. Graham's Scan ist optimal, da die untere Schranke $nlog(n)$ erreicht wird.\\
+\subsubsection{Inkrementeller Algorithmus}
+Idee: \\
+1. Sortiere nach xy-Ordnung\\
+2. Betrachte die Punkte nacheinander. Finde obere und untere Tangente von neuem Punkt zu bisheriger Konvexer Hülle, ersetze die damit übersprungenen Kanten mit der jeweiligen Tangente.\\
+Finde Berührungspunkte o und u der oberen und unteren Tangente von $p_i$ an das Polygon CH($p_1,...,p_{i-1}$). Entferne alle Ecken zwischen o und u. Füge $p_i$ nach u (vor o) ein. \\
+Details: Darstellung der CH: Zirkuläre doppelt verkettete Liste gegen den Uhrzeigersinn, pred-Verweise im Uhrzeigersinn.\\
+Initialisierung: CH <- Dreieck ($p_1,p_2,p_3$) unter Beobachtung der Orientierung entweder ($p_1,p_2,p_3$) oder ($p_1,p_3,p_2$). Ein Orientation-Test notwendig.\\
+Tangenten und Berührpunkte für $p_i$  mit $i>3$:\\
+Verwende Orientation um zu prüfen, ob es Knoten "oberhalb" der Geraden $p_i,p_{i-1}$\\
+Pseudocode für oberen Teil:\\
+\begin{lstlisting}[escapechar=@]
+p <- @$p_{i-1}$@
+while !let_turn(@$p_i,p,$@CH.succ(p)) do
+	p <- CH.succ(p)
+od
+\end{lstlisting}
+Laufzeit: Beobachtung: Berechnung der Tangenten für einen Punkt $p_i$ hat Laufzeit \oh{1+\#entfernter Ecken}. Gesamtaufwand der Tangentenberechnung linear. \oh{n}
 \end{document}
 
